@@ -109,9 +109,9 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.selectMany, [identifier(selector)], scopes);
     }
 
-    static join<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
+    static joinWith<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
         selector: (item: T, other: TOther) => TResult | string, scopes: any[]) {
-        return this.create(QueryFunc.join, [literal(other), identifier(thisKey), identifier(otherKey), identifier(selector)], scopes);
+        return this.create(QueryFunc.joinWith, [literal(other), identifier(thisKey), identifier(otherKey), identifier(selector)], scopes);
     }
 
     static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
@@ -159,8 +159,8 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.distinct, [identifier(comparer)], scopes);
     }
 
-    static concat<T>(other: Array<T> | string, scopes: any[]) {
-        return this.create(QueryFunc.concat, [literal(other)], scopes);
+    static concatWith<T>(other: Array<T> | string, scopes: any[]) {
+        return this.create(QueryFunc.concatWith, [literal(other)], scopes);
     }
 
     static zip<T, TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, scopes: any[]) {
@@ -267,7 +267,7 @@ export const QueryFunc = {
     cast: 'cast',
     select: 'select',
     selectMany: 'selectMany',
-    join: 'join',
+    joinWith: 'joinWith',
     groupJoin: 'groupJoin',
     orderBy: 'orderBy',
     orderByDescending: 'orderByDescending',
@@ -279,7 +279,7 @@ export const QueryFunc = {
     skipWhile: 'skipWhile',
     groupBy: 'groupBy',
     distinct: 'distinct',
-    concat: 'concat',
+    concatWith: 'concatWith',
     zip: 'zip',
     union: 'union',
     intersect: 'intersect',

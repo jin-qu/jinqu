@@ -16,7 +16,7 @@ Array.prototype.asQueryable = function() {
 Array.prototype.q = Array.prototype.asQueryable;
 
 function extendArray(func: string) {
-    Array.prototype.where = function () {
+    Array.prototype[func] = function () {
         return this.asQueryable()[func].apply(this, arguments);
     }
 }

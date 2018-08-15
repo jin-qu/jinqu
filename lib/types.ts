@@ -30,7 +30,7 @@ export interface IQuery<T = any> {
     cast<TResult>(type: new (...args) => TResult): IQuery<TResult>;
     select<TResult = any>(selector: (i: T) => TResult | string, ...scopes): IQuery<TResult>;
     selectMany<TResult = any>(selector: (i: T) => Array<TResult> | string, ...scopes): IQuery<TResult>;
-    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
+    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
         selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
         selector: (item: T, other: Array<TOther>) => TResult | string, ...scopes): IQuery<TResult>;
@@ -42,7 +42,7 @@ export interface IQuery<T = any> {
     skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
     groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult>;
     distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T>;
-    concat(other: Array<T> | string, ...scopes): IQuery<T>;
+    concatWith(other: Array<T> | string, ...scopes): IQuery<T>;
     zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult>;
     union(other: Array<T> | string, ...scopes): IQuery<T>;
     intersect(other: Array<T> | string, ...scopes): IQuery<T>;
