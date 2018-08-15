@@ -89,7 +89,7 @@ export class QueryPart {
     }
 
     static distinct(comparer?: (x, y) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.distinct, comparer ? [comparer] : null, scopes);
+        return this.create(QueryFunc.distinct, [comparer], scopes);
     }
 
     static concat<T>(other: Array<T> | string, scopes: any[]) {
@@ -121,7 +121,7 @@ export class QueryPart {
     }
 
     static first<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.first, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.first, [predicate], scopes);
     }
 
     static firstOrDefault<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
@@ -129,19 +129,19 @@ export class QueryPart {
     }
 
     static last<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.last, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.last, [predicate], scopes);
     }
 
     static lastOrDefault<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.lastOrDefault, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.lastOrDefault, [predicate], scopes);
     }
 
     static single<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.single, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.single, [predicate], scopes);
     }
 
     static singleOrDefault<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.singleOrDefault, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.singleOrDefault, [predicate], scopes);
     }
 
     static elementAt(index: number) {
@@ -161,36 +161,36 @@ export class QueryPart {
     }
 
     static any<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.any, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.any, [predicate], scopes);
     }
 
     static all<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.all, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.all, [predicate], scopes);
     }
 
     static count<T>(predicate?: (i: T) => boolean | string, scopes?: any[]) {
-        return this.create(QueryFunc.count, predicate ? [predicate] : null, scopes);
+        return this.create(QueryFunc.count, [predicate], scopes);
     }
 
     static min<T, TResult = T>(selector?: (i: T) => TResult | string, scopes?: any[]) {
-        return this.create(QueryFunc.min, selector ? [selector] : null, scopes);
+        return this.create(QueryFunc.min, [selector], scopes);
     }
 
     static max<T, TResult = T>(selector?: (i: T) => TResult | string, scopes?: any[]) {
-        return this.create(QueryFunc.max, selector ? [selector] : null, scopes);
+        return this.create(QueryFunc.max, [selector], scopes);
     }
 
     static sum<T>(selector?: (i: T) => number | string, scopes?: any[]) {
-        return this.create(QueryFunc.sum, selector ? [selector] : null, scopes);
+        return this.create(QueryFunc.sum, [selector], scopes);
     }
 
     static average<T>(selector?: (i: T) => number | string, scopes?: any[]) {
-        return this.create(QueryFunc.average, selector ? [selector] : null, scopes);
+        return this.create(QueryFunc.average, [selector], scopes);
     }
 
     static aggregate<T, TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
         selector?: (acc: TAccumulate) => TResult, scopes?: any[]) {
-        return this.create(QueryFunc.aggregate, selector ? [func, seed, selector] : null, scopes);
+        return this.create(QueryFunc.aggregate, [func, seed, selector], scopes);
     }
 }
 
