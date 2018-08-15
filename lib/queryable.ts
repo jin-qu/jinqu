@@ -234,6 +234,7 @@ export class Query<T = any> implements IOrderedQuery<T> {
 
     aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
         selector?: (acc: TAccumulate) => TResult, ...scopes): TResult {
+        return this.provider.execute(this.create(QueryPart.aggregate(func, seed, selector, scopes)));
     }
 
     protected create<TResult = T>(part: QueryPart): Query<TResult> {
