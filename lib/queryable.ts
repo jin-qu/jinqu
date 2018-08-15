@@ -165,55 +165,71 @@ export class Query<T = any> implements IOrderedQuery<T> {
     }
 
     first(predicate?: (i: T) => boolean | string, ...scopes): T {
-        return this.provider.execute(this.create(QueryPart.first, predicate, scopes));
+        return this.provider.execute(this.create(QueryPart.first(predicate, scopes)));
     }
 
-    firstOrDefault(predicate? (i: T) => boolean | string, ...scopes): T {
+    firstOrDefault(predicate?: (i: T) => boolean | string, ...scopes): T {
+        return this.provider.execute(this.create(QueryPart.firstOrDefault(predicate, scopes)));
     }
 
     last(predicate?: (i: T) => boolean | string, ...scopes): T {
+        return this.provider.execute(this.create(QueryPart.last(predicate, scopes)));
     }
 
     lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+        return this.provider.execute(this.create(QueryPart.lastOrDefault(predicate, scopes)));
     }
 
     single(predicate: (i: T) => boolean | string, ...scopes): T {
+        return this.provider.execute(this.create(QueryPart.single(predicate, scopes)));
     }
 
     singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+        return this.provider.execute(this.create(QueryPart.singleOrDefault(predicate, scopes)));
     }
 
     elementAt(index: number): T {
+        return this.provider.execute(this.create(QueryPart.elementAt(index)));
     }
 
     elementAtOrDefault(index: number): T {
+        return this.provider.execute(this.create(QueryPart.elementAtOrDefault(index)));
     }
 
     contains(item: T): boolean {
+        return this.provider.execute(this.create(QueryPart.contains(item)));
     }
 
     sequenceEqual(other: Array<T> | string, ...scopes): boolean {
+        return this.provider.execute(this.create(QueryPart.sequenceEqual(other, scopes)));
     }
 
     any(predicate?: (i: T) => boolean | string, ...scopes): boolean {
+        return this.provider.execute(this.create(QueryPart.any(predicate, scopes)));
     }
 
     all(predicate: (i: T) => boolean | string, ...scopes): boolean {
+        return this.provider.execute(this.create(QueryPart.all(predicate, scopes)));
     }
 
     count(predicate: (i: T) => boolean | string, ...scopes): number {
+        return this.provider.execute(this.create(QueryPart.count(predicate, scopes)));
     }
 
     min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+        return this.provider.execute(this.create(QueryPart.min(selector, scopes)));
     }
 
     max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+        return this.provider.execute(this.create(QueryPart.max(selector, scopes)));
     }
 
     sum(selector?: (i: T) => number | string, ...scopes): number {
+        return this.provider.execute(this.create(QueryPart.sum(selector, scopes)));
     }
 
     average(selector?: (i: T) => number | string, ...scopes): number {
+        return this.provider.execute(this.create(QueryPart.average(selector, scopes)));
     }
 
     aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,

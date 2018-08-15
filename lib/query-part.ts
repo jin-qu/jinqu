@@ -172,11 +172,11 @@ export class QueryPart {
         return this.create(QueryFunc.count, predicate ? [predicate] : null, scopes);
     }
 
-    static min<T>(selector?: (i: T) => T | string, scopes?: any[]) {
+    static min<T, TResult = T>(selector?: (i: T) => TResult | string, scopes?: any[]) {
         return this.create(QueryFunc.min, selector ? [selector] : null, scopes);
     }
 
-    static max<T>(selector?: (i: T) => T | string, scopes?: any[]) {
+    static max<T, TResult = T>(selector?: (i: T) => TResult | string, scopes?: any[]) {
         return this.create(QueryFunc.max, selector ? [selector] : null, scopes);
     }
 
