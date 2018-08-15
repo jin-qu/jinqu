@@ -11,7 +11,7 @@ declare global {
 }
 
 Array.prototype.asQueryable = function() {
-    return new Query(new ArrayQueryProvider());
+    return new Query(new ArrayQueryProvider(this));
 }
 Array.prototype.q = Array.prototype.asQueryable;
 

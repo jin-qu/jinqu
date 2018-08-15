@@ -2,6 +2,9 @@ import { IQueryProvider, IQuery } from './types';
 
 export class ArrayQueryProvider implements IQueryProvider {
 
+    constructor(private readonly items: []) {
+    }
+
     execute<TResult = any>(query: IQuery<any>, ...scopes: any[]): TResult {
         throw new Error("Method not implemented.");
     }    
