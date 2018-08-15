@@ -1,3 +1,5 @@
+import { Expression } from "jokenizer";
+
 export interface IGrouping<T, TKey> extends Array<T> {
     Key: TKey;
 }
@@ -7,9 +9,15 @@ export interface IQueryProvider {
     executeAsync<TResult = any>(query: IQuery, ...scopes): TResult;
 }
 
+export interface IPartArgument {
+    readonly func: Function;
+    readonly exp: Expression;
+    readonly literal;
+}
+
 export interface IQueryPart {
     readonly type: string;
-    readonly args: Array<Function | string>;
+    readonly args: IPartArgument[];
     readonly scopes: any[];
 }
 
