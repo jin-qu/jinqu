@@ -1,17 +1,14 @@
 import { QueryPart } from "./query-part";
+import { IGrouping } from './common';
 
 export interface IQueryProvider {
     execute<TResult = any>(query: Query, ...scopes): TResult;
     executeAsync<TResult = any>(query: Query, ...scopes): TResult;
 }
 
-interface IGrouping<T, TKey> extends Array<T> {
-    Key: TKey;
-}
-
-export interface IQuery<T> {
-    // readonly provider: IQueryProvider;
-    // readonly parts: QueryPart[];
+export interface IQuery<T = any> {
+    readonly provider: IQueryProvider;
+    readonly parts: QueryPart[];
 
     where(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
     ofType<TResult>(type: new (...args) => TResult): IQuery<TResult>;
@@ -24,38 +21,39 @@ export interface IQuery<T> {
         selector: (item: T, other: Array<TOther>) => TResult | string, ...scopes): IQuery<TResult>;
     orderBy(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
-    // take(count: number): IQuery<T>;
-    // takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
-    // skip(count: number): IQuery<T>;
-    // skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
-    // groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult>;
-    // distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T>;
-    // concat(other: Array<T> | string, ...scopes): IQuery<T>;
-    // zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult>;
-    // union(other: Array<T> | string, ...scopes): IQuery<T>;
-    // intersect(other: Array<T> | string, ...scopes): IQuery<T>;
-    // except(other: Array<T> | string, ...scopes): IQuery<T>;
-    // first(predicate: (i: T) => boolean | string, ...scopes): T;
-    // firstOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
-    // last(predicate: (i: T) => boolean | string, ...scopes): T;
-    // lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
-    // single(predicate: (i: T) => boolean | string, ...scopes): T;
-    // singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
-    // elementAt(index: number): T;
-    // elementAtOrDefault(index: number): T;
-    // defaultIfEmpty(): IQuery<T>;
-    // contains(item: T): boolean;
-    // reverse(): IQuery<T>;
-    // sequenceEqual(other: Array<T> | string, ...scopes): boolean;
-    // any(predicate?: (i: T) => boolean | string, ...scopes): boolean;
-    // all(predicate: (i: T) => boolean | string, ...scopes): boolean;
-    // count(predicate: (i: T) => boolean | string, ...scopes): number;
-    // min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult;
-    // max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult;
-    // sum(selector: (i: T) => number | string, ...scopes): number;
-    // average(selector: (i: T) => number | string, ...scopes): number;
-    // aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
-    //     selector?: (acc: TAccumulate) => TResult, ...scopes): IQuery<TResult>;
+    take(count: number): IQuery<T>;
+    takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
+    skip(count: number): IQuery<T>;
+    skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
+    groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult>;
+    distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T>;
+    concat(other: Array<T> | string, ...scopes): IQuery<T>;
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult>;
+    union(other: Array<T> | string, ...scopes): IQuery<T>;
+    intersect(other: Array<T> | string, ...scopes): IQuery<T>;
+    except(other: Array<T> | string, ...scopes): IQuery<T>;
+    defaultIfEmpty(): IQuery<T>;
+    reverse(): IQuery<T>;
+
+    first(predicate?: (i: T) => boolean | string, ...scopes): T;
+    firstOrDefault(predicate?: (i: T) => boolean | string, ...scopes): T;
+    last(predicate?: (i: T) => boolean | string, ...scopes): T;
+    lastOrDefault(predicate?: (i: T) => boolean | string, ...scopes): T;
+    single(predicate?: (i: T) => boolean | string, ...scopes): T;
+    singleOrDefault(predicate?: (i: T) => boolean | string, ...scopes): T;
+    elementAt(index: number): T;
+    elementAtOrDefault(index: number): T;
+    contains(item: T): boolean;
+    sequenceEqual(other: Array<T> | string, ...scopes): boolean;
+    any(predicate?: (i: T) => boolean | string, ...scopes): boolean;
+    all(predicate: (i: T) => boolean | string, ...scopes): boolean;
+    count(predicate?: (i: T) => boolean | string, ...scopes): number;
+    min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult;
+    max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult;
+    sum(selector?: (i: T) => number | string, ...scopes): number;
+    average(selector?: (i: T) => number | string, ...scopes): number;
+    aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
+        selector?: (acc: TAccumulate) => TResult, ...scopes): TResult;
 }
 
 export interface IOrderedQuery<T> extends IQuery<T> {
@@ -63,7 +61,7 @@ export interface IOrderedQuery<T> extends IQuery<T> {
     thenByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
 }
 
-export class Query<T> implements IOrderedQuery<T> {
+export class Query<T = any> implements IOrderedQuery<T> {
 
     constructor(public readonly provider: IQueryProvider, public readonly parts: QueryPart[] = []) {
     }
@@ -114,101 +112,115 @@ export class Query<T> implements IOrderedQuery<T> {
         return this.create(QueryPart.thenByDescending(keySelector, scopes));
     }
 
-    // take(count: number): IQuery<T> {
-    // }
+    take(count: number): IQuery<T> {
+        return this.create(QueryPart.take(count));
+    }
 
-    // takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
-    // }
+    takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.takeWhile(predicate, scopes));
+    }
 
-    // skip(count: number): IQuery<T> {
-    // }
+    skip(count: number): IQuery<T> {
+        return this.create(QueryPart.skip(count));
+    }
 
-    // skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
-    // }
+    skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.skipWhile(predicate, scopes));
+    }
 
-    // groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult> {
-    // }
+    groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.groupBy(keySelector, valueSelector, scopes));
+    }
 
-    // distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T> {
-    // }
+    distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.distinct(comparer, scopes));
+    }
 
-    // concat(other: Array<T> | string, ...scopes): IQuery<T> {
-    // }
+    concat(other: Array<T> | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.concat(other, scopes));
+    }
 
-    // zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult> {
-    // }
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.zip(other, selector, scopes));
+    }
 
-    // union(other: Array<T> | string, ...scopes): IQuery<T> {
-    // }
+    union(other: Array<T> | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.union(other, scopes));
+    }
 
-    // intersect(other: Array<T> | string, ...scopes): IQuery<T> {
-    // }
+    intersect(other: Array<T> | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.intersect(other, scopes));
+    }
 
-    // except(other: Array<T> | string, ...scopes): IQuery<T> {
-    // }
+    except(other: Array<T> | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.except(other, scopes));
+    }
 
-    // first(predicate: (i: T) => boolean | string, ...scopes): T {
-    // }
+    defaultIfEmpty(): IQuery<T> {
+        return this.create(QueryPart.defaultIfEmpty());
+    }
 
-    // firstOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
-    // }
+    reverse(): IQuery<T> {
+        return this.create(QueryPart.reverse());
+    }
 
-    // last(predicate: (i: T) => boolean | string, ...scopes): T {
-    // }
+    first(predicate?: (i: T) => boolean | string, ...scopes): T {
+        return this.provider.execute(this.create(QueryPart.first, predicate, scopes));
+    }
 
-    // lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
-    // }
+    firstOrDefault(predicate? (i: T) => boolean | string, ...scopes): T {
+    }
 
-    // single(predicate: (i: T) => boolean | string, ...scopes): T {
-    // }
+    last(predicate?: (i: T) => boolean | string, ...scopes): T {
+    }
 
-    // singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
-    // }
+    lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+    }
 
-    // elementAt(index: number): T {
-    // }
+    single(predicate: (i: T) => boolean | string, ...scopes): T {
+    }
 
-    // elementAtOrDefault(index: number): T {
-    // }
+    singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+    }
 
-    // defaultIfEmpty(): IQuery<T> {
-    // }
+    elementAt(index: number): T {
+    }
 
-    // contains(item: T): boolean {
-    // }
+    elementAtOrDefault(index: number): T {
+    }
 
-    // reverse(): IQuery<T> {
-    // }
+    contains(item: T): boolean {
+    }
 
-    // sequenceEqual(other: Array<T> | string, ...scopes): boolean {
-    // }
+    sequenceEqual(other: Array<T> | string, ...scopes): boolean {
+    }
 
-    // any(predicate?: (i: T) => boolean | string, ...scopes): boolean {
-    // }
+    any(predicate?: (i: T) => boolean | string, ...scopes): boolean {
+    }
 
-    // all(predicate: (i: T) => boolean | string, ...scopes): boolean {
-    // }
+    all(predicate: (i: T) => boolean | string, ...scopes): boolean {
+    }
 
-    // count(predicate: (i: T) => boolean | string, ...scopes): number {
-    // }
+    count(predicate: (i: T) => boolean | string, ...scopes): number {
+    }
 
-    // min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
-    // }
+    min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+    }
 
-    // max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
-    // }
+    max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+    }
 
-    // sum(selector: (i: T) => number | string, ...scopes): number {
-    // }
+    sum(selector?: (i: T) => number | string, ...scopes): number {
+    }
 
-    // average(selector: (i: T) => number | string, ...scopes): number {
-    // }
+    average(selector?: (i: T) => number | string, ...scopes): number {
+    }
 
-    // aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
-    //     selector?: (acc: TAccumulate) => TResult, ...scopes): IQuery<TResult> {
-    // }
+    aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
+        selector?: (acc: TAccumulate) => TResult, ...scopes): TResult {
+    }
 
-    protected create<TResult>(part: QueryPart): Query<TResult> {
+    protected create<TResult = T>(part: QueryPart): Query<TResult> {
         return new Query<TResult>(this.provider, [...this.parts, part]);
     }
 }
