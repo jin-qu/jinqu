@@ -1,5 +1,5 @@
 import { QueryPart } from "./query-part";
-import { IGrouping } from './common';
+import { IGrouping } from './types';
 
 export interface IQueryProvider {
     execute<TResult = any>(query: Query, ...scopes): TResult;

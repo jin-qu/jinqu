@@ -1,8 +1,8 @@
-import { IGrouping } from './common';
+import { IGrouping, IQueryPart } from './types';
 
-export class QueryPart {
+export class QueryPart implements IQueryPart {
 
-    constructor(private _type: string, private _args: any[] = [], private _scopes: any[] = []) {
+    constructor(private _type: string, private _args: Array<Function | string> = [], private _scopes: any[] = []) {
         if (!_type) throw new Error('Type of QueryPart cannot be null or empty.');
     }
 
