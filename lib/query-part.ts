@@ -1,69 +1,76 @@
 import { tokenize, Expression, evaluate } from 'jokenizer';
 
-export interface IQueryPart {
-    readonly type: string;
-    readonly func: Function;
-    readonly expStr: string;
-    readonly exp: Expression;
-    readonly scopes: any[];
-}
+export class QueryPart {
 
-export class QueryPart implements IQueryPart {
-
-    constructor(private _type: string, private _func: Function, private _expStr: string, private _scopes: any[] = []) {
+    constructor(private _type: string, private _args?: any[], private _scopes: any[] = []) {
         if (!_type) throw new Error('Type of QueryPart cannot be null or empty.');
-        if (!_func && !_expStr) throw new Error('Function or expression string must be provided.');
     }
 
     get type() {
         return this._type;
     }
 
-    get func() {
-        if (this._func != null) return this._func;
-
-        return this._func = (scopes: []) => evaluate(this.exp, scopes);
-    }
-
-    get expStr() {
-        if (this._expStr != null) return this._expStr;
-
-        return this._expStr = this.func.toString();
-    }
-
-    private _exp: Expression;
-    get exp() {
-        if (this._exp != null) return this._exp;
-
-        return this._exp = tokenize(this.expStr);
+    get args() {
+        return this._args;
     }
 
     get scopes() {
         return this._scopes;
     }
 
-    static where<T>(predicate: (i: T) => boolean | string, ...scopes) {
-        const args = handleArgs(predicate);
-        return new QueryPart(QueryPartType.where, args[0], args[1], scopes);
+    static create(type: string, args: any[], scopes?: any[]) {
+        return new QueryPart(type, args, scopes);
     }
 
-    static ofType<TResult>(type: new(...args) => TResult) {
-        return new QueryPart(QueryPartType.ofType, type, null);
+    static where<T>(predicate: (i: T) => boolean | string, scopes: any[]) {
+        return this.create(QueryPartType.where, [predicate], scopes);
     }
 
-    static cast<TResult>(type: new(...args) => TResult) {
-        return new QueryPart(QueryPartType.cast, type, null);
+    static ofType<TResult>(type: new (...args) => TResult) {
+        return this.create(QueryPartType.ofType, [type]);
     }
-}
 
-function handleArgs(arg) {
-    return arg && typeof arg === "function"
-        ? [arg, null]
-        : [null, arg];
+    static cast<TResult>(type: new (...args) => TResult) {
+        return this.create(QueryPartType.cast, [type]);
+    }
+
+    static select<T, TResult = any>(selector: (i: T) => TResult | string, scopes: any[]) {
+        return this.create(QueryPartType.cast, [selector], scopes);
+    }
+
+    static selectMany<T, TResult = any>(selector: (i: T) => Array<TResult> | string, scopes: any[]) {
+        return this.create(QueryPartType.selectMany, [selector], scopes);
+    }
+
+    static join<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
+        selector: (item: T, other: TOther) => TResult | string, scopes: any[]) {
+        return this.create(QueryPartType.join, [other, thisKey, otherKey, selector], scopes);
+    }
+
+    static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
+        selector: (item: T, other: Array<TOther>) => TResult | string, ...scopes) {
+        return this.create(QueryPartType.groupJoin, [other, thisKey, otherKey, selector], scopes);
+    }
+
+    static orderBy<T>(keySelector: (item: T) => any, scopes: any[]) {
+        return this.create(QueryPartType.orderBy, [keySelector], scopes);
+    }
+
+    static orderByDescending<T>(keySelector: (item: T) => any, scopes: any[]) {
+        return this.create(QueryPartType.orderBy, [keySelector], scopes);
+    }
+
+    static thenBy<T>(keySelector: (item: T) => any, scopes: any[]) {
+        return this.create(QueryPartType.thenBy, [keySelector], scopes);
+    }
+
+    static thenByDescending<T>(keySelector: (item: T) => any, scopes: any[]) {
+        return this.create(QueryPartType.thenByDescending, [keySelector], scopes);
+    }
 }
 
 export const QueryPartType = {
-    where: 'where', 
+    where: 'where',
     ofType: 'ofType',
     cast: 'cast',
     select: 'select',

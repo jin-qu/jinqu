@@ -1,251 +1,214 @@
-import { QueryPart, QueryPartType } from "./query-part";
+import { QueryPart } from "./query-part";
+
+export interface IQueryProvider {
+    execute<TResult = any>(query: Query, ...scopes): TResult;
+    executeAsync<TResult = any>(query: Query, ...scopes): TResult;
+}
 
 interface IGrouping<T, TKey> extends Array<T> {
     Key: TKey;
 }
 
-export interface IQuery<T = any> {
+export interface IQuery<T> {
+    // readonly provider: IQueryProvider;
+    // readonly parts: QueryPart[];
+
     where(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
     ofType<TResult>(type: new (...args) => TResult): IQuery<TResult>;
     cast<TResult>(type: new (...args) => TResult): IQuery<TResult>;
     select<TResult = any>(selector: (i: T) => TResult | string, ...scopes): IQuery<TResult>;
-    selectMany<TResult = any>(selector: (i: T) => Array<TResult> |  string, ...scopes): IQuery<TResult>;
-    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey |  string, otherKey: (item: TOther) => TKey |  string,
-                                            selector: (item: T, other: TOther) => TResult |  string, ...scopes): IQuery<TResult>;
+    selectMany<TResult = any>(selector: (i: T) => Array<TResult> | string, ...scopes): IQuery<TResult>;
+    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
+        selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
-                                            selector: (item: T, other: Array<TOther>) => TResult |  string, ...scopes): IQuery<TResult>;
+        selector: (item: T, other: Array<TOther>) => TResult | string, ...scopes): IQuery<TResult>;
     orderBy(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
-    thenBy(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
-    thenByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
-    take(count: number): IQuery<T>;
-    takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
-    skip(count: number): IQuery<T>;
-    skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
-    groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult>;
-    distinct(comparer?: (x, y) => boolean |  string, ...scopes): IQuery<T>;
-    concat(other: Array<T> |  string, ...scopes): IQuery<T>;
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult |  string, ...scopes): IQuery<TResult>;
-    union(other: Array<T> | string, ...scopes): IQuery<T>;
-    intersect(other: Array<T> |  string, ...scopes): IQuery<T>;
-    except(other: Array<T> |  string, ...scopes): IQuery<T>;
-    first(predicate: (i: T) => boolean | string, ...scopes): T;
-    firstOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
-    last(predicate: (i: T) => boolean | string, ...scopes): T;
-    lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
-    single(predicate: (i: T) => boolean | string, ...scopes): T;
-    singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
-    elementAt(index: number): T;
-    elementAtOrDefault(index: number): T;
-    defaultIfEmpty(): IQuery<T>;
-    contains(item: T): boolean;
-    reverse(): IQuery<T>;
-    sequenceEqual(other: Array<T> | string, ...scopes): boolean;
-    any(predicate?: (i: T) => boolean | string, ...scopes): boolean;
-    all(predicate: (i: T) => boolean | string, ...scopes): boolean;
-    count(predicate: (i: T) => boolean | string, ...scopes): number;
-    min<TResult = T>(selector?: (i: T) => TResult |  string, ...scopes): TResult;
-    max<TResult = T>(selector?: (i: T) => TResult |  string, ...scopes): TResult;
-    sum(selector: (i: T) => number |  string, ...scopes): number;
-    average(selector: (i: T) => number |  string, ...scopes): number;
-    aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
-                                                        selector?: (acc: TAccumulate) => TResult, ...scopes): IQuery<TResult>;
+    // take(count: number): IQuery<T>;
+    // takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
+    // skip(count: number): IQuery<T>;
+    // skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T>;
+    // groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult>;
+    // distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T>;
+    // concat(other: Array<T> | string, ...scopes): IQuery<T>;
+    // zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult>;
+    // union(other: Array<T> | string, ...scopes): IQuery<T>;
+    // intersect(other: Array<T> | string, ...scopes): IQuery<T>;
+    // except(other: Array<T> | string, ...scopes): IQuery<T>;
+    // first(predicate: (i: T) => boolean | string, ...scopes): T;
+    // firstOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
+    // last(predicate: (i: T) => boolean | string, ...scopes): T;
+    // lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
+    // single(predicate: (i: T) => boolean | string, ...scopes): T;
+    // singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T;
+    // elementAt(index: number): T;
+    // elementAtOrDefault(index: number): T;
+    // defaultIfEmpty(): IQuery<T>;
+    // contains(item: T): boolean;
+    // reverse(): IQuery<T>;
+    // sequenceEqual(other: Array<T> | string, ...scopes): boolean;
+    // any(predicate?: (i: T) => boolean | string, ...scopes): boolean;
+    // all(predicate: (i: T) => boolean | string, ...scopes): boolean;
+    // count(predicate: (i: T) => boolean | string, ...scopes): number;
+    // min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult;
+    // max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult;
+    // sum(selector: (i: T) => number | string, ...scopes): number;
+    // average(selector: (i: T) => number | string, ...scopes): number;
+    // aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
+    //     selector?: (acc: TAccumulate) => TResult, ...scopes): IQuery<TResult>;
 }
 
-export interface IOrderedQuery<T = any> extends IQuery<T> {
+export interface IOrderedQuery<T> extends IQuery<T> {
     thenBy(selector: (T) => any): IOrderedQuery<T>;
-    thenByDescending(): IOrderedQuery<T>;
+    thenByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T>;
 }
 
-export interface IQueryProvider {
-    createQuery<T>(parts: QueryPart[]): IQuery<T>;
-    execute<TResult = any>(query: Query, ...scopes): TResult;
-}
+export class Query<T> implements IOrderedQuery<T> {
 
-export class Query<T = any> implements IQuery<T> {
-
-    constructor(private _provider: IQueryProvider, private _parts: QueryPart[] = []) {
+    constructor(public readonly provider: IQueryProvider, public readonly parts: QueryPart[] = []) {
     }
 
-    where(predicate: (i) => boolean | string, ...scopes) {
+    where(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
         return this.create(QueryPart.where(predicate, scopes));
     }
 
-    ofType<TResult>(type: new (...args) => TResult) {
-        return this.create<TResult>(QueryPart.ofType(type));
+    ofType<TResult>(type: new (...args) => TResult): IQuery<TResult> {
+        return this.create(QueryPart.ofType(type));
     }
 
-    cast<TResult>(type: new (...args) => TResult) {
-        return this.create<TResult>(QueryPart.cast(type));
+    cast<TResult>(type: new (...args) => TResult): IQuery<TResult> {
+        return this.create(QueryPart.cast(type));
     }
 
-    select<TResult = any>(selector: (i: T) => string | TResult, ...scopes: any[]): IQuery<TResult> {
-        throw new Error("Method not implemented.");
+    select<TResult = any>(selector: (i: T) => TResult | string, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.select(selector, scopes));
     }
 
-    selectMany<TResult = any>(selector: (i: T) => string | TResult[], ...scopes: any[]): IQuery<TResult> {
-        throw new Error("Method not implemented.");
+    selectMany<TResult = any>(selector: (i: T) => Array<TResult> | string, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.selectMany(selector, scopes));
     }
 
-    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => string | TKey, otherKey: (item: TOther) => string | TKey,
-                                            selector: (item: T, other: TOther) => string | TResult, ...scopes: any[]): IQuery<T> {
-        return this.create(QueryPart.join());
+    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
+        selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.join(other, thisKey, otherKey, selector, scopes));
     }
 
-    groupJoin<TOther, TResult = any, TKey = any>(other: TOther[], thisKey: (item: T) => string | TKey, otherKey: (item: TOther) => string | TKey,
-                                                 selector: (item: T, other: TOther[]) => string | TResult, ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
+    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
+        selector: (item: T, other: Array<TOther>) => TResult | string, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.groupJoin(other, thisKey, otherKey, selector, scopes));
     }
 
-    orderBy(keySelector: (item: T) => , ...scopes: any[]): IOrderedQuery<T> {
-        throw new Error("Method not implemented.");
+    orderBy(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+        return this.create(QueryPart.orderBy(keySelector, scopes));
     }
 
-    orderByDescending(keySelector: (item: T) => , ...scopes: any[]): IOrderedQuery<T> {
-        throw new Error("Method not implemented.");
+    orderByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+        return this.create(QueryPart.orderByDescending(keySelector, scopes));
     }
 
-    thenBy(keySelector: (item: T) => , ...scopes: any[]): IOrderedQuery<T> {
-        throw new Error("Method not implemented.");
+    thenBy(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+        return this.create(QueryPart.thenBy(keySelector, scopes));
     }
 
-    thenByDescending(keySelector: (item: T) => , ...scopes: any[]): IOrderedQuery<T> {
-        throw new Error("Method not implemented.");
+    thenByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+        return this.create(QueryPart.thenByDescending(keySelector, scopes));
     }
 
-    take(count: number): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // take(count: number): IQuery<T> {
+    // }
 
-    takeWhile(predicate: (i: T) => string | boolean, ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
+    // }
 
-    skip(count: number): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // skip(count: number): IQuery<T> {
+    // }
 
-    skipWhile(predicate: (i: T) => string | boolean, ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
+    // }
 
-    groupBy<TResult = any, TKey = any>(keySelector: (item: T) => string | TKey, valueSelector: (group: IGrouping<T, TKey>) => string | TResult, ...scopes: any[]): IQuery<TResult> {
-        throw new Error("Method not implemented.");
-    }
+    // groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult> {
+    // }
 
-    distinct(comparer?: (x: any, y: any) => string | boolean, ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T> {
+    // }
 
-    concat(other: string | T[], ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // concat(other: Array<T> | string, ...scopes): IQuery<T> {
+    // }
 
-    zip<TOther, TResult = any>(other: TOther[], selector: (item: T, other: TOther) => string | TResult, ...scopes: any[]): IQuery<TResult> {
-        throw new Error("Method not implemented.");
-    }
+    // zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult> {
+    // }
 
-    union(other: string | T[], ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // union(other: Array<T> | string, ...scopes): IQuery<T> {
+    // }
 
-    intersect(other: string | T[], ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // intersect(other: Array<T> | string, ...scopes): IQuery<T> {
+    // }
 
-    except(other: string | T[], ...scopes: any[]): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // except(other: Array<T> | string, ...scopes): IQuery<T> {
+    // }
 
-    first(predicate: (i: T) => string | boolean, ...scopes: any[]): T {
-        throw new Error("Method not implemented.");
-    }
+    // first(predicate: (i: T) => boolean | string, ...scopes): T {
+    // }
 
-    firstOrDefault(predicate: (i: T) => string | boolean, ...scopes: any[]): T {
-        throw new Error("Method not implemented.");
-    }
+    // firstOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+    // }
 
-    last(predicate: (i: T) => string | boolean, ...scopes: any[]): T {
-        throw new Error("Method not implemented.");
-    }
+    // last(predicate: (i: T) => boolean | string, ...scopes): T {
+    // }
 
-    lastOrDefault(predicate: (i: T) => string | boolean, ...scopes: any[]): T {
-        throw new Error("Method not implemented.");
-    }
+    // lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+    // }
 
-    single(predicate: (i: T) => string | boolean, ...scopes: any[]): T {
-        throw new Error("Method not implemented.");
-    }
+    // single(predicate: (i: T) => boolean | string, ...scopes): T {
+    // }
 
-    singleOrDefault(predicate: (i: T) => string | boolean, ...scopes: any[]): T {
-        throw new Error("Method not implemented.");
-    }
+    // singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+    // }
 
-    elementAt(index: number): T {
-        throw new Error("Method not implemented.");
-    }
+    // elementAt(index: number): T {
+    // }
 
-    elementAtOrDefault(index: number): T {
-        throw new Error("Method not implemented.");
-    }
+    // elementAtOrDefault(index: number): T {
+    // }
 
-    defaultIfEmpty(): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // defaultIfEmpty(): IQuery<T> {
+    // }
 
-    contains(item: T): boolean {
-        throw new Error("Method not implemented.");
-    }
+    // contains(item: T): boolean {
+    // }
 
-    reverse(): IQuery<T> {
-        throw new Error("Method not implemented.");
-    }
+    // reverse(): IQuery<T> {
+    // }
 
-    sequenceEqual(other: string | T[], ...scopes: any[]): boolean {
-        throw new Error("Method not implemented.");
-    }
+    // sequenceEqual(other: Array<T> | string, ...scopes): boolean {
+    // }
 
-    any(predicate?: (i: T) => string | boolean, ...scopes: any[]): boolean {
-        throw new Error("Method not implemented.");
-    }
+    // any(predicate?: (i: T) => boolean | string, ...scopes): boolean {
+    // }
 
-    all(predicate: (i: T) => string | boolean, ...scopes: any[]): boolean {
-        throw new Error("Method not implemented.");
-    }
+    // all(predicate: (i: T) => boolean | string, ...scopes): boolean {
+    // }
 
-    count(predicate: (i: T) => string | boolean, ...scopes: any[]): number {
-        throw new Error("Method not implemented.");
-    }
+    // count(predicate: (i: T) => boolean | string, ...scopes): number {
+    // }
 
-    min(): T;
-    min<TResult = T>(selector: (i: T) => string | TResult, ...scopes: any[]): TResult;
-    min(...rest?: any[]) {
-        throw new Error("Method not implemented.");
-    }
+    // min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+    // }
 
-    max(): T;
-    max<TResult = T>(selector: (i: T) => string | TResult, ...scopes: any[]): TResult;
-    max(...rest?: any[]) {
-        throw new Error("Method not implemented.");
-    }
+    // max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+    // }
 
-    sum(): number;
-    sum<TResult = T>(selector: (i: T) => string | TResult, ...scopes: any[]): TResult;
-    sum(...rest?: any[]) {
-        throw new Error("Method not implemented.");
-    }
+    // sum(selector: (i: T) => number | string, ...scopes): number {
+    // }
 
-    average(): number;
-    average<TResult = T>(selector: (i: T) => string | TResult, ...scopes: any[]): TResult;
-    average(...rest?: any[]) {
-        throw new Error("Method not implemented.");
-    }
+    // average(selector: (i: T) => number | string, ...scopes): number {
+    // }
 
-    aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => string | TAccumulate, seed?: TAccumulate, selector?: (acc: TAccumulate) => TResult, ...scopes: any[]): IQuery<TResult> {
-        throw new Error("Method not implemented.");
-    }
+    // aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
+    //     selector?: (acc: TAccumulate) => TResult, ...scopes): IQuery<TResult> {
+    // }
 
-    protected create<TResult = T>(part: QueryPart) {
-        return this._provider.createQuery<TResult>([...this._parts, part]);
+    protected create<TResult>(part: QueryPart): Query<TResult> {
+        return new Query<TResult>(this.provider, [...this.parts, part]);
     }
 }
