@@ -1,5 +1,5 @@
 import { Expression, tokenize, evaluate } from 'jokenizer';
-import { IGrouping, IPartArgument, IQueryPart } from './types';
+import { Ctor, Func1, Func2, Predicate, IGrouping, IPartArgument, IQueryPart } from './types';
 
 export class PartArgument implements IPartArgument {
 
@@ -18,27 +18,29 @@ export class PartArgument implements IPartArgument {
 
     private _func: Function;
     get func() {
-        if (this._func != null) return this._func;
+        if (this._func) return this._func;
+        if (!this._expStr) return null;
 
-        const e = this.exp;
-        if (!e) return null;
-
-        this._func = (...args) => evaluate(this.exp, args[args.length - 1]).apply(null, args);
-        return this._func;
+        const f = evaluate(this.exp, this._scopes);
+        return this._func = (...args) => f.apply(null, args);
     }
 
     private _expStr;
     get expStr() {
-        if (this._expStr != null) return this._expStr;
+        if (this._expStr) return this._expStr;
+        if (!this._func) return null;
 
-        return this.func ? (this._expStr = this.func.toString()) : null;
+        return this._expStr = this._func.toString();
     }
 
     private _exp: Expression;
     get exp() {
-        if (this._exp != null) return this._exp;
+        if (this._exp) return this._exp;
 
-        return this.expStr ? (this._exp = tokenize(this.expStr)) : null;
+        const s = this.expStr;
+        if (!s) return null;
+
+        return this._exp = tokenize(s);
     }
 
     private _literal;
@@ -99,67 +101,67 @@ export class QueryPart implements IQueryPart {
         return new QueryPart(type, args, scopes);
     }
 
-    static where<T>(predicate: ((i: T) => boolean) | string, scopes: any[]) {
+    static where<T>(predicate: Predicate<T>, scopes: any[]) {
         return this.create(QueryFunc.where, [identifier(predicate, scopes)], scopes);
     }
 
-    static ofType<TResult>(type: new (...args) => TResult) {
+    static ofType<TResult>(type: Ctor<TResult>) {
         return this.create(QueryFunc.ofType, [literal(type)]);
     }
 
-    static cast<TResult>(type: new (...args) => TResult) {
+    static cast<TResult>(type: Ctor<TResult>) {
         return this.create(QueryFunc.cast, [literal(type)]);
     }
 
-    static select<T, TResult = any>(selector: ((i: T) => TResult) | string, scopes: any[]) {
+    static select<T, TResult = any>(selector: Func1<T, TResult>, scopes: any[]) {
         return this.create(QueryFunc.cast, [identifier(selector, scopes)], scopes);
     }
 
-    static selectMany<T, TResult = any>(selector: ((i: T) => Array<TResult>) | string, scopes: any[]) {
+    static selectMany<T, TResult = any>(selector: Func1<T, TResult>, scopes: any[]) {
         return this.create(QueryFunc.selectMany, [identifier(selector, scopes)], scopes);
     }
 
-    static joinWith<T, TOther, TResult = any, TKey = any>(other: Array<TOther> |  string, thisKey: ((item: T) => TKey) | string, otherKey: ((item: TOther) => TKey) | string,
-        selector: ((item: T, other: TOther) => TResult) | string, scopes: any[]) {
+    static joinWith<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, scopes: any[]) {
         return this.create(
-            QueryFunc.joinWith, 
+            QueryFunc.joinWith,
             [
-                typeof other === 'string' ? identifier(other, scopes) : literal(other), 
-                identifier(thisKey, scopes), 
-                identifier(otherKey, scopes), 
+                typeof other === 'string' ? identifier(other, scopes) : literal(other),
+                identifier(thisKey, scopes),
+                identifier(otherKey, scopes),
                 identifier(selector, scopes)
-            ], 
+            ],
             scopes
         );
     }
 
-    static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: ((item: T) => TKey) | string, otherKey: ((item: TOther) => TKey) | string,
-        selector: ((item: T, other: Array<TOther>) => TResult) | string, scopes: any[]) {
+    static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther> |  string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, scopes: any[]) {
         return this.create(
-            QueryFunc.groupJoin, 
+            QueryFunc.groupJoin,
             [
-                typeof other === 'string' ? identifier(other, scopes) : literal(other), 
-                identifier(thisKey, scopes), 
-                identifier(otherKey, scopes), 
+                typeof other === 'string' ? identifier(other, scopes) : literal(other),
+                identifier(thisKey, scopes),
+                identifier(otherKey, scopes),
                 identifier(selector, scopes)
-            ], 
+            ],
             scopes
         );
     }
 
-    static orderBy<T>(keySelector: ((item: T) => any) | string, scopes: any[]) {
+    static orderBy<T>(keySelector: Func1<T>, scopes: any[]) {
         return this.create(QueryFunc.orderBy, [identifier(keySelector, scopes)], scopes);
     }
 
-    static orderByDescending<T>(keySelector: ((item: T) => any) | string, scopes: any[]) {
+    static orderByDescending<T>(keySelector: Func1<T>, scopes: any[]) {
         return this.create(QueryFunc.orderBy, [identifier(keySelector, scopes)], scopes);
     }
 
-    static thenBy<T>(keySelector: ((item: T) => any) |  string, scopes: any[]) {
+    static thenBy<T>(keySelector: Func1<T>, scopes: any[]) {
         return this.create(QueryFunc.thenBy, [identifier(keySelector, scopes)], scopes);
     }
 
-    static thenByDescending<T>(keySelector: ((item: T) => any) | string, scopes: any[]) {
+    static thenByDescending<T>(keySelector: Func1<T>, scopes: any[]) {
         return this.create(QueryFunc.thenByDescending, [identifier(keySelector, scopes)], scopes);
     }
 
@@ -167,7 +169,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.take, [literal(count)]);
     }
 
-    static takeWhile<T>(predicate: ((i: T) => boolean) | string, scopes: any[]) {
+    static takeWhile<T>(predicate: Predicate<T>, scopes: any[]) {
         return this.create(QueryFunc.takeWhile, [identifier(predicate, scopes)], scopes)
     }
 
@@ -175,15 +177,15 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.skip, [literal(count)]);
     }
 
-    static skipWhile<T>(predicate: ((i: T) => boolean) | string, scopes: any[]) {
+    static skipWhile<T>(predicate: Predicate<T>, scopes: any[]) {
         return this.create(QueryFunc.skipWhile, [identifier(predicate, scopes)], scopes)
     }
-    
-    static groupBy<T, TResult = any, TKey = any>(keySelector: ((item: T) => TKey) | string, valueSelector: ((group: IGrouping<T, TKey>) => TResult) | string, scopes: any[]) {
+
+    static groupBy<T, TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, scopes: any[]) {
         return this.create(QueryFunc.groupBy, [identifier(keySelector, scopes), identifier(valueSelector, scopes)], scopes);
     }
 
-    static distinct(comparer?: ((x, y) => boolean) | string, scopes?: any[]) {
+    static distinct<T>(comparer?: Func2<T, T, boolean>, scopes?: any[]) {
         return this.create(QueryFunc.distinct, [identifier(comparer, scopes)], scopes);
     }
 
@@ -191,7 +193,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.concatWith, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
     }
 
-    static zip<T, TOther, TResult = any>(other: Array<TOther> |  string, selector: ((item: T, other: TOther) => TResult) | string, scopes: any[]) {
+    static zip<T, TOther, TResult = any>(other: Array<TOther> |  string, selector: Func2<T, TOther, TResult>, scopes: any[]) {
         return this.create(QueryFunc.zip, [typeof other === 'string' ? identifier(other, scopes) : literal(other), identifier(selector, scopes)], scopes);
     }
 
@@ -215,27 +217,27 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.reverse);
     }
 
-    static first<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static first<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.first, [identifier(predicate, scopes)], scopes);
     }
 
-    static firstOrDefault<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static firstOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.firstOrDefault, [identifier(predicate, scopes)], scopes);
     }
 
-    static last<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static last<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.last, [identifier(predicate, scopes)], scopes);
     }
 
-    static lastOrDefault<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static lastOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.lastOrDefault, [identifier(predicate, scopes)], scopes);
     }
 
-    static single<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static single<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.single, [identifier(predicate, scopes)], scopes);
     }
 
-    static singleOrDefault<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static singleOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.singleOrDefault, [identifier(predicate, scopes)], scopes);
     }
 
@@ -255,36 +257,36 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.sequenceEqual, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
     }
 
-    static any<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static any<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.any, [identifier(predicate, scopes)], scopes);
     }
 
-    static all<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static all<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.all, [identifier(predicate, scopes)], scopes);
     }
 
-    static count<T>(predicate?: ((i: T) => boolean) | string, scopes?: any[]) {
+    static count<T>(predicate?: Predicate<T>, scopes?: any[]) {
         return this.create(QueryFunc.count, [identifier(predicate, scopes)], scopes);
     }
 
-    static min<T, TResult = T>(selector?: ((i: T) => TResult) | string, scopes?: any[]) {
+    static min<T, TResult = T>(selector?: Func1<T, TResult>, scopes?: any[]) {
         return this.create(QueryFunc.min, [identifier(selector, scopes)], scopes);
     }
 
-    static max<T, TResult = T>(selector?: ((i: T) => TResult) | string, scopes?: any[]) {
+    static max<T, TResult = T>(selector?: Func1<T, TResult>, scopes?: any[]) {
         return this.create(QueryFunc.max, [identifier(selector, scopes)], scopes);
     }
 
-    static sum<T>(selector?: ((i: T) => number) | string, scopes?: any[]) {
+    static sum<T>(selector?: Func1<T, number>, scopes?: any[]) {
         return this.create(QueryFunc.sum, [identifier(selector, scopes)], scopes);
     }
 
-    static average<T>(selector?: ((i: T) => number) | string, scopes?: any[]) {
+    static average<T>(selector?: Func1<T, number>, scopes?: any[]) {
         return this.create(QueryFunc.average, [identifier(selector, scopes)], scopes);
     }
 
-    static aggregate<T, TAccumulate = any, TResult = TAccumulate>(func: ((aggregate: TAccumulate, item: T) => TAccumulate) | string, seed?: TAccumulate,
-        selector?: ((acc: TAccumulate) => TResult) |  string, scopes?: any[]) {
+    static aggregate<T, TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
+        selector?: Func1<TAccumulate, TResult>, scopes?: any[]) {
         return this.create(QueryFunc.aggregate, [identifier(func, scopes), literal(seed), identifier(selector, scopes)], scopes);
     }
 }

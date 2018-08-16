@@ -1,15 +1,18 @@
 import { Expression } from "jokenizer";
 
-declare type Func1<T1, T2> = ((p1: T1) => T2) | string;
-declare type Func2<T1, T2, T3> = ((p1: T1, p2: T2) => T3) | string;
+export type Ctor<T> = new (...args) => T;
+
+export type Func1<T1, T2 = any> = ((p1: T1) => T2) | string;
+export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
+export type Predicate<T> = Func1<T, boolean>;
 
 export interface IGrouping<T, TKey> extends Array<T> {
     Key: TKey;
 }
 
 export interface IQueryProvider {
-    execute<T = any, TResult = any>(query: IQuery<T>): TResult;
-    executeAsync<T = any, TResult = any>(query: IQuery<T>): PromiseLike<TResult>;
+    execute<T = any, TResult = T[]>(query: IQuery<T>): TResult;
+    executeAsync<T = any, TResult = []>(query: IQuery<T>): PromiseLike<TResult>;
 }
 
 export interface IPartArgument {
@@ -29,55 +32,56 @@ export interface IQuery<T = any> {
     readonly provider: IQueryProvider;
     readonly parts: IQueryPart[];
 
-    where(predicate: ((i: T) => boolean) | string, ...scopes): IQuery<T>;
-    ofType<TResult extends T>(type: new (...args) => TResult): IQuery<TResult>;
-    cast<TResult>(type: new (...args) => TResult): IQuery<TResult>;
-    select<TResult = any>(selector: ((i: T) => TResult) | string, ...scopes): IQuery<TResult>;
-    selectMany<TResult = any>(selector: ((i: T) => Array<TResult>) | string, ...scopes): IQuery<TResult>;
-    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: ((item: T) => TKey) | string, otherKey: ((item: TOther) => TKey) | string,
-        selector: ((item: T, other: TOther) => TResult) | string, ...scopes): IQuery<TResult>;
-    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: ((item: T) => TKey) | string, otherKey: ((item: TOther) => TKey) | string,
-        selector: ((item: T, other: Array<TOther>) => TResult) | string, ...scopes): IQuery<TResult>;
-    orderBy(keySelector: ((item: T) => any) | string, ...scopes): IOrderedQuery<T>;
-    orderByDescending(keySelector: ((item: T) => any) | string, ...scopes): IOrderedQuery<T>;
+    where(predicate: Predicate<T>, ...scopes): IQuery<T>;
+    ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult>;
+    cast<TResult>(type: Ctor<TResult>): IQuery<TResult>;
+    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
+    selectMany<TResult = any>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
+    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+    orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
+    orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     take(count: number): IQuery<T>;
-    takeWhile(predicate: ((i: T) => boolean) | string, ...scopes): IQuery<T>;
+    takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T>;
     skip(count: number): IQuery<T>;
-    skipWhile(predicate: ((i: T) => boolean) | string, ...scopes): IQuery<T>;
-    groupBy<TResult = any, TKey = any>(keySelector: ((item: T) => TKey) | string, valueSelector: ((group: IGrouping<T, TKey>) => TResult) | string, ...scopes): IQuery<TResult>;
-    distinct(comparer?: ((x, y) => boolean) | string, ...scopes): IQuery<T>;
+    skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T>;
+    groupBy<TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, ...scopes): IQuery<TResult>;
+    distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
     concatWith(other: Array<T> | string, ...scopes): IQuery<T>;
-    zip<TOther, TResult = any>(other: Array<TOther> | string, selector: ((item: T, other: TOther) => TResult) | string, ...scopes): IQuery<TResult>;
+    zip<TOther, TResult = any>(other: Array<TOther> | string, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     union(other: Array<T> | string, ...scopes): IQuery<T>;
     intersect(other: Array<T> | string, ...scopes): IQuery<T>;
     except(other: Array<T> | string, ...scopes): IQuery<T>;
     defaultIfEmpty(): IQuery<T>;
     reverse(): IQuery<T>;
 
-    first(predicate?: ((i: T) => boolean) | string, ...scopes): T;
-    firstOrDefault(predicate?: ((i: T) => boolean) | string, ...scopes): T;
-    last(predicate?: ((i: T) => boolean) | string, ...scopes): T;
-    lastOrDefault(predicate?: ((i: T) => boolean) | string, ...scopes): T;
-    single(predicate?: ((i: T) => boolean) | string, ...scopes): T;
-    singleOrDefault(predicate?: ((i: T) => boolean) | string, ...scopes): T;
+    first(predicate?: Predicate<T>, ...scopes): T;
+    firstOrDefault(predicate?: Predicate<T>, ...scopes): T;
+    last(predicate?: Predicate<T>, ...scopes): T;
+    lastOrDefault(predicate?: Predicate<T>, ...scopes): T;
+    single(predicate?: Predicate<T>, ...scopes): T;
+    singleOrDefault(predicate?: Predicate<T>, ...scopes): T;
     elementAt(index: number): T;
     elementAtOrDefault(index: number): T;
     contains(item: T): boolean;
     sequenceEqual(other: Array<T> | string, ...scopes): boolean;
-    any(predicate?: ((i: T) => boolean) | string, ...scopes): boolean;
-    all(predicate: ((i: T) => boolean) | string, ...scopes): boolean;
-    count(predicate?: ((i: T) => boolean) | string, ...scopes): number;
-    min<TResult = T>(selector?: ((i: T) => TResult) | string, ...scopes): TResult;
-    max<TResult = T>(selector?: ((i: T) => TResult) | string, ...scopes): TResult;
-    sum(selector?: ((i: T) => number) | string, ...scopes): number;
-    average(selector?: ((i: T) => number) | string, ...scopes): number;
-    aggregate<TAccumulate = any, TResult = TAccumulate>(func: ((aggregate: TAccumulate, item: T) => TAccumulate) | string, seed?: TAccumulate,
-        selector?: ((acc: TAccumulate) => TResult), ...scopes): TResult;
+    any(predicate?: Predicate<T>, ...scopes): boolean;
+    all(predicate: Predicate<T>, ...scopes): boolean;
+    count(predicate?: Predicate<T>, ...scopes): number;
+    min<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult;
+    max<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult;
+    sum(selector?: Func1<T, number>, ...scopes): number;
+    average(selector?: Func1<T, number>, ...scopes): number;
+    aggregate<TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
+        selector?: Func1<TAccumulate, TResult>, ...scopes): TResult;
 
     toList(): Array<T>;
+    toListAsync(): PromiseLike<Array<T>>;
 }
 
 export interface IOrderedQuery<T> extends IQuery<T> {
-    thenBy(selector: ((T) => any) | string, ...scopes): IOrderedQuery<T>;
-    thenByDescending(keySelector: ((item: T) => any) | string, ...scopes): IOrderedQuery<T>;
+    thenBy(selector: Func1<T>, ...scopes): IOrderedQuery<T>;
+    thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
 }

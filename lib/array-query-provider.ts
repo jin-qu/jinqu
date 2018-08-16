@@ -33,8 +33,21 @@ const funcs = {
     where(items: any[], predicate: IPartArgument) {
         if (!items) return items;
         
-        return items.filter(x => predicate.func(x));
+        return items.filter(i => predicate.func(i));
     },
     ofType(items: any[]) { return items; },
-    cast(items: any[]) { return items; }
+    cast(items: any[]) { return items; },
+    select(items: any[], selector: IPartArgument) { 
+        if (!items) return items;
+
+        return items.map(i => selector.func(i));
+    },
+    selectMany(items: any[], selector: IPartArgument) {
+        if (!items) return items;
+
+        const arr = [];
+        return items.forEach(i => arr.push(selector.func(i)));
+    },
+    joinWith(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
+    }
 }
