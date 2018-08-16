@@ -1,6 +1,5 @@
 import { IQuery } from "./types";
 import { QueryFunc } from './query-part';
-import { Query } from "./queryable";
 import { ArrayQueryProvider } from "./array-query-provider";
 
 declare global {
@@ -11,7 +10,7 @@ declare global {
 }
 
 Array.prototype.asQueryable = function() {
-    return new Query(new ArrayQueryProvider(this));
+    return new ArrayQueryProvider(this).createQuery();
 }
 Array.prototype.q = Array.prototype.asQueryable;
 

@@ -1,8 +1,13 @@
 import { IQueryProvider, IPartArgument, IQueryPart, IQuery } from './types';
+import { Query } from './queryable';
 
 export class ArrayQueryProvider implements IQueryProvider {
 
     constructor(private readonly items: any[]) {
+    }
+
+    createQuery<T>(parts?: IQueryPart[]) {
+        return new Query<T>(this, parts);
     }
 
     execute<TResult = any>(query: IQuery<any>): TResult {
@@ -11,17 +16,6 @@ export class ArrayQueryProvider implements IQueryProvider {
             items = handlePart(items, query.parts[i]);
         }
         return <any>items;
-    }    
-    
-    executeAsync<TResult = any>(query: IQuery<any>): Promise<TResult> {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(this.execute(query));
-            }
-            catch (e) {
-                reject(e);
-            }
-        });
     }
 }
 

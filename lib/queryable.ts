@@ -1,9 +1,9 @@
 import { QueryPart } from "./query-part";
-import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQuery, IOrderedQuery } from './types';
+import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery } from './types';
 
 export class Query<T = any> implements IOrderedQuery<T> {
 
-    constructor(public readonly provider: IQueryProvider, public readonly parts: QueryPart[] = []) {
+    constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
 
     where(predicate: Predicate<T>, ...scopes): IQuery<T> {
@@ -181,11 +181,7 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.provider.execute(this);
     }
 
-    toListAsync() {
-        return this.provider.executeAsync(this);
-    }
-
-    protected create<TResult = T>(part: QueryPart): Query<TResult> {
-        return new Query<TResult>(this.provider, [...this.parts, part]);
+    protected create<TResult = T>(part: IQueryPart): Query<TResult> {
+        return new Query(this.provider, [...this.parts, part]);
     }
 }

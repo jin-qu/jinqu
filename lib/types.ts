@@ -11,8 +11,8 @@ export interface IGrouping<T, TKey> extends Array<T> {
 }
 
 export interface IQueryProvider {
+    createQuery<T>(parts?: IQueryPart[]): IQuery<T>;
     execute<T = any, TResult = T[]>(query: IQuery<T>): TResult;
-    executeAsync<T = any, TResult = []>(query: IQuery<T>): PromiseLike<TResult>;
 }
 
 export interface IPartArgument {
@@ -78,7 +78,6 @@ export interface IQuery<T = any> {
         selector?: Func1<TAccumulate, TResult>, ...scopes): TResult;
 
     toList(): Array<T>;
-    toListAsync(): PromiseLike<Array<T>>;
 }
 
 export interface IOrderedQuery<T> extends IQuery<T> {
