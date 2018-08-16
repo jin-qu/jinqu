@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import '../lib/array-extensions';
+import '../index';
 
 interface Customer {
     id: number;
@@ -20,7 +20,7 @@ const customers: Customer[] = [
 describe('Query part tests', () => {
 
     it('should filter the array', () => {
-        const result = customers.where('c => c.id > 4').toList();
+        const result = customers.where(c => c.id > 4).toList();
 
         expect(result.length).to.equal(3);
         expect(result[0].id).to.equal(5);

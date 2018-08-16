@@ -12,7 +12,7 @@ export interface IGrouping<T, TKey> extends Array<T> {
 
 export interface IQueryProvider {
     createQuery<T>(parts?: IQueryPart[]): IQuery<T>;
-    execute<T = any, TResult = T[]>(query: IQuery<T>): TResult;
+    execute<T = any, TResult = T[]>(parts: IQueryPart[]): TResult;
 }
 
 export interface IPartArgument {

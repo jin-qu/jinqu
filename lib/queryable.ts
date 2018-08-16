@@ -37,19 +37,19 @@ export class Query<T = any> implements IOrderedQuery<T> {
     }
 
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
-        return this.create(QueryPart.orderBy(keySelector, scopes));
+        return <IOrderedQuery<T>>this.create(QueryPart.orderBy(keySelector, scopes));
     }
 
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
-        return this.create(QueryPart.orderByDescending(keySelector, scopes));
+        return <IOrderedQuery<T>>this.create(QueryPart.orderByDescending(keySelector, scopes));
     }
 
     thenBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
-        return this.create(QueryPart.thenBy(keySelector, scopes));
+        return <IOrderedQuery<T>>this.create(QueryPart.thenBy(keySelector, scopes));
     }
 
     thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
-        return this.create(QueryPart.thenByDescending(keySelector, scopes));
+        return <IOrderedQuery<T>>this.create(QueryPart.thenByDescending(keySelector, scopes));
     }
 
     take(count: number): IQuery<T> {
@@ -105,83 +105,83 @@ export class Query<T = any> implements IOrderedQuery<T> {
     }
 
     first(predicate?: Predicate<T>, ...scopes): T {
-        return this.provider.execute(this.create(QueryPart.first(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.first(predicate, scopes)]);
     }
 
     firstOrDefault(predicate?: Predicate<T>, ...scopes): T {
-        return this.provider.execute(this.create(QueryPart.firstOrDefault(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
     last(predicate?: Predicate<T>, ...scopes): T {
-        return this.provider.execute(this.create(QueryPart.last(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.last(predicate, scopes)]);
     }
 
     lastOrDefault(predicate?: Predicate<T>, ...scopes): T {
-        return this.provider.execute(this.create(QueryPart.lastOrDefault(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.lastOrDefault(predicate, scopes)]);
     }
 
     single(predicate?: Predicate<T>, ...scopes): T {
-        return this.provider.execute(this.create(QueryPart.single(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.single(predicate, scopes)]);
     }
 
     singleOrDefault(predicate?: Predicate<T>, ...scopes): T {
-        return this.provider.execute(this.create(QueryPart.singleOrDefault(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.singleOrDefault(predicate, scopes)]);
     }
 
     elementAt(index: number): T {
-        return this.provider.execute(this.create(QueryPart.elementAt(index)));
+        return this.provider.execute([...this.parts, QueryPart.elementAt(index)]);
     }
 
     elementAtOrDefault(index: number): T {
-        return this.provider.execute(this.create(QueryPart.elementAtOrDefault(index)));
+        return this.provider.execute([...this.parts, QueryPart.elementAtOrDefault(index)]);
     }
 
     contains(item: T): boolean {
-        return this.provider.execute(this.create(QueryPart.contains(item)));
+        return this.provider.execute([...this.parts, QueryPart.contains(item)]);
     }
 
     sequenceEqual(other: Array<T> | string, ...scopes): boolean {
-        return this.provider.execute(this.create(QueryPart.sequenceEqual(other, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.sequenceEqual(other, scopes)]);
     }
 
     any(predicate?: Predicate<T>, ...scopes): boolean {
-        return this.provider.execute(this.create(QueryPart.any(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.any(predicate, scopes)]);
     }
 
     all(predicate: Predicate<T>, ...scopes): boolean {
-        return this.provider.execute(this.create(QueryPart.all(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.all(predicate, scopes)]);
     }
 
     count(predicate: Predicate<T>, ...scopes): number {
-        return this.provider.execute(this.create(QueryPart.count(predicate, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.count(predicate, scopes)]);
     }
 
     min<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult {
-        return this.provider.execute(this.create(QueryPart.min(selector, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
     max<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult {
-        return this.provider.execute(this.create(QueryPart.max(selector, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.max(selector, scopes)]);
     }
 
     sum(selector?: Func1<T, number>, ...scopes): number {
-        return this.provider.execute(this.create(QueryPart.sum(selector, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.sum(selector, scopes)]);
     }
 
     average(selector?: Func1<T, number>, ...scopes): number {
-        return this.provider.execute(this.create(QueryPart.average(selector, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.average(selector, scopes)]);
     }
 
     aggregate<TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
         selector?: Func1<TAccumulate, TResult>, ...scopes): TResult {
-        return this.provider.execute(this.create(QueryPart.aggregate(func, seed, selector, scopes)));
+        return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, selector, scopes)]);
     }
 
     toList() {
-        return this.provider.execute(this);
+        return this.provider.execute(this.parts);
     }
 
-    protected create<TResult = T>(part: IQueryPart): Query<TResult> {
-        return new Query(this.provider, [...this.parts, part]);
+    private create<TResult = T>(part: IQueryPart): IQuery<TResult> {
+        return this.provider.createQuery<TResult>([...this.parts, part]);
     }
 }

@@ -1,4 +1,4 @@
-import { IQueryProvider, IPartArgument, IQueryPart, IQuery } from './types';
+import {  IQueryProvider, IPartArgument, IQueryPart, IQuery } from './types';
 import { Query } from './queryable';
 
 export class ArrayQueryProvider implements IQueryProvider {
@@ -10,13 +10,17 @@ export class ArrayQueryProvider implements IQueryProvider {
         return new Query<T>(this, parts);
     }
 
-    execute<TResult = any>(query: IQuery<any>): TResult {
-        let items = this.items;
-        for (let i = 0; i < query.parts.length; i++) {
-            items = handlePart(items, query.parts[i]);
-        }
-        return <any>items;
+    execute<TResult = any>(parts: IQueryPart[]): TResult {
+        return execute(this.items, parts);
     }
+}
+
+export function execute(items: any[], parts: IQueryPart[]) {
+    let value: any = items;
+    for (let i = 0; i < parts.length; i++) {
+        value = handlePart(value, parts[i]);
+    }
+    return value;
 }
 
 function handlePart(items: any[], part: IQueryPart) {
@@ -26,12 +30,12 @@ function handlePart(items: any[], part: IQueryPart) {
 const funcs = {
     where(items: any[], predicate: IPartArgument) {
         if (!items) return items;
-        
+
         return items.filter(i => predicate.func(i));
     },
     ofType(items: any[]) { return items; },
     cast(items: any[]) { return items; },
-    select(items: any[], selector: IPartArgument) { 
+    select(items: any[], selector: IPartArgument) {
         if (!items) return items;
 
         return items.map(i => selector.func(i));
