@@ -17,7 +17,8 @@ Array.prototype.q = Array.prototype.asQueryable;
 
 function extendArray(func: string) {
     Array.prototype[func] = function () {
-        return this.asQueryable()[func].apply(this, arguments);
+        const q = this.asQueryable();
+        return q[func].apply(q, arguments);
     }
 }
 

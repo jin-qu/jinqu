@@ -6,11 +6,11 @@ export class Query<T = any> implements IOrderedQuery<T> {
     constructor(public readonly provider: IQueryProvider, public readonly parts: QueryPart[] = []) {
     }
 
-    where(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
+    where(predicate: ((i: T) => boolean) | string, ...scopes): IQuery<T> {
         return this.create(QueryPart.where(predicate, scopes));
     }
 
-    ofType<TResult>(type: new (...args) => TResult): IQuery<TResult> {
+    ofType<TResult extends T>(type: new (...args) => TResult): IQuery<TResult> {
         return this.create(QueryPart.ofType(type));
     }
 
@@ -18,37 +18,37 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.cast(type));
     }
 
-    select<TResult = any>(selector: (i: T) => TResult | string, ...scopes): IQuery<TResult> {
+    select<TResult = any>(selector: ((i: T) => TResult) | string, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.select(selector, scopes));
     }
 
-    selectMany<TResult = any>(selector: (i: T) => Array<TResult> | string, ...scopes): IQuery<TResult> {
+    selectMany<TResult = any>(selector: ((i: T) => Array<TResult>) | string, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.selectMany(selector, scopes));
     }
 
-    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
-        selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult> {
+    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: ((item: T) => TKey) | string, otherKey: ((item: TOther) => TKey) | string,
+        selector: ((item: T, other: TOther) => TResult) | string, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.joinWith(other, thisKey, otherKey, selector, scopes));
     }
 
-    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: (item: T) => TKey | string, otherKey: (item: TOther) => TKey | string,
-        selector: (item: T, other: Array<TOther>) => TResult | string, ...scopes): IQuery<TResult> {
+    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: ((item: T) => TKey) | string, otherKey: ((item: TOther) => TKey) | string,
+        selector: ((item: T, other: Array<TOther>) => TResult) | string, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupJoin(other, thisKey, otherKey, selector, scopes));
     }
 
-    orderBy(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+    orderBy(keySelector: ((item: T) => any) | string, ...scopes): IOrderedQuery<T> {
         return this.create(QueryPart.orderBy(keySelector, scopes));
     }
 
-    orderByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+    orderByDescending(keySelector: ((item: T) => any) | string, ...scopes): IOrderedQuery<T> {
         return this.create(QueryPart.orderByDescending(keySelector, scopes));
     }
 
-    thenBy(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+    thenBy(keySelector: ((item: T) => any) | string, ...scopes): IOrderedQuery<T> {
         return this.create(QueryPart.thenBy(keySelector, scopes));
     }
 
-    thenByDescending(keySelector: (item: T) => any, ...scopes): IOrderedQuery<T> {
+    thenByDescending(keySelector: ((item: T) => any) | string, ...scopes): IOrderedQuery<T> {
         return this.create(QueryPart.thenByDescending(keySelector, scopes));
     }
 
@@ -56,7 +56,7 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.take(count));
     }
 
-    takeWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
+    takeWhile(predicate: ((i: T) => boolean) | string, ...scopes): IQuery<T> {
         return this.create(QueryPart.takeWhile(predicate, scopes));
     }
 
@@ -64,15 +64,15 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.skip(count));
     }
 
-    skipWhile(predicate: (i: T) => boolean | string, ...scopes): IQuery<T> {
+    skipWhile(predicate: ((i: T) => boolean) | string, ...scopes): IQuery<T> {
         return this.create(QueryPart.skipWhile(predicate, scopes));
     }
 
-    groupBy<TResult = any, TKey = any>(keySelector: (item: T) => TKey | string, valueSelector: (group: IGrouping<T, TKey>) => TResult | string, ...scopes): IQuery<TResult> {
+    groupBy<TResult = any, TKey = any>(keySelector: ((item: T) => TKey) | string, valueSelector: ((group: IGrouping<T, TKey>) => TResult) | string, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupBy(keySelector, valueSelector, scopes));
     }
 
-    distinct(comparer?: (x, y) => boolean | string, ...scopes): IQuery<T> {
+    distinct(comparer?: ((x, y) => boolean) | string, ...scopes): IQuery<T> {
         return this.create(QueryPart.distinct(comparer, scopes));
     }
 
@@ -80,7 +80,7 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.concatWith(other, scopes));
     }
 
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: (item: T, other: TOther) => TResult | string, ...scopes): IQuery<TResult> {
+    zip<TOther, TResult = any>(other: Array<TOther> | string, selector: ((item: T, other: TOther) => TResult) | string, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.zip(other, selector, scopes));
     }
 
@@ -104,27 +104,27 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.reverse());
     }
 
-    first(predicate?: (i: T) => boolean | string, ...scopes): T {
+    first(predicate?: ((i: T) => boolean) | string, ...scopes): T {
         return this.provider.execute(this.create(QueryPart.first(predicate, scopes)));
     }
 
-    firstOrDefault(predicate?: (i: T) => boolean | string, ...scopes): T {
+    firstOrDefault(predicate?: ((i: T) => boolean) | string, ...scopes): T {
         return this.provider.execute(this.create(QueryPart.firstOrDefault(predicate, scopes)));
     }
 
-    last(predicate?: (i: T) => boolean | string, ...scopes): T {
+    last(predicate?: ((i: T) => boolean) | string, ...scopes): T {
         return this.provider.execute(this.create(QueryPart.last(predicate, scopes)));
     }
 
-    lastOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+    lastOrDefault(predicate: ((i: T) => boolean) | string, ...scopes): T {
         return this.provider.execute(this.create(QueryPart.lastOrDefault(predicate, scopes)));
     }
 
-    single(predicate: (i: T) => boolean | string, ...scopes): T {
+    single(predicate: ((i: T) => boolean) | string, ...scopes): T {
         return this.provider.execute(this.create(QueryPart.single(predicate, scopes)));
     }
 
-    singleOrDefault(predicate: (i: T) => boolean | string, ...scopes): T {
+    singleOrDefault(predicate: ((i: T) => boolean) | string, ...scopes): T {
         return this.provider.execute(this.create(QueryPart.singleOrDefault(predicate, scopes)));
     }
 
@@ -144,37 +144,41 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.provider.execute(this.create(QueryPart.sequenceEqual(other, scopes)));
     }
 
-    any(predicate?: (i: T) => boolean | string, ...scopes): boolean {
+    any(predicate?: ((i: T) => boolean) | string, ...scopes): boolean {
         return this.provider.execute(this.create(QueryPart.any(predicate, scopes)));
     }
 
-    all(predicate: (i: T) => boolean | string, ...scopes): boolean {
+    all(predicate: ((i: T) => boolean) | string, ...scopes): boolean {
         return this.provider.execute(this.create(QueryPart.all(predicate, scopes)));
     }
 
-    count(predicate: (i: T) => boolean | string, ...scopes): number {
+    count(predicate: ((i: T) => boolean) | string, ...scopes): number {
         return this.provider.execute(this.create(QueryPart.count(predicate, scopes)));
     }
 
-    min<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+    min<TResult = T>(selector?: ((i: T) => TResult) | string, ...scopes): TResult {
         return this.provider.execute(this.create(QueryPart.min(selector, scopes)));
     }
 
-    max<TResult = T>(selector?: (i: T) => TResult | string, ...scopes): TResult {
+    max<TResult = T>(selector?: ((i: T) => TResult) | string, ...scopes): TResult {
         return this.provider.execute(this.create(QueryPart.max(selector, scopes)));
     }
 
-    sum(selector?: (i: T) => number | string, ...scopes): number {
+    sum(selector?: ((i: T) => number) | string, ...scopes): number {
         return this.provider.execute(this.create(QueryPart.sum(selector, scopes)));
     }
 
-    average(selector?: (i: T) => number | string, ...scopes): number {
+    average(selector?: ((i: T) => number) | string, ...scopes): number {
         return this.provider.execute(this.create(QueryPart.average(selector, scopes)));
     }
 
-    aggregate<TAccumulate = any, TResult = TAccumulate>(func: (aggregate: TAccumulate, item: T) => TAccumulate | string, seed?: TAccumulate,
+    aggregate<TAccumulate = any, TResult = TAccumulate>(func: ((aggregate: TAccumulate, item: T) => TAccumulate) | string, seed?: TAccumulate,
         selector?: (acc: TAccumulate) => TResult, ...scopes): TResult {
         return this.provider.execute(this.create(QueryPart.aggregate(func, seed, selector, scopes)));
+    }
+
+    toList(...scopes) {
+        return this.provider.execute<T>(this, scopes);
     }
 
     protected create<TResult = T>(part: QueryPart): Query<TResult> {
