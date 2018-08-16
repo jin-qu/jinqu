@@ -55,7 +55,7 @@ export interface IQuery<T = any> {
     intersect(other: Array<T> | string, ...scopes): IQuery<T>;
     except(other: Array<T> | string, ...scopes): IQuery<T>;
     defaultIfEmpty(): IQuery<T>;
-    reverse(): IQuery<T>;
+    reverseTo(): IQuery<T>;
 
     first(predicate?: Predicate<T>, ...scopes): T;
     firstOrDefault(predicate?: Predicate<T>, ...scopes): T;

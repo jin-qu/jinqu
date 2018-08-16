@@ -213,7 +213,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.defaultIfEmpty);
     }
 
-    static reverse() {
+    static reverseTo() {
         return this.create(QueryFunc.reverse);
     }
 
