@@ -173,9 +173,16 @@ function reverse(items: any[]) {
 }
 
 function first(items: any[], predicate: IPartArgument) {
+    if (!items.length) throw new Error('Sequence contains no element')
+    
+    const i = predicate.func ? items.find(<any>predicate.func) : items[0];
+    if (!i) throw new Error('Sequence contains no matching element');
+
+    return i;
 }
 
 function firstOrDefault(items: any[], predicate: IPartArgument) {
+    return predicate.func ? items.find(<any>predicate.func) : items[0];
 }
 
 function last(items: any[], predicate: IPartArgument) {
@@ -185,9 +192,41 @@ function lastOrDefault(items: any[], predicate: IPartArgument) {
 }
 
 function single(items: any[], predicate: IPartArgument) {
+    if (!items.length) throw new Error('Sequence contains no element');
+    
+    if (predicate.func) {
+        const matches = getSingle(items, predicate);
+        if (matches.length !== 1) throw new Error('Sequence contains no matching element');
+
+        return matches[0];
+    }
+
+    if (items.length > 1) throw new Error('Sequence contains more than one matching element');
+
+    return items[0];
 }
 
 function singleOrDefault(items: any[], predicate: IPartArgument) {
+    if (predicate.func)
+        return getSingle(items, predicate)[0];
+
+    if (items.length > 1) throw new Error('Sequence contains more than one matching element');
+
+    return items[0];
+}
+
+function getSingle(items: any[], predicate: IPartArgument) {
+    const matches = [];
+    for (let item of items) {
+        if (!predicate.func(item)) continue;
+
+        if (matches.length > 0) 
+            throw new Error('Sequence contains more than one matching element');
+
+        matches.push(item);
+    }
+
+    return matches;
 }
 
 function elementAt(items: any[], index: IPartArgument) {
