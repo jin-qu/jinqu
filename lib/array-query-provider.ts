@@ -119,7 +119,7 @@ function orderBy(items: any[], keySelectors: IQueryPart[]) {
 }
 
 function take(items: any[], count: IPartArgument) {
-    return items.slice(count.literal);
+    return items.slice(0, count.literal);
 }
 
 function* takeWhile(items: any[], predicate: IPartArgument) {
@@ -146,6 +146,7 @@ function* groupBy(items: any[], keySelector: IPartArgument, valueSelector: IPart
 }
 
 function distinct(items: any[], comparer: IPartArgument) {
+    // comparer nullable
 }
 
 function concat(items: any[], other: IPartArgument) {
@@ -186,9 +187,11 @@ function firstOrDefault(items: any[], predicate: IPartArgument) {
 }
 
 function last(items: any[], predicate: IPartArgument) {
+    // predicate nullable
 }
 
 function lastOrDefault(items: any[], predicate: IPartArgument) {
+    // predicate nullable
 }
 
 function single(items: any[], predicate: IPartArgument) {
@@ -230,39 +233,61 @@ function getSingle(items: any[], predicate: IPartArgument) {
 }
 
 function elementAt(items: any[], index: IPartArgument) {
+    if (index.literal > items.length)
+        throw new Error('Index was outside the bounds of the array.');
+    
+    return items[index.literal];
 }
 
 function elementAtOrDefault(items: any[], index: IPartArgument) {
+    return items[index.literal];
 }
 
 function contains(items: any[], item: IPartArgument) {
+    return items.indexOf(item) > 0;
 }
 
-function sequenceEqual(items: any[], other: IPartArgument) {
+function sequenceEqual(items: any[], other: IPartArgument) {    
 }
 
 function any(items: any[], predicate: IPartArgument) {
+    return predicate.func ? items.some(<any>predicate.func) : items.length;
 }
 
 function all(items: any[], predicate: IPartArgument) {
+    return items.every(<any>predicate.func);
 }
 
 function count(items: any[], predicate: IPartArgument) {
+    return items.filter(<any>predicate.func).length;
 }
 
 function min(items: any[], selector: IPartArgument) {
+    return Math.min(selector.func ? selector.func(items) : items);
 }
 
 function max(items: any[], selector: IPartArgument) {
+    return Math.max(selector.func ? selector.func(items) : items);
 }
 
 function sum(items: any[], selector: IPartArgument) {
+    if (selector.func) {
+        items = selector.func(items);
+    }
+
+    return items.reduce((p, c) => p + c, 0);
 }
 
 function average(items: any[], selector: IPartArgument) {
+    return sum(items, selector) / items.length;
 }
 
 function aggregate(items: any[], func: IPartArgument, seed: IPartArgument, selector: IPartArgument) {
+    if (selector.func) {
+        items = selector.func(items);
+    }
+
+    return items.reduce(<any>func, seed);
 }
 
 

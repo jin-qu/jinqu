@@ -182,6 +182,6 @@ export class Query<T = any> implements IOrderedQuery<T> {
     }
 
     private create<TResult = T>(part: IQueryPart): IQuery<TResult> {
-        return this.provider.createQuery<TResult>([...this.parts, part]);
+        return <any>this.provider.createQuery([...this.parts, part]);
     }
 }
