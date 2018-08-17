@@ -64,11 +64,11 @@ export class PartArgument implements IPartArgument {
 }
 
 function identifier(value: Function | string, scopes: any[]) {
-    return value ? PartArgument.identifier(value, scopes) : null;
+    return PartArgument.identifier(value, scopes);
 }
 
 function literal(value) {
-    return value != null ? PartArgument.literal(value) : null;
+    return PartArgument.literal(value);
 }
 
 export class QueryPart implements IQueryPart {

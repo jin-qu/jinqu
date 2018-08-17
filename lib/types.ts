@@ -11,7 +11,7 @@ export interface IGrouping<T, TKey> extends Array<T> {
 }
 
 export interface IQueryProvider {
-    createQuery<T>(parts?: IQueryPart[]): IQuery<T>;
+    createQuery(parts?: IQueryPart[]): IQueryBase;
     execute<T = any, TResult = T[]>(parts: IQueryPart[]): TResult;
 }
 
@@ -28,10 +28,12 @@ export interface IQueryPart {
     readonly scopes: any[];
 }
 
-export interface IQuery<T = any> {
+export interface IQueryBase {
     readonly provider: IQueryProvider;
     readonly parts: IQueryPart[];
+}
 
+export interface IQuery<T> extends IQueryBase {
     where(predicate: Predicate<T>, ...scopes): IQuery<T>;
     ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult>;
     cast<TResult>(type: Ctor<TResult>): IQuery<TResult>;
