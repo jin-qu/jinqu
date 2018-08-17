@@ -121,7 +121,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.selectMany, [identifier(selector, scopes)], scopes);
     }
 
-    static joinWith<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    static join<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, scopes: any[]) {
         return this.create(
             QueryFunc.join,
@@ -189,7 +189,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.distinct, [identifier(comparer, scopes)], scopes);
     }
 
-    static concatWith<T>(other: Array<T> | string, scopes: any[]) {
+    static concat<T>(other: Array<T> | string, scopes: any[]) {
         return this.create(QueryFunc.concat, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
     }
 
