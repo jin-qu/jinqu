@@ -2,7 +2,7 @@ import { IQueryProvider, IPartArgument, IQueryPart, IQuery, Predicate } from './
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
-const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending, QueryFunc.thenBy, QueryFunc.thenByDescending];
+const thenFuncs = [QueryFunc.thenBy, QueryFunc.thenByDescending];
 
 export class ArrayQueryProvider implements IQueryProvider {
 
@@ -19,14 +19,14 @@ export class ArrayQueryProvider implements IQueryProvider {
 }
 
 export function execute(items: any[], parts: IQueryPart[]) {
-    if (!parts || !parts.length) return items;
-    
+    if (!parts || !parts.length) return items;
+
     check(items);
-    
+
     let value: any = items;
     let orderParts = [];
     for (let p of parts) {
-        if (orderFuncs.contains(p.type)) {
+        if (thenFuncs.contains(p.type)) {
             orderParts.push(p);
         }
         else {
@@ -88,7 +88,7 @@ const funcs = {
 }
 
 function* where(items: any[], predicate: IPartArgument) {
-    for (let i of items) {
+    for (let i of items) {
         if (predicate.func(i)) yield i;
     }
 }
@@ -110,12 +110,15 @@ function* selectMany(items: any[], selector: IPartArgument) {
 }
 
 function join(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
+    // todo
 }
 
 function groupJoin(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
+    // todo
 }
 
 function orderBy(items: any[], keySelectors: IQueryPart[]) {
+    // todo
 }
 
 function take(items: any[], count: IPartArgument) {
@@ -143,10 +146,25 @@ function* skipWhile(items: any[], predicate: IPartArgument) {
 }
 
 function* groupBy(items: any[], keySelector: IPartArgument, valueSelector: IPartArgument) {
+    // todo
 }
 
 function distinct(items: any[], comparer: IPartArgument) {
-    // comparer nullable
+    const r = [];
+    for (let i = 0; i < items.length; i++) {
+        const i1 = items[i];
+        let j = i
+        for (; j < items.length; j++) {
+            const i2 = items[j];
+            if (comparer.func ? comparer.func(i1, i2) : (i1 == i2)) break;
+        }
+
+        if (j === items.length) {
+            r.push(i1);
+        }
+    }
+
+    return r;
 }
 
 function concat(items: any[], other: IPartArgument) {
@@ -154,19 +172,23 @@ function concat(items: any[], other: IPartArgument) {
 }
 
 function zip(items: any[], other: IPartArgument, selector: IPartArgument) {
+    // todo
 }
 
 function union(items: any[], other: IPartArgument) {
+    // todo
 }
 
 function intersect(items: any[], other: IPartArgument) {
+    // todo
 }
 
 function except(items: any[], other: IPartArgument) {
+    // todo
 }
 
 function defaultIfEmpty(items: any[]) {
-    return items || [];
+    return items || [];
 }
 
 function reverse(items: any[]) {
@@ -175,67 +197,81 @@ function reverse(items: any[]) {
 
 function first(items: any[], predicate: IPartArgument) {
     if (!items.length) throw new Error('Sequence contains no element')
-    
-    const i = predicate.func ? items.find(<any>predicate.func) : items[0];
-    if (!i) throw new Error('Sequence contains no matching element');
 
-    return i;
+    const [found, item] = getFirst(items, predicate);
+
+    if (!found) throw new Error('Sequence contains no matching element');
+
+    return item;
 }
 
 function firstOrDefault(items: any[], predicate: IPartArgument) {
-    return predicate.func ? items.find(<any>predicate.func) : items[0];
+    return getFirst(items, predicate)[1];
+}
+
+function getFirst(items: any[], predicate: IPartArgument) {
+    for (let i of items) {
+        if (!predicate.func || predicate.func(i)) return [true, i];
+    }
+
+    return [false, null]
 }
 
 function last(items: any[], predicate: IPartArgument) {
-    // predicate nullable
+    if (!items.length) throw new Error('Sequence contains no element');
+
+    const [found, item] = getLast(items, predicate);
+
+    if (!found) throw new Error('Sequence contains no matching element');
+
+    return item;
 }
 
 function lastOrDefault(items: any[], predicate: IPartArgument) {
-    // predicate nullable
+    return getLast(items, predicate)[1];
+}
+
+function getLast(items: any[], predicate: IPartArgument) {
+    for (let i = items.length - 1; i >= 0; i--) {
+        const item = items[i];
+        if (!predicate.func || predicate.func(item)) return [true, item];
+    }
+
+    return [false, null];
 }
 
 function single(items: any[], predicate: IPartArgument) {
     if (!items.length) throw new Error('Sequence contains no element');
-    
-    if (predicate.func) {
-        const matches = getSingle(items, predicate);
-        if (matches.length !== 1) throw new Error('Sequence contains no matching element');
 
-        return matches[0];
-    }
+    const [found, item] = getSingle(items, predicate);
+   
+    if (!found) throw new Error('Sequence contains no matching element');
 
-    if (items.length > 1) throw new Error('Sequence contains more than one matching element');
-
-    return items[0];
+    return item;
 }
 
 function singleOrDefault(items: any[], predicate: IPartArgument) {
-    if (predicate.func)
-        return getSingle(items, predicate)[0];
-
-    if (items.length > 1) throw new Error('Sequence contains more than one matching element');
-
-    return items[0];
+    return getSingle(items, predicate)[1];
 }
 
 function getSingle(items: any[], predicate: IPartArgument) {
-    const matches = [];
+    let matches = [];
     for (let item of items) {
-        if (!predicate.func(item)) continue;
+        if (predicate.func && !predicate.func(item)) continue;
 
-        if (matches.length > 0) 
+        if (matches.length > 0)
             throw new Error('Sequence contains more than one matching element');
 
         matches.push(item);
     }
-
-    return matches;
+    
+    return matches.length ? [true, matches[0]] : [false, null];
 }
 
 function elementAt(items: any[], index: IPartArgument) {
     if (index.literal > items.length)
         throw new Error('Index was outside the bounds of the array.');
-    
+
     return items[index.literal];
 }
 
@@ -247,11 +283,19 @@ function contains(items: any[], item: IPartArgument) {
     return items.indexOf(item) > 0;
 }
 
-function sequenceEqual(items: any[], other: IPartArgument) {    
+function sequenceEqual(items: any[], other: IPartArgument) {
+    const o = other.literal;
+    if (!o || items.length !== o.length) return false;
+
+    for (let i = 0; i < items.length; i++) {
+        if (items[i] != o[i]) return false;
+    }
+
+    return true;
 }
 
 function any(items: any[], predicate: IPartArgument) {
-    return predicate.func ? items.some(<any>predicate.func) : items.length;
+    return predicate.func ? items.some(<any>predicate.func) : items.length > 0;
 }
 
 function all(items: any[], predicate: IPartArgument) {
@@ -259,39 +303,38 @@ function all(items: any[], predicate: IPartArgument) {
 }
 
 function count(items: any[], predicate: IPartArgument) {
-    return items.filter(<any>predicate.func).length;
+    return predicate.func ? items.filter(<any>predicate.func).length : items.length;
 }
 
 function min(items: any[], selector: IPartArgument) {
-    return Math.min(selector.func ? selector.func(items) : items);
+    return Math.min(selector.func ? <any>items.map(<any>selector.func) : items);
 }
 
 function max(items: any[], selector: IPartArgument) {
-    return Math.max(selector.func ? selector.func(items) : items);
+    return Math.max(selector.func ? <any>items.map(<any>selector.func) : items);
 }
 
 function sum(items: any[], selector: IPartArgument) {
-    if (selector.func) {
-        items = selector.func(items);
+    let s = 0;
+    for (let i of items) {
+        s += selector.func ? selector.func(i) : i;
     }
 
-    return items.reduce((p, c) => p + c, 0);
+    return s;
 }
 
 function average(items: any[], selector: IPartArgument) {
-    return sum(items, selector) / items.length;
+    return items.length ? sum(items, selector) / items.length : 0;
 }
 
 function aggregate(items: any[], func: IPartArgument, seed: IPartArgument, selector: IPartArgument) {
-    if (selector.func) {
-        items = selector.func(items);
+    let s = seed.literal != null ? seed.literal : 0;
+    for (let i of items) {
+        s = func.func(s, selector.func ? selector.func(i) : i);
     }
 
     return items.reduce(<any>func, seed);
 }
-
-
-
 
 function check(items) {
     if (!items) throw new TypeError('Cannot query null array.');
