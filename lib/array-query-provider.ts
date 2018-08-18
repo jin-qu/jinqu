@@ -1,3 +1,6 @@
+// todo: iterate all the things
+// todo: use map for dictionaries and add support for deep equal
+
 import { IQueryProvider, IPartArgument, IQueryPart } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
