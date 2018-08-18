@@ -27,7 +27,7 @@ export function execute(items: any[], parts: IQueryPart[]) {
     let value: any = items;
     let orderParts = [];
     for (let p of parts) {
-        if (thenFuncs.contains(p.type)) {
+        if (!~thenFuncs.indexOf(p.type)) {
             orderParts.push(p);
         }
         else {
@@ -114,7 +114,7 @@ function* selectMany(items: any[], selector: IPartArgument) {
 }
 
 function* joinWith(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
-    const os = (other.func ? other.func() : other.literal) as any[];
+    const os = getArray(other);
 
     for (let i in items) {
         var k = thisKey.func(i);
@@ -124,7 +124,7 @@ function* joinWith(items: any[], other: IPartArgument, thisKey: IPartArgument, o
 }
 
 function* groupJoin(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
-    const os = (other.func ? other.func() : other.literal) as any[];
+    const os = getArray(other);
 
     for (let i of items) {
         var k = thisKey.func(i);
@@ -141,7 +141,7 @@ function orderBy(items: any[], keySelectors: IQueryPart[]) {
             const v2 = sel.func(i2);
 
             if (v1 > v2) return desc;
-            if (v1 < v2) return -1 *  desc;
+            if (v1 < v2) return -1 * desc;
         }
     });
 }
@@ -195,20 +195,56 @@ function concatWith(items: any[], other: IPartArgument) {
     return Array.prototype.concat.call(items, other)
 }
 
-function zip(items: any[], other: IPartArgument, selector: IPartArgument) {
-    // todo
+function* zip(items: any[], other: IPartArgument, selector: IPartArgument) {
+    const os = getArray(other);
+
+    
+    var l = Math.min(items.length, os.length);
+    for (var i = 0; i < l; i++) 
+        yield selector.func(items[i], other[i]);
 }
 
-function union(items: any[], other: IPartArgument) {
-    // todo
+function* union(items: any[], other: IPartArgument) {
+    const os = getArray(other);
+    const l = [];
+
+    for (let i of items) {
+        if (!~l.indexOf(i)) {
+            l.push(i);
+            yield i;
+        }
+    }
+
+    for (let o of os) {
+        if (!~l.indexOf(o)) {
+            l.push(o);
+            yield o;
+        }
+    }
 }
 
-function intersect(items: any[], other: IPartArgument) {
-    // todo
+function* intersect(items: any[], other: IPartArgument) {
+    const os = getArray(other);
+
+    const prevs = [];
+    for (let i of items) {
+        if (~os.indexOf(i) && !~prevs.indexOf(i)) {
+            prevs.push(i);
+            yield i;
+        }
+    }
 }
 
-function except(items: any[], other: IPartArgument) {
-    // todo
+function* except(items: any[], other: IPartArgument) {
+    const os = getArray(other);
+    
+    const prevs = [];
+    for (let i of items) {
+        if (!~os.indexOf(i) && !~prevs.indexOf(i)) {
+            prevs.push(i);
+            yield i;
+        }
+    }
 }
 
 function defaultIfEmpty(items: any[]) {
@@ -258,7 +294,7 @@ function lastOrDefault(items: any[], predicate: IPartArgument) {
 function getLast(items: any[], predicate: IPartArgument) {
     for (let i = items.length - 1; i >= 0; i--) {
         const item = items[i];
-        if (!predicate.func ||  predicate.func(item)) return [true, item];
+        if (!predicate.func || predicate.func(item)) return [true, item];
     }
 
     return [false, null];
@@ -281,7 +317,7 @@ function singleOrDefault(items: any[], predicate: IPartArgument) {
 function getSingle(items: any[], predicate: IPartArgument) {
     let matches = [];
     for (let item of items) {
-        if (predicate.func &&  !predicate.func(item)) continue;
+        if (predicate.func && !predicate.func(item)) continue;
 
         if (matches.length > 0)
             throw new Error('Sequence contains more than one matching element');
@@ -355,4 +391,8 @@ function aggregate(items: any[], func: IPartArgument, seed: IPartArgument, selec
 
 function check(items) {
     if (!items) throw new TypeError('Cannot query null array.');
+}
+
+function getArray(arg: IPartArgument) {
+    return (arg.func ? arg.func() : arg.literal) as any[];
 }
