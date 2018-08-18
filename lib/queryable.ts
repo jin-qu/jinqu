@@ -26,9 +26,9 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.selectMany(selector, scopes));
     }
 
-    join<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.join(other, thisKey, otherKey, selector, scopes));
+        return this.create(QueryPart.joinWith(other, thisKey, otherKey, selector, scopes));
     }
 
     groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> |  string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
@@ -76,8 +76,8 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.distinct(comparer, scopes));
     }
 
-    concat(other: Array<T> | string, ...scopes): IQuery<T> {
-        return this.create(QueryPart.concat(other, scopes));
+    concatWith(other: Array<T> | string, ...scopes): IQuery<T> {
+        return this.create(QueryPart.concatWith(other, scopes));
     }
 
     zip<TOther, TResult = any>(other: Array<TOther> |  string, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {

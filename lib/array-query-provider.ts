@@ -55,7 +55,7 @@ const funcs = {
     cast,
     select,
     selectMany,
-    join,
+    joinWith,
     groupJoin,
     take,
     takeWhile,
@@ -63,7 +63,7 @@ const funcs = {
     skipWhile,
     groupBy,
     distinct,
-    concat,
+    concatWith,
     zip,
     union,
     intersect,
@@ -113,7 +113,7 @@ function* selectMany(items: any[], selector: IPartArgument) {
     }
 }
 
-function* join(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
+function* joinWith(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
     const os = (other.func ? other.func() : other.literal) as any[];
 
     for (let i in items) {
@@ -191,7 +191,7 @@ function* distinct(items: any[], comparer: IPartArgument) {
     return r;
 }
 
-function concat(items: any[], other: IPartArgument) {
+function concatWith(items: any[], other: IPartArgument) {
     return Array.prototype.concat.call(items, other)
 }
 

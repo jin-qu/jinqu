@@ -39,7 +39,7 @@ export interface IQuery<T> extends IQueryBase {
     cast<TResult>(type: Ctor<TResult>): IQuery<TResult>;
     select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
     selectMany<TResult = any>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
-    join<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
@@ -51,7 +51,7 @@ export interface IQuery<T> extends IQueryBase {
     skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T>;
     groupBy<TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, ...scopes): IQuery<TResult>;
     distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
-    concat(other: Array<T> | string, ...scopes): IQuery<T>;
+    concatWith(other: Array<T> | string, ...scopes): IQuery<T>;
     zip<TOther, TResult = any>(other: Array<TOther> | string, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     union(other: Array<T> | string, ...scopes): IQuery<T>;
     intersect(other: Array<T> | string, ...scopes): IQuery<T>;
