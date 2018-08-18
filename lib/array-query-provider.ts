@@ -1,8 +1,9 @@
-import { IQueryProvider, IPartArgument, IQueryPart, IQuery, Predicate } from './types';
+import { IQueryProvider, IPartArgument, IQueryPart } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
 const thenFuncs = [QueryFunc.thenBy, QueryFunc.thenByDescending];
+const descFuncs = [QueryFunc.orderByDescending, QueryFunc.thenByDescending];
 
 export class ArrayQueryProvider implements IQueryProvider {
 
@@ -42,7 +43,10 @@ export function execute(items: any[], parts: IQueryPart[]) {
 }
 
 function handlePart(items: any[], part: IQueryPart) {
-    return funcs[part.type].call(null, items, ...part.args);
+    const f = funcs[part.type];
+    if (!f) throw new Error(`Unknown query part type ${part.type}.`);
+
+    return f.call(null, items, ...part.args);
 }
 
 const funcs = {
@@ -109,16 +113,37 @@ function* selectMany(items: any[], selector: IPartArgument) {
     }
 }
 
-function join(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
-    // todo
+function* join(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
+    const os = (other.func ? other.func() : other.literal) as any[];
+
+    for (let i in items) {
+        var k = thisKey.func(i);
+        for (let o of os.filter(o => otherKey.func(o) == k))
+            yield selector.func(i, o);
+    }
 }
 
-function groupJoin(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
-    // todo
+function* groupJoin(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
+    const os = (other.func ? other.func() : other.literal) as any[];
+
+    for (let i of items) {
+        var k = thisKey.func(i);
+        yield selector.func(i, os.filter(o => otherKey.func(o) == k));
+    }
 }
 
 function orderBy(items: any[], keySelectors: IQueryPart[]) {
-    // todo
+    return items.sort((i1, i2) => {
+        for (let s of keySelectors) {
+            const desc = descFuncs.indexOf(s.type) ? -1 : 1;
+            const sel = s.args[0];
+            const v1 = sel.func(i1);
+            const v2 = sel.func(i2);
+
+            if (v1 > v2) return desc;
+            if (v1 < v2) return -1 *  desc;
+        }
+    });
 }
 
 function take(items: any[], count: IPartArgument) {
@@ -233,7 +258,7 @@ function lastOrDefault(items: any[], predicate: IPartArgument) {
 function getLast(items: any[], predicate: IPartArgument) {
     for (let i = items.length - 1; i >= 0; i--) {
         const item = items[i];
-        if (!predicate.func || predicate.func(item)) return [true, item];
+        if (!predicate.func ||  predicate.func(item)) return [true, item];
     }
 
     return [false, null];
@@ -243,7 +268,7 @@ function single(items: any[], predicate: IPartArgument) {
     if (!items.length) throw new Error('Sequence contains no element');
 
     const [found, item] = getSingle(items, predicate);
-   
+
     if (!found) throw new Error('Sequence contains no matching element');
 
     return item;
@@ -256,14 +281,14 @@ function singleOrDefault(items: any[], predicate: IPartArgument) {
 function getSingle(items: any[], predicate: IPartArgument) {
     let matches = [];
     for (let item of items) {
-        if (predicate.func && !predicate.func(item)) continue;
+        if (predicate.func &&  !predicate.func(item)) continue;
 
         if (matches.length > 0)
             throw new Error('Sequence contains more than one matching element');
 
         matches.push(item);
     }
-    
+
     return matches.length ? [true, matches[0]] : [false, null];
 }
 
@@ -323,7 +348,7 @@ function average(items: any[], selector: IPartArgument) {
 
 function aggregate(items: any[], func: IPartArgument, seed: IPartArgument, selector: IPartArgument) {
     return items.reduce(
-        (p, c) => func.func(p, selector.func ? selector.func(c) : c), 
+        (p, c) => func.func(p, selector.func ? selector.func(c) : c),
         seed.literal
     );
 }

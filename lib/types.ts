@@ -42,7 +42,7 @@ export interface IQuery<T> extends IQueryBase {
     join<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     take(count: number): IQuery<T>;
