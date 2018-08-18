@@ -31,7 +31,7 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.joinWith(other, thisKey, otherKey, selector, scopes));
     }
 
-    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> |  string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupJoin(other, thisKey, otherKey, selector, scopes));
     }
@@ -80,7 +80,7 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.concatWith(other, scopes));
     }
 
-    zip<TOther, TResult = any>(other: Array<TOther> |  string, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
+    zip<TOther, TResult = any>(other: Array<TOther> | string, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.zip(other, selector, scopes));
     }
 
@@ -177,8 +177,12 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, selector, scopes)]);
     }
 
+    [Symbol.iterator]() {
+        return <any>this.provider.execute(this.parts);
+    }
+
     toList() {
-        return this.provider.execute(this.parts);
+        return <T[]>Array.from(this);
     }
 
     private create<TResult = T>(part: IQueryPart): IQuery<TResult> {

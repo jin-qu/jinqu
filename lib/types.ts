@@ -33,7 +33,7 @@ export interface IQueryBase {
     readonly parts: IQueryPart[];
 }
 
-export interface IQuery<T> extends IQueryBase {
+export interface IQuery<T> extends IQueryBase, Iterable<T> {
     where(predicate: Predicate<T>, ...scopes): IQuery<T>;
     ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult>;
     cast<TResult>(type: Ctor<TResult>): IQuery<TResult>;

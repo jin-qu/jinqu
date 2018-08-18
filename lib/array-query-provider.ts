@@ -27,7 +27,7 @@ export function execute(items: any[], parts: IQueryPart[]) {
     let value: any = items;
     let orderParts = [];
     for (let p of parts) {
-        if (!~thenFuncs.indexOf(p.type)) {
+        if (~thenFuncs.indexOf(p.type)) {
             orderParts.push(p);
         }
         else {
