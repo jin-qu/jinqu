@@ -5,13 +5,7 @@
       "moduleResolution": "node",
       "sourceMap": true,
       "outDir": "./dist",
-      "declaration": true,
-      "lib": [
-        "dom",
-        "es5",
-        "es2015",
-        "es2015.promise"
-      ]
+      "declaration": true
     },
     "compileOnSave": true,
     "include": [
