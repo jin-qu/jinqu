@@ -20,7 +20,7 @@ const customers: Customer[] = [
 describe('Query part tests', () => {
 
     it('should filter the array', () => {
-        const result = customers.where(c => c.id > 4).toList();
+        const result = customers.where(c => c.id > 4).toArray();
 
         expect(result.length).to.equal(3);
         expect(result[0].id).to.equal(5);

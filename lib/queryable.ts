@@ -181,7 +181,7 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return <any>this.provider.execute(this.parts);
     }
 
-    toList() {
+    toArray() {
         return <T[]>Array.from(this);
     }
 

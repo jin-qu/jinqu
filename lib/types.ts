@@ -79,7 +79,7 @@ export interface IQuery<T> extends IQueryBase, Iterable<T> {
     aggregate<TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
         selector?: Func1<TAccumulate, TResult>, ...scopes): TResult;
 
-    toList(): Array<T>;
+    toArray(): Array<T>;
 }
 
 export interface IOrderedQuery<T> extends IQuery<T> {
