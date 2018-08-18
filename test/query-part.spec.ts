@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
+import faker from 'faker';
 import '../index';
 
 interface Customer {
