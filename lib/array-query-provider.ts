@@ -171,7 +171,22 @@ function* skipWhile(items: any[], predicate: IPartArgument) {
 }
 
 function* groupBy(items: any[], keySelector: IPartArgument, valueSelector: IPartArgument) {
-    // todo
+    const groups = [];
+    for (let i of items) {
+        const k = keySelector.func(i);
+        const a = groups.find(g => g.key === k);
+        if (!a) {
+            const group = [];
+            group['key'] = k; 
+            groups.push(group);
+        }
+        else {
+            a.push(i);
+        }
+    }
+
+    for (let g in groups)
+        yield valueSelector.func(g);
 }
 
 function* distinct(items: any[], comparer: IPartArgument) {

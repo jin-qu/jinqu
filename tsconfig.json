@@ -1,16 +1,18 @@
 {
-    "compilerOptions": {
-      "target": "es5",
-      "module": "umd",
-      "moduleResolution": "node",
-      "sourceMap": true,
-      "outDir": "./dist",
-      "declaration": true
-    },
-    "compileOnSave": true,
-    "include": [
-      "./index.ts",
-      "./lib/**/*.ts"
+  "compilerOptions": {
+    "target": "es5",
+    "module": "umd",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "lib": [
+      "es2015"
     ]
-  }
-  
+  },
+  "compileOnSave": true,
+  "include": [
+    "./index.ts",
+    "./lib/**/*.ts"
+  ]
+}
