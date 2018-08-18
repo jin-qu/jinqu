@@ -266,8 +266,9 @@ function defaultIfEmpty(items: any[]) {
     return items || [];
 }
 
-function reverse(items: any[]) {
-    return Array.prototype.reverse.call(items.slice());
+function* reverse(items: any[]) {
+    for (let i = items.length; i >= 0; i--)
+        yield items[i];
 }
 
 function first(items: any[], predicate: IPartArgument) {
