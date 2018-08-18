@@ -7,7 +7,7 @@ export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
 export type Predicate<T> = Func1<T, boolean>;
 
 export interface IGrouping<T, TKey> extends Array<T> {
-    Key: TKey;
+    key: TKey;
 }
 
 export interface IQueryProvider {
