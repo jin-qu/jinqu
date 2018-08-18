@@ -149,7 +149,7 @@ function* groupBy(items: any[], keySelector: IPartArgument, valueSelector: IPart
     // todo
 }
 
-function distinct(items: any[], comparer: IPartArgument) {
+function* distinct(items: any[], comparer: IPartArgument) {
     const r = [];
     for (let i = 0; i < items.length; i++) {
         const i1 = items[i];
@@ -159,9 +159,8 @@ function distinct(items: any[], comparer: IPartArgument) {
             if (comparer.func ? comparer.func(i1, i2) : (i1 == i2)) break;
         }
 
-        if (j === items.length) {
-            r.push(i1);
-        }
+        if (j === items.length)
+            yield i1;
     }
 
     return r;
@@ -315,12 +314,7 @@ function max(items: any[], selector: IPartArgument) {
 }
 
 function sum(items: any[], selector: IPartArgument) {
-    let s = 0;
-    for (let i of items) {
-        s += selector.func ? selector.func(i) : i;
-    }
-
-    return s;
+    return items.reduce((p, c) => p + (selector.func ? selector.func(c) : c), 0);
 }
 
 function average(items: any[], selector: IPartArgument) {
@@ -333,7 +327,7 @@ function aggregate(items: any[], func: IPartArgument, seed: IPartArgument, selec
         s = func.func(s, selector.func ? selector.func(i) : i);
     }
 
-    return items.reduce(<any>func, seed);
+    return s;
 }
 
 function check(items) {
