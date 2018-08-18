@@ -322,12 +322,10 @@ function average(items: any[], selector: IPartArgument) {
 }
 
 function aggregate(items: any[], func: IPartArgument, seed: IPartArgument, selector: IPartArgument) {
-    let s = seed.literal != null ? seed.literal : 0;
-    for (let i of items) {
-        s = func.func(s, selector.func ? selector.func(i) : i);
-    }
-
-    return s;
+    return items.reduce(
+        (p, c) => func.func(p, selector.func ? selector.func(c) : c), 
+        seed.literal
+    );
 }
 
 function check(items) {
