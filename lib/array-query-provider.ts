@@ -1,5 +1,6 @@
 // todo: use map for dictionaries and add support for deep equal
 
+import deepEqual = require('deep-equal');
 import { IQueryProvider, IPartArgument, IQueryPart } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
@@ -120,8 +121,10 @@ function* joinWith(items: any[], other: IPartArgument, thisKey: IPartArgument, o
 
     for (let i in items) {
         var k = thisKey.func(i);
-        for (let o of os.filter(o => otherKey.func(o) == k))
-            yield selector.func(i, o);
+        for (let o of os) {
+            if (deepEqual(otherKey.func(o), k))
+                yield selector.func(i, o);
+        }
     }
 }
 
@@ -130,7 +133,7 @@ function* groupJoin(items: any[], other: IPartArgument, thisKey: IPartArgument, 
 
     for (let i of items) {
         var k = thisKey.func(i);
-        yield selector.func(i, os.filter(o => otherKey.func(o) == k));
+        yield selector.func(i, os.filter(o => deepEqual(otherKey.func(o), k)));
     }
 }
 
@@ -185,7 +188,7 @@ function* groupBy(items: any[], keySelector: IPartArgument, valueSelector: IPart
     const groups = [];
     for (let i of items) {
         const k = keySelector.func(i);
-        const a = groups.find(g => g.key === k);
+        const a = groups.find(g => deepEqual(g.key, k));
         if (!a) {
             const group = [];
             group['key'] = k;
