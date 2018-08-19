@@ -1,5 +1,3 @@
-// todo: use map for dictionaries and add support for deep equal
-
 import deepEqual = require('deep-equal');
 import { IQueryProvider, IPartArgument, IQueryPart } from './types';
 import { QueryFunc } from './query-part';
