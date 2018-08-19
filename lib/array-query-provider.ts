@@ -148,8 +148,13 @@ function orderBy(items: any[], keySelectors: IQueryPart[]) {
     });
 }
 
-function take(items: any[], count: IPartArgument) {
-    return items.slice(0, count.literal);
+function* take(items: any[], count: IPartArgument) {
+    let i = 0;
+    for (let item of items) {
+        if (++i <= count.literal)
+            yield item;
+        else break;
+    }
 }
 
 function* takeWhile(items: any[], predicate: IPartArgument) {
@@ -160,8 +165,12 @@ function* takeWhile(items: any[], predicate: IPartArgument) {
     }
 }
 
-function skip(items: any[], count: IPartArgument) {
-    return items.slice(count.literal);
+function* skip(items: any[], count: IPartArgument) {
+    let i = 0;
+    for (let item of items) {
+        if (++i > count.literal)
+            yield item;
+    }
 }
 
 function* skipWhile(items: any[], predicate: IPartArgument) {
@@ -179,7 +188,7 @@ function* groupBy(items: any[], keySelector: IPartArgument, valueSelector: IPart
         const a = groups.find(g => g.key === k);
         if (!a) {
             const group = [];
-            group['key'] = k; 
+            group['key'] = k;
             groups.push(group);
         }
         else {
@@ -208,16 +217,24 @@ function* distinct(items: any[], comparer: IPartArgument) {
     return r;
 }
 
-function concatWith(items: any[], other: IPartArgument) {
-    return Array.prototype.concat.call(items, other)
+function* concatWith(items: any[], other: IPartArgument) {
+    const os = getArray(other);
+
+    for (let i of items) {
+        yield i;
+    }
+
+    for (let o of os) {
+        yield o;
+    }
 }
 
 function* zip(items: any[], other: IPartArgument, selector: IPartArgument) {
     const os = getArray(other);
 
-    
+
     var l = Math.min(items.length, os.length);
-    for (var i = 0; i < l; i++) 
+    for (var i = 0; i < l; i++)
         yield selector.func(items[i], other[i]);
 }
 
@@ -254,7 +271,7 @@ function* intersect(items: any[], other: IPartArgument) {
 
 function* except(items: any[], other: IPartArgument) {
     const os = getArray(other);
-    
+
     const prevs = [];
     for (let i of items) {
         if (!~os.indexOf(i) && !~prevs.indexOf(i)) {
@@ -411,6 +428,6 @@ function check(items) {
     if (!items) throw new TypeError('Cannot query null array.');
 }
 
-function getArray(arg: IPartArgument) {
+function getArray(arg: IPartArgument)  {
     return (arg.func ? arg.func() : arg.literal) as any[];
 }
