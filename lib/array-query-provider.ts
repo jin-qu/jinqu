@@ -98,9 +98,32 @@ function* where(items: any[], predicate: IPartArgument) {
     }
 }
 
-function ofType(items: any[]) { return items; }
+function* ofType(items: any[], ctor: IPartArgument) {
+    for (let i of items) {
+        if (i !== Object(i)) {
+            if (ctor.literal(i) === i)
+                yield i;
+        } else if (i instanceof ctor.literal)
+            yield i;
+    }
+}
 
-function cast(items: any[]) { return items; }
+function* cast(items: any[], ctor: IPartArgument) {
+    for (let i of items) {
+        if (i !== Object(i)) {
+            const v = ctor.literal(i);
+            if (v === NaN || v === null)
+                throw new Error(`Unable to cast ${i}`);
+            
+            yield v;
+        } else {
+            if (i.constructor !== Object && !(i instanceof ctor.literal))
+                throw new Error(`Unable to cast ${i}`);
+
+            yield i;
+        }
+    }
+}
 
 function* select(items: any[], selector: IPartArgument) {
     for (let i in items)
@@ -221,18 +244,15 @@ function* distinct(items: any[], comparer: IPartArgument) {
 function* concatWith(items: any[], other: IPartArgument) {
     const os = getArray(other);
 
-    for (let i of items) {
+    for (let i of items)
         yield i;
-    }
 
-    for (let o of os) {
+    for (let o of os)
         yield o;
-    }
 }
 
 function* zip(items: any[], other: IPartArgument, selector: IPartArgument) {
     const os = getArray(other);
-
 
     var l = Math.min(items.length, os.length);
     for (var i = 0; i < l; i++)
@@ -429,6 +449,6 @@ function check(items) {
     if (!items) throw new TypeError('Cannot query null array.');
 }
 
-function getArray(arg: IPartArgument)  {
+function getArray(arg: IPartArgument) {
     return (arg.func ? arg.func() : arg.literal) as any[];
 }
