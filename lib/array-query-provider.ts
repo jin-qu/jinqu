@@ -239,43 +239,43 @@ function* zip(items: any[], other: IPartArgument, selector: IPartArgument) {
 }
 
 function* union(items: any[], other: IPartArgument) {
-    const os = getArray(other);
-    const l = [];
+    const s = new Set();
 
     for (let i of items) {
-        if (!~l.indexOf(i)) {
-            l.push(i);
+        if (!s.has(i)) {
+            s.add(i);
             yield i;
         }
     }
 
+    const os = getArray(other);
     for (let o of os) {
-        if (!~l.indexOf(o)) {
-            l.push(o);
+        if (!s.has(o)) {
+            s.add(o);
             yield o;
         }
     }
 }
 
 function* intersect(items: any[], other: IPartArgument) {
-    const os = getArray(other);
+    const os = new Set(getArray(other));
 
-    const prevs = [];
+    const s = new Set();
     for (let i of items) {
-        if (~os.indexOf(i) && !~prevs.indexOf(i)) {
-            prevs.push(i);
+        if (os.has(i) && !s.has(i)) {
+            s.add(i);
             yield i;
         }
     }
 }
 
 function* except(items: any[], other: IPartArgument) {
-    const os = getArray(other);
+    const os = new Set(getArray(other));
 
-    const prevs = [];
+    const s = new Set();
     for (let i of items) {
-        if (!~os.indexOf(i) && !~prevs.indexOf(i)) {
-            prevs.push(i);
+        if (!os.has(i) && !s.has(i)) {
+            s.add(i);
             yield i;
         }
     }
@@ -375,7 +375,7 @@ function elementAtOrDefault(items: any[], index: IPartArgument) {
 }
 
 function contains(items: any[], item: IPartArgument) {
-    return items.indexOf(item) > 0;
+    return items.indexOf(item) >= 0;
 }
 
 function sequenceEqual(items: any[], other: IPartArgument) {
