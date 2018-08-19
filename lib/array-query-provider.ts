@@ -135,7 +135,7 @@ function* groupJoin(items: any[], other: IPartArgument, thisKey: IPartArgument, 
 }
 
 function orderBy(items: any[], keySelectors: IQueryPart[]) {
-    return items.sort((i1, i2) => {
+    return items.slice().sort((i1, i2) => {
         for (let s of keySelectors) {
             const desc = descFuncs.indexOf(s.type) ? -1 : 1;
             const sel = s.args[0];
