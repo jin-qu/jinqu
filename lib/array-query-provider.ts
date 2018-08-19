@@ -126,13 +126,13 @@ function* cast(items: any[], ctor: IPartArgument) {
 }
 
 function* select(items: any[], selector: IPartArgument) {
-    for (let i in items)
+    for (let i of items)
         yield selector.func(i);
 }
 
 function* selectMany(items: any[], selector: IPartArgument) {
-    for (let i in items) {
-        for (let ii in selector.func(i))
+    for (let i of items) {
+        for (let ii of selector.func(i))
             yield ii;
     }
 }
@@ -140,7 +140,7 @@ function* selectMany(items: any[], selector: IPartArgument) {
 function* joinWith(items: any[], other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
     const os = getArray(other);
 
-    for (let i in items) {
+    for (let i of items) {
         var k = thisKey.func(i);
         for (let o of os) {
             if (deepEqual(otherKey.func(o), k))
@@ -182,7 +182,7 @@ function* take(items: any[], count: IPartArgument) {
 }
 
 function* takeWhile(items: any[], predicate: IPartArgument) {
-    for (let i in items) {
+    for (let i of items) {
         if (predicate.func(i))
             yield i;
         else break;
@@ -198,7 +198,7 @@ function* skip(items: any[], count: IPartArgument) {
 }
 
 function* skipWhile(items: any[], predicate: IPartArgument) {
-    for (let i in items) {
+    for (let i of items) {
         if (predicate.func(i))
             break;
         else yield i;
@@ -220,7 +220,7 @@ function* groupBy(items: any[], keySelector: IPartArgument, valueSelector: IPart
         }
     }
 
-    for (let g in groups)
+    for (let g of groups)
         yield valueSelector.func(g);
 }
 

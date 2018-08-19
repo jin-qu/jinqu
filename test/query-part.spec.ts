@@ -39,7 +39,9 @@ describe('Query part tests', () => {
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
     });
 
-    it('should ', () => {
-
+    it('should select only given members', () => {
+        const ids = orders.select(o => o.id).toArray();
+        
+        expect(ids).to.deep.equal([1, 2, 3, 4, 5]);
     });
 });

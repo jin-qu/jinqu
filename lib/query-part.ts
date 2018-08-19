@@ -114,7 +114,7 @@ export class QueryPart implements IQueryPart {
     }
 
     static select<T, TResult = any>(selector: Func1<T, TResult>, scopes: any[]) {
-        return this.create(QueryFunc.cast, [identifier(selector, scopes)], scopes);
+        return this.create(QueryFunc.select, [identifier(selector, scopes)], scopes);
     }
 
     static selectMany<T, TResult = any>(selector: Func1<T, TResult>, scopes: any[]) {
