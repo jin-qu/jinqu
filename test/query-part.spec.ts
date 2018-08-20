@@ -78,7 +78,7 @@ describe('Query part tests', () => {
     });
 
     it('should sort orders by price', () => {
-        const sortedOrders = orders.orderBy(o => o.price).toArray();
+        const sortedOrders = orders.where(o => o.price > 10).orderBy(o => o.price).toArray();
 
         expect(sortedOrders[0]).property('no').to.be.equal('Ord4');
         expect(sortedOrders[1]).property('no').to.be.equal('Ord1');
