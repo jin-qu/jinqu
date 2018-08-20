@@ -82,7 +82,7 @@ const funcs = {
     intersect,
     except,
     defaultIfEmpty,
-    reverse,
+    reverseTo,
 
     first,
     firstOrDefault,
@@ -217,7 +217,7 @@ function* skipWhile(items: IterableIterator<any>, predicate: IPartArgument) {
         if (!yielding && !predicate.func(i)) {
             yielding = true;
         }
-        
+
         if (yielding) yield i;
     }
 }
@@ -325,7 +325,7 @@ function* defaultIfEmpty(items: IterableIterator<any>) {
     return items;
 }
 
-function* reverse(items: IterableIterator<any>) {
+function* reverseTo(items: IterableIterator<any>) {
     const arr = [];
 
     for (let i of items) {

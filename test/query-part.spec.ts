@@ -118,4 +118,7 @@ describe('Query part tests', () => {
         expect(biggerTwo[1]).property('id').to.be.equal(4);
         expect(biggerTwo[2]).property('id').to.be.equal(5);
     });
+
+    it('should group orders by customer', () => {
+    });
 });

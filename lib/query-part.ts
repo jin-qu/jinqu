@@ -214,7 +214,7 @@ export class QueryPart implements IQueryPart {
     }
 
     static reverseTo() {
-        return this.create(QueryFunc.reverse);
+        return this.create(QueryFunc.reverseTo);
     }
 
     static first<T>(predicate?: Predicate<T>, scopes?: any[]) {
@@ -315,7 +315,7 @@ export const QueryFunc = {
     intersect: 'intersect',
     except: 'except',
     defaultIfEmpty: 'defaultIfEmpty',
-    reverse: 'reverse',
+    reverseTo: 'reverseTo',
 
     first: 'first',
     firstOrDefault: 'firstOrDefault',
