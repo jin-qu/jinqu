@@ -318,8 +318,8 @@ function* except(items: IterableIterator<any>, other: IPartArgument) {
     }
 }
 
-function defaultIfEmpty(items: IterableIterator<any>) {
-    return items[Symbol.iterator]();
+function* defaultIfEmpty(items: IterableIterator<any>) {
+    return items;
 }
 
 function* reverse(items: IterableIterator<any>) {
