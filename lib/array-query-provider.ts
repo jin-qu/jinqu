@@ -323,10 +323,13 @@ function defaultIfEmpty(items: IterableIterator<any>) {
 }
 
 function* reverse(items: IterableIterator<any>) {
-    const arr = Array.from(items);
+    const arr = [];
 
-    for (let i = arr.length; i >= 0; i--)
-        yield arr[i];
+    for (let i of items) {
+        arr.splice(0, 0, i);
+    }
+
+    return arr;
 }
 
 function first(items: IterableIterator<any>, predicate: IPartArgument) {
@@ -362,14 +365,15 @@ function lastOrDefault(items: IterableIterator<any>, predicate: IPartArgument) {
 }
 
 function getLast(items: IterableIterator<any>, predicate: IPartArgument) {
-    const arr = Array.from(items);
+    let last;
 
-    for (let i = arr.length - 1; i >= 0; i--) {
-        const item = arr[i];
-        if (!predicate.func || predicate.func(item)) return [true, item];
+    for (let i of items) {
+        if (!predicate.func || predicate.func(i)) {
+            last = [true, i];
+        }
     }
-
-    return [false, null];
+    
+    return last ? last : [false, null];
 }
 
 function single(items: IterableIterator<any>, predicate: IPartArgument) {
