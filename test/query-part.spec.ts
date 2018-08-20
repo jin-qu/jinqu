@@ -258,4 +258,9 @@ describe('Query part tests', () => {
         expect(() => products.single()).to.throw();
         expect(() => products.single(p => p.category === 'None')).to.throw();
     });
+
+    it('should return given indexed item', () => {
+        expect(products.elementAt(3)).to.equal(products[3]);
+        expect(products.elementAtOrDefault(33)).to.equal(null);
+    });
 });

@@ -409,7 +409,8 @@ function elementAt(items: IterableIterator<any>, index: IPartArgument) {
 }
 
 function elementAtOrDefault(items: IterableIterator<any>, index: IPartArgument) {
-    return items[index.literal];
+    const v = items[index.literal];
+    return v === void 0 ? null : v;
 }
 
 function contains(items: IterableIterator<any>, item: IPartArgument) {
