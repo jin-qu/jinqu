@@ -423,15 +423,15 @@ function contains(items: IterableIterator<any>, item: IPartArgument) {
 }
 
 function sequenceEqual(items: IterableIterator<any>, other: IPartArgument) {
-    const arr = Array.from(items);
-    const o = other.literal;
-    if (!o || arr.length !== o.length) return false;
+    let os = getArray(other);
+    let idx = 0;
 
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i] != o[i]) return false;
+    for (let i of items) {
+        if (idx >= os.length || i != os[i]) return false;
+        idx++;
     }
-
-    return true;
+    
+    return idx === os.length;
 }
 
 function any(items: IterableIterator<any>, predicate: IPartArgument) {
