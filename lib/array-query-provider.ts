@@ -315,7 +315,7 @@ function* except(items: IterableIterator<any>, other: IPartArgument) {
     }
 }
 
-function* defaultIfEmpty(items: IterableIterator<any>) {
+function defaultIfEmpty(items: IterableIterator<any>) {
     return items;
 }
 

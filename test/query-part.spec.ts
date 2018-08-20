@@ -196,7 +196,7 @@ describe('Query part tests', () => {
         expect(concat).property('length').to.equal(2);
     });
 
-    it('should detect differing items between two arrays', () => {
+    it('should return same sequence for defaultIfEmpty', () => {
         const arr = [{ id: 1 }, { id: 2 }];
 
         const defEmp = arr.defaultIfEmpty().toArray();
@@ -211,5 +211,51 @@ describe('Query part tests', () => {
         const rev2 = arr.splice(0, 0).reverse();
         
         expect(rev1).to.deep.equal(rev2);
+    });
+
+    it('should return first item', () => {
+        expect(products.first()).to.equal(products[0]);
+        expect(products.first(p => p.no === products[3].no)).to.equal(products[3]);
+    });
+
+    it('should return default for missing first item', () => {
+        expect([].firstOrDefault()).to.equal(null);
+        expect(products.firstOrDefault(p => p.category === 'None')).to.equal(null);
+    });
+
+    it('should throw error for missing first item', () => {
+        expect(() => [].first()).to.throw();
+        expect(() => products.first(p => p.category === 'None')).to.throw();
+    });
+
+    it('should return last item', () => {
+        const idx = products.length - 1;
+        expect(products.last()).to.equal(products[idx]);
+        expect(products.last(p => p.no === products[idx].no)).to.equal(products[idx]);
+    });
+
+    it('should return default for missing last item', () => {
+        expect([].lastOrDefault()).to.equal(null);
+        expect(products.lastOrDefault(p => p.category === 'None')).to.equal(null);
+    });
+
+    it('should throw error for missing last item', () => {
+        expect(() => [].last()).to.throw();
+        expect(() => products.last(p => p.category === 'None')).to.throw();
+    });
+
+    it('should return single item', () => {
+        expect([42].single()).to.equal(42);
+        expect(products.single(p => p.no === products[3].no)).to.equal(products[3]);
+    });
+
+    it('should return default for missing single item', () => {
+        expect([].singleOrDefault()).to.equal(null);
+        expect(products.singleOrDefault(p => p.category === 'None')).to.equal(null);
+    });
+
+    it('should throw error for missing single item', () => {
+        expect(() => products.single()).to.throw();
+        expect(() => products.single(p => p.category === 'None')).to.throw();
     });
 });
