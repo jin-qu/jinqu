@@ -173,7 +173,7 @@ function* groupJoin(items: IterableIterator<any>, other: IPartArgument, thisKey:
 function multiOrderBy(items: IterableIterator<any>, keySelectors: IQueryPart[]) {
     const arr = Array.from(items).sort((i1, i2) => {
         for (let s of keySelectors) {
-            const desc = descFuncs.indexOf(s.type) ? -1 : 1;
+            const desc = ~descFuncs.indexOf(s.type) ? 1 : -1;
             const sel = s.args[0];
             const v1 = sel.func(i1);
             const v2 = sel.func(i2);
@@ -212,10 +212,13 @@ function* skip(items: IterableIterator<any>, count: IPartArgument) {
 }
 
 function* skipWhile(items: IterableIterator<any>, predicate: IPartArgument) {
+    let yielding = false;
     for (let i of items) {
-        if (predicate.func(i))
-            break;
-        else yield i;
+        if (!yielding && !predicate.func(i)) {
+            yielding = true;
+        }
+        
+        if (yielding) yield i;
     }
 }
 

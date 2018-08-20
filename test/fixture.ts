@@ -116,7 +116,7 @@ export const orders: IOrder[] = [
         },
         {
             product: 'Prd6',
-            supplier: 'BNM  ',
+            supplier: 'BNM',
             count: 13
         },
         {

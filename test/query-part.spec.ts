@@ -77,10 +77,45 @@ describe('Query part tests', () => {
         expect(prdCount).to.be.deep.equal([{ product: 'Prd1', count: 2 }, { product: 'Prd2', count: 1 }]);
     });
 
-    it('should sort orders by price', () => {
-        const sortedOrders = orders.where(o => o.price > 10).orderBy(o => o.price).toArray();
+    it('should sort order details', () => {
+        const sortedDetails = orders[4].details.orderBy(d => d.supplier).thenByDescending(d => d.count).toArray();
+        
+        expect(sortedDetails[0]).property('count').to.be.equal(67);
+        expect(sortedDetails[1]).property('count').to.be.equal(13);
+        expect(sortedDetails[2]).property('count').to.be.equal(86);
+    });
 
-        expect(sortedOrders[0]).property('no').to.be.equal('Ord4');
-        expect(sortedOrders[1]).property('no').to.be.equal('Ord1');
+    it('should take only first 3', () => {
+        const firstThree = orders.take(3).toArray();
+   
+        expect(firstThree).property('length').to.be.equal(3);
+        expect(firstThree[0]).property('id').to.be.equal(1);
+        expect(firstThree[1]).property('id').to.be.equal(2);
+        expect(firstThree[2]).property('id').to.be.equal(3);
+    });
+
+    it('should take when id is smaller than 3', () => {
+        const firstTwo = orders.takeWhile(o => o.id < 3).toArray();
+   
+        expect(firstTwo).property('length').to.be.equal(2);
+        expect(firstTwo[0]).property('id').to.be.equal(1);
+        expect(firstTwo[1]).property('id').to.be.equal(2);
+    });
+
+    it('should skip first 3', () => {
+        const skipThree = orders.skip(3).toArray();
+   
+        expect(skipThree).property('length').to.be.equal(2);
+        expect(skipThree[0]).property('id').to.be.equal(4);
+        expect(skipThree[1]).property('id').to.be.equal(5);
+    });
+
+    it('should skip when id is smaller than 3', () => {
+        const biggerTwo = orders.skipWhile(o => o.id < 3).toArray();
+   
+        expect(biggerTwo).property('length').to.be.equal(3);
+        expect(biggerTwo[0]).property('id').to.be.equal(3);
+        expect(biggerTwo[1]).property('id').to.be.equal(4);
+        expect(biggerTwo[2]).property('id').to.be.equal(5);
     });
 });
