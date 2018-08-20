@@ -228,7 +228,7 @@ function* groupBy(items: IterableIterator<any>, keySelector: IPartArgument, valu
         const k = keySelector.func(i);
         const a = groups.find(g => deepEqual(g.key, k));
         if (!a) {
-            const group = [];
+            const group = [i];
             group['key'] = k;
             groups.push(group);
         }
@@ -242,18 +242,12 @@ function* groupBy(items: IterableIterator<any>, keySelector: IPartArgument, valu
 }
 
 function* distinct(items: IterableIterator<any>, comparer: IPartArgument) {
-    const arr = Array.from(items);
-    
-    for (let i = 0; i < arr.length; i++) {
-        const i1 = items[i];
-        let j = i
-        for (; j < arr.length; j++) {
-            const i2 = items[j];
-            if (comparer.func ? comparer.func(i1, i2) : (i1 == i2)) break;
+    const dist = [];
+    for (let i of items) {
+        if (!dist.find(d => comparer.func ? comparer.func(i, d) : (i == d))) {
+            dist.push(i);
+            yield i;
         }
-
-        if (j === arr.length)
-            yield i1;
     }
 }
 

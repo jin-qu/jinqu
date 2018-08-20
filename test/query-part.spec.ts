@@ -7,7 +7,7 @@ describe('Query part tests', () => {
 
     it('should filter the array', () => {
         const result = orders.where(c => c.id > 3).toArray();
-        expect(result.length).to.equal(2);
+        expect(result).property('length').to.equal(2);
         expect(result[0].id).to.equal(4);
         expect(result[1].no).to.equal('Ord5');
     });
@@ -79,7 +79,7 @@ describe('Query part tests', () => {
 
     it('should sort order details', () => {
         const sortedDetails = orders[4].details.orderBy(d => d.supplier).thenByDescending(d => d.count).toArray();
-        
+
         expect(sortedDetails[0]).property('count').to.be.equal(67);
         expect(sortedDetails[1]).property('count').to.be.equal(13);
         expect(sortedDetails[2]).property('count').to.be.equal(86);
@@ -87,7 +87,7 @@ describe('Query part tests', () => {
 
     it('should take only first 3', () => {
         const firstThree = orders.take(3).toArray();
-   
+
         expect(firstThree).property('length').to.be.equal(3);
         expect(firstThree[0]).property('id').to.be.equal(1);
         expect(firstThree[1]).property('id').to.be.equal(2);
@@ -96,7 +96,7 @@ describe('Query part tests', () => {
 
     it('should take when id is smaller than 3', () => {
         const firstTwo = orders.takeWhile(o => o.id < 3).toArray();
-   
+
         expect(firstTwo).property('length').to.be.equal(2);
         expect(firstTwo[0]).property('id').to.be.equal(1);
         expect(firstTwo[1]).property('id').to.be.equal(2);
@@ -104,7 +104,7 @@ describe('Query part tests', () => {
 
     it('should skip first 3', () => {
         const skipThree = orders.skip(3).toArray();
-   
+
         expect(skipThree).property('length').to.be.equal(2);
         expect(skipThree[0]).property('id').to.be.equal(4);
         expect(skipThree[1]).property('id').to.be.equal(5);
@@ -112,7 +112,7 @@ describe('Query part tests', () => {
 
     it('should skip when id is smaller than 3', () => {
         const biggerTwo = orders.skipWhile(o => o.id < 3).toArray();
-   
+
         expect(biggerTwo).property('length').to.be.equal(3);
         expect(biggerTwo[0]).property('id').to.be.equal(3);
         expect(biggerTwo[1]).property('id').to.be.equal(4);
@@ -120,5 +120,96 @@ describe('Query part tests', () => {
     });
 
     it('should group orders by customer', () => {
+        const prodCat = products
+            .groupBy(p => p.category, g => ({ category: g.key, count: g.length }))
+            .toArray();
+
+        expect(prodCat).property('length').to.equal(3);
+        expect(prodCat[0]).property('count').to.equal(3);
+        expect(prodCat[1]).property('count').to.equal(2);
+        expect(prodCat[2]).property('count').to.equal(4);
+    });
+
+    it('should eleminate recurring items', () => {
+        const arr = [1, 2, 1, 3, 3, 2, 1, 3];
+        const dist = arr.distinct().toArray();
+
+        expect(dist).property('length').to.equal(3);
+
+        const items = [
+            { id: 1, name: 'i1' },
+            { id: 2, name: 'i2' },
+            { id: 1, name: 'i3' },
+            { id: 3, name: 'i4' },
+            { id: 3, name: 'i5' },
+            { id: 2, name: 'i6' },
+            { id: 1, name: 'i7' },
+            { id: 3, name: 'i8' }
+        ];
+        const distItems = items.distinct((i1, i2) => i1.id === i2.id).toArray();
+
+        expect(distItems).property('length').to.equal(3);
+    });
+
+    it('should concat two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+
+        const concat = arr1.concatWith(arr2).toArray();
+
+        expect(concat).property('length').to.equal(5);
+    });
+
+    it('should zip two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }];
+
+        const zip = arr1.zip(arr2, (i1, i2) => i1.id + i2.id).toArray();
+
+        expect(zip).to.deep.equal([4, 6]);
+    });
+
+    it('should union two arrays with eliminating recurring items', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+
+        const concat = arr1.union(arr2).toArray();
+
+        expect(concat).property('length').to.equal(4);
+    });
+    
+    it('should detect shared items between two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+
+        const concat = arr1.intersect(arr2).toArray();
+
+        expect(concat).property('length').to.equal(1);
+    });
+
+    it('should detect differing items between two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+
+        const concat = arr2.except(arr1).toArray();
+
+        expect(concat).property('length').to.equal(2);
+    });
+
+    it('should detect differing items between two arrays', () => {
+        const arr = [{ id: 1 }, { id: 2 }];
+
+        const defEmp = arr.defaultIfEmpty().toArray();
+
+        expect(defEmp).to.not.equal(arr);
+        expect(defEmp).to.deep.equal(arr);
+    });
+
+    it('should reverse the array to a new one', () => {
+        const arr = [1, 2, 1, 3, 3, 2, 1, 3];
+        const rev1 = arr.reverseTo().toArray()
+        const rev2 = arr.splice(0, 0).reverse();
+        
+        expect(rev1).to.deep.equal(rev2);
     });
 });
