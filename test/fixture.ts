@@ -24,6 +24,12 @@ export interface Customer {
     no: string;
 }
 
+export interface Product {
+    no: string;
+    name: string;
+    category: string;
+}
+
 export const orders: IOrder[] = [
     new Order(1, 'Ord1', 400, new Date("2013/8/6 12:34:56"), { no: 'Cus4' }, [
         {
@@ -129,4 +135,52 @@ export const orders: IOrder[] = [
             count: 86
         }
     ])
+];
+
+export const products: Product[] = [
+    {
+        no: 'Prd1',
+        name: 'Product 01',
+        category: 'Cat01'
+    },
+    {
+        no: 'Prd2',
+        name: 'Product 02',
+        category: 'Cat01'
+    },
+    {
+        no: 'Prd3',
+        name: 'Product 03',
+        category: 'Cat01'
+    },
+    {
+        no: 'Prd4',
+        name: 'Product 04',
+        category: 'Cat02'
+    },
+    {
+        no: 'Prd5',
+        name: 'Product 05',
+        category: 'Cat02'
+    },
+    {
+        no: 'Prd6',
+        name: 'Product 06',
+        category: 'Cat03'
+    },
+    {
+        no: 'Prd7',
+        name: 'Product 07',
+        category: 'Cat03'
+    },
+    {
+        no: 'Prd8',
+        name: 'Product 08',
+        category: 'Cat03'
+    },
+    {
+        no: 'Prd9',
+        name: 'Product 09',
+        category: 'Cat03'
+    },
 ];

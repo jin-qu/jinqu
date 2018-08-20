@@ -3,6 +3,7 @@ import { IQueryProvider, IPartArgument, IQueryPart } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
+const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending];
 const thenFuncs = [QueryFunc.thenBy, QueryFunc.thenByDescending];
 const descFuncs = [QueryFunc.orderByDescending, QueryFunc.thenByDescending];
 
@@ -28,19 +29,30 @@ export function execute(items: any[], parts: IQueryPart[]) {
     let value: any = items;
     let orderParts = [];
     for (let p of parts) {
+        // accumulate consecutive sortings
         if (~thenFuncs.indexOf(p.type)) {
             orderParts.push(p);
+            continue;
+        }
+
+        // if it is not a thenBy, apply previous sortings to items
+        if (orderParts.length) {
+            value = multiOrderBy(items, orderParts);
+        }
+
+        if (~orderFuncs.indexOf(p.type)) {
+            // save the new sorting
+            orderParts = [p];
         }
         else {
-            if (orderParts.length) {
-                value = orderBy(items, orderParts);
-                orderParts = [];
-            }
-
+            // clear sortings
+            orderParts = [];
             value = handlePart(value, p);
         }
     }
-    return value;
+
+    // handle remaining sortings
+    return orderParts.length ? multiOrderBy(items, orderParts) : value;
 }
 
 function handlePart(items: any[], part: IQueryPart) {
@@ -114,7 +126,7 @@ function* cast(items: any[], ctor: IPartArgument) {
             const v = ctor.literal(i);
             if (v === NaN || v === null)
                 throw new Error(`Unable to cast ${i}`);
-            
+
             yield v;
         } else {
             if (i.constructor !== Object && !(i instanceof ctor.literal))
@@ -158,18 +170,20 @@ function* groupJoin(items: any[], other: IPartArgument, thisKey: IPartArgument, 
     }
 }
 
-function orderBy(items: any[], keySelectors: IQueryPart[]) {
-    return items.slice().sort((i1, i2) => {
+function multiOrderBy(items: any[], keySelectors: IQueryPart[]) {
+    items = items.slice().sort((i1, i2) => {
         for (let s of keySelectors) {
             const desc = descFuncs.indexOf(s.type) ? -1 : 1;
             const sel = s.args[0];
             const v1 = sel.func(i1);
             const v2 = sel.func(i2);
 
-            if (v1 > v2) return desc;
-            if (v1 < v2) return -1 * desc;
+            if (v1 < v2) return desc;
+            if (v1 > v2) return -1 * desc;
         }
     });
+
+    return items[Symbol.iterator]();
 }
 
 function* take(items: any[], count: IPartArgument) {
@@ -303,7 +317,7 @@ function* except(items: any[], other: IPartArgument) {
 }
 
 function defaultIfEmpty(items: any[]) {
-    return items || [];
+    return items[Symbol.iterator]();
 }
 
 function* reverse(items: any[]) {
