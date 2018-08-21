@@ -268,4 +268,8 @@ describe('Query part tests', () => {
         expect(products.contains(products[3])).to.be.true;
         expect([1, 2, 3, 4].contains(5)).to.be.false;
     });
+
+    it('should return if array is equal to given array', () => {
+        expect([1, 2, 3, 4].sequenceEqual([1, 2, 3, 4])).to.be.true;
+    });
 });

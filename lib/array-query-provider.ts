@@ -17,49 +17,63 @@ export class ArrayQueryProvider implements IQueryProvider {
     }
 
     execute<TResult = any>(parts: IQueryPart[]): TResult {
-        return execute(this.items, parts);
+        const items = this.items;
+        
+        if (!parts || !parts.length) return <any>items;
+
+        check(items);
+    
+        let value = items[Symbol.iterator]();
+        let orderParts = [];
+        for (let p of parts) {
+            // accumulate consecutive sortings
+            if (~thenFuncs.indexOf(p.type)) {
+                orderParts.push(p);
+                continue;
+            }
+    
+            // if it is not a thenBy, apply previous sortings to items
+            if (orderParts.length) {
+                value = this.multiOrderBy(value, orderParts);
+            }
+    
+            if (~orderFuncs.indexOf(p.type)) {
+                // save the new sorting
+                orderParts = [p];
+            }
+            else {
+                // clear sortings
+                orderParts = [];
+                value = this.handlePart(value, p);
+            }
+        }
+    
+        // handle remaining sortings
+        return <any>(orderParts.length ? this.multiOrderBy(value, orderParts) : value);
     }
-}
 
-export function execute(items: any[], parts: IQueryPart[]): any {
-    if (!parts || !parts.length) return items;
-
-    check(items);
-
-    let value = items[Symbol.iterator]();
-    let orderParts = [];
-    for (let p of parts) {
-        // accumulate consecutive sortings
-        if (~thenFuncs.indexOf(p.type)) {
-            orderParts.push(p);
-            continue;
-        }
-
-        // if it is not a thenBy, apply previous sortings to items
-        if (orderParts.length) {
-            value = multiOrderBy(value, orderParts);
-        }
-
-        if (~orderFuncs.indexOf(p.type)) {
-            // save the new sorting
-            orderParts = [p];
-        }
-        else {
-            // clear sortings
-            orderParts = [];
-            value = handlePart(value, p);
-        }
+    handlePart(items: IterableIterator<any>, part: IQueryPart) {
+        const f = funcs[part.type];
+        if (!f) throw new Error(`Unknown query part type ${part.type}.`);
+    
+        return f.call(null, items, ...part.args);
     }
 
-    // handle remaining sortings
-    return orderParts.length ? multiOrderBy(value, orderParts) : value;
-}
-
-function handlePart(items: IterableIterator<any>, part: IQueryPart) {
-    const f = funcs[part.type];
-    if (!f) throw new Error(`Unknown query part type ${part.type}.`);
-
-    return f.call(null, items, ...part.args);
+    multiOrderBy(items: IterableIterator<any>, keySelectors: IQueryPart[]) {
+        const arr = Array.from(items).sort((i1, i2) => {
+            for (let s of keySelectors) {
+                const desc = ~descFuncs.indexOf(s.type) ? 1 : -1;
+                const sel = s.args[0];
+                const v1 = sel.func(i1);
+                const v2 = sel.func(i2);
+    
+                if (v1 < v2) return desc;
+                if (v1 > v2) return -1 * desc;
+            }
+        });
+    
+        return arr[Symbol.iterator]();
+    }
 }
 
 const funcs = {
@@ -168,22 +182,6 @@ function* groupJoin(items: IterableIterator<any>, other: IPartArgument, thisKey:
         var k = thisKey.func(i);
         yield selector.func(i, os.filter(o => deepEqual(otherKey.func(o), k)));
     }
-}
-
-function multiOrderBy(items: IterableIterator<any>, keySelectors: IQueryPart[]) {
-    const arr = Array.from(items).sort((i1, i2) => {
-        for (let s of keySelectors) {
-            const desc = ~descFuncs.indexOf(s.type) ? 1 : -1;
-            const sel = s.args[0];
-            const v1 = sel.func(i1);
-            const v2 = sel.func(i2);
-
-            if (v1 < v2) return desc;
-            if (v1 > v2) return -1 * desc;
-        }
-    });
-
-    return arr[Symbol.iterator]();
 }
 
 function* take(items: IterableIterator<any>, count: IPartArgument) {
@@ -415,7 +413,7 @@ function elementAtOrDefault(items: IterableIterator<any>, index: IPartArgument) 
 
 function contains(items: IterableIterator<any>, item: IPartArgument) {
     for (let i of items)
-        if (i == item) return true;
+        if (i == item.literal) return true;
     
     return false;
 }
@@ -425,8 +423,7 @@ function sequenceEqual(items: IterableIterator<any>, other: IPartArgument) {
     let idx = 0;
 
     for (let i of items) {
-        if (idx >= os.length || i != os[i]) return false;
-        idx++;
+        if (idx++ >= os.length || i != os[i]) return false;
     }
     
     return idx === os.length;
