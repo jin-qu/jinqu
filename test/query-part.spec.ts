@@ -296,4 +296,14 @@ describe('Query part tests', () => {
         expect([1, 2, 3, 4].count()).to.equal(4);
         expect([1, 2, 3, 4].count(i => i > 2)).to.equal(2);
     });
+
+    it('should return the min value', () => {
+        expect([1, 2, 3, 4].min()).to.equal(1);
+        expect(products.min(p => p.no)).to.equal('Prd1');
+    });
+
+    it('should return the max value', () => {
+        expect([1, 2, 3, 4].max()).to.equal(4);
+        expect(products.max(p => p.no)).to.equal('Prd9');
+    });
 });

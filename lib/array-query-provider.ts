@@ -385,7 +385,7 @@ const funcs = {
         for (let i of items) {
             let curr = selector.func ? selector.func(i) : i;
             if (min == null || curr < min) {
-                min = i;
+                min = curr;
             }
         }
 
@@ -397,7 +397,7 @@ const funcs = {
         for (let i of items) {
             let curr = selector.func ? selector.func(i) : i;
             if (max == null || curr > max) {
-                max = i;
+                max = curr;
             }
         }
 
