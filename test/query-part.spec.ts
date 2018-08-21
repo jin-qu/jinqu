@@ -306,4 +306,9 @@ describe('Query part tests', () => {
         expect([1, 2, 3, 4].max()).to.equal(4);
         expect(products.max(p => p.no)).to.equal('Prd9');
     });
+
+    it('should return the sum of values', () => {
+        expect([1, 2, 3, 4].sum()).to.equal(10);
+        expect(orders.sum(o => o.id)).to.equal(15);
+    });
 });

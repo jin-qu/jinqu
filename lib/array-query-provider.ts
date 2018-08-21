@@ -405,7 +405,7 @@ const funcs = {
     },
 
     sum(items: IterableIterator<any>, selector: IPartArgument) {
-        let sum;
+        let sum = 0;
         for (let i of items) {
             let curr = selector.func ? selector.func(i) : i;
             sum += curr;
@@ -415,8 +415,7 @@ const funcs = {
     },
 
     average(items: IterableIterator<any>, selector: IPartArgument) {
-        let sum;
-        let c = 0;
+        let sum = 0, c = 0;
         for (let i of items) {
             let curr = selector.func ? selector.func(i) : i;
             sum += curr;
