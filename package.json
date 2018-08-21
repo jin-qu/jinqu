@@ -1,6 +1,6 @@
 {
   "name": "jinqu",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Querying infrastructure for JavaScript, with Linq style",
   "main": "dist/index.js",
   "keywords": [
@@ -17,10 +17,8 @@
     "url": "https://github.com/umutozel/jinqu"
   },
   "scripts": {
-    "test": "mocha --opts mocha.opts",
-    "test-spec": "mocha --opts mocha.opts --reporter spec",
-    "cover": "nyc mocha --opts mocha.opts",
-    "cover-spec": "nyc --reporter text-summary mocha --opts mocha.opts --reporter spec",
+    "test": "mocha --opts mocha.opts --reporter spec",
+    "cover": "nyc --reporter text-summary mocha --opts mocha.opts --reporter spec",
     "build": "tsc"
   },
   "author": "Umut Özel",
