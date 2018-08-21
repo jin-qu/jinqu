@@ -274,4 +274,26 @@ describe('Query part tests', () => {
         expect([1, 2, 3, 4, 5].sequenceEqual([1, 2, 3, 4])).to.be.false;
         expect([1, 2, 3, 4].sequenceEqual([1, 2, 3, 4, 5])).to.be.false;
     });
+
+    it('should return if any item matches the predicate', () => {
+        expect([1, 2, 3, 4].any()).to.be.true;
+        expect([1, 2, 3, 4].any(i => i > 3)).to.be.true;
+        expect([1, 2, 3, 4].any(i => i > 4)).to.be.false;
+
+        expect(products.any(p => p.name === products[4].name)).to.be.true;
+        expect(products.any(p => p.name === 'None')).to.be.false;
+    });
+
+    it('should return if all items matches the predicate', () => {
+        expect([1, 2, 3, 4].all(i => i > 0)).to.be.true;
+        expect([1, 2, 3, 4].any(i => i > 4)).to.be.false;
+
+        expect(products.all(p => p.category !== null)).to.be.true;
+        expect(products.all(p => p.name === 'None')).to.be.false;
+    });
+
+    it('should return the count of items that matches the predicate', () => {
+        expect([1, 2, 3, 4].count()).to.equal(4);
+        expect([1, 2, 3, 4].count(i => i > 2)).to.equal(2);
+    });
 });
