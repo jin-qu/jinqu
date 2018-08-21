@@ -77,7 +77,6 @@ export class ArrayQueryProvider implements IQueryProvider {
 }
 
 const funcs = {
-
     where: function* (items: IterableIterator<any>, predicate: IPartArgument) {
         for (let i of items) {
             if (predicate.func(i)) yield i;
@@ -422,19 +421,18 @@ const funcs = {
             c++;
         }
 
-        return c === 0 ? 0 : sum / 0;
+        return c === 0 ? 0 : sum / c;
     },
 
     aggregate(items: IterableIterator<any>, func: IPartArgument, seed: IPartArgument, selector: IPartArgument) {
         let s = seed.literal ||  0;
 
         for (let i of items) {
-            s = func.func(s, selector.func ? selector.func(i) : i);
+            s = func.func(s, i);
         }
 
-        return s;
-    },
-
+        return selector.func ? selector.func(s) : s;
+    }
 };
 
 function check(items) {

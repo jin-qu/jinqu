@@ -311,4 +311,17 @@ describe('Query part tests', () => {
         expect([1, 2, 3, 4].sum()).to.equal(10);
         expect(orders.sum(o => o.id)).to.equal(15);
     });
+
+    it('should return the average of values', () => {
+        expect([1, 2, 3, 4].average()).to.equal(2.5);
+        expect(orders.average(o => o.id)).to.equal(3);
+    });
+
+    it('should return the aggregated value', () => {
+        expect([1, 2, 3, 4].aggregate((seed, value) => seed + value)).to.equal(10);
+        expect([1, 2, 3, 4].aggregate((seed, value) => seed + value, 32)).to.equal(42);
+
+        const agg = orders.aggregate((seed, order) => seed + order.id, 69, v => v / 2);
+        expect(agg).to.equal(42);
+    });
 });
