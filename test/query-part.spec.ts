@@ -207,7 +207,7 @@ describe('Query part tests', () => {
 
     it('should reverse the array to a new one', () => {
         const arr = [1, 2, 1, 3, 3, 2, 1, 3];
-        const rev1 = arr.reverseTo().toArray()
+        const rev1 = arr.asQueryable().reverse().toArray()
         const rev2 = arr.splice(0, 0).reverse();
         
         expect(rev1).to.deep.equal(rev2);
@@ -262,5 +262,10 @@ describe('Query part tests', () => {
     it('should return given indexed item', () => {
         expect(products.elementAt(3)).to.equal(products[3]);
         expect(products.elementAtOrDefault(33)).to.equal(null);
+    });
+
+    it('should return if array contains the given item', () => {
+        expect(products.contains(products[3])).to.be.true;
+        expect([1, 2, 3, 4].contains(5)).to.be.false;
     });
 });

@@ -100,8 +100,8 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.create(QueryPart.defaultIfEmpty());
     }
 
-    reverseTo(): IQuery<T> {
-        return this.create(QueryPart.reverseTo());
+    reverse(): IQuery<T> {
+        return this.create(QueryPart.reverse());
     }
 
     first(predicate?: Predicate<T>, ...scopes): T {

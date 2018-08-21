@@ -82,7 +82,7 @@ const funcs = {
     intersect,
     except,
     defaultIfEmpty,
-    reverseTo,
+    reverse,
 
     first,
     firstOrDefault,
@@ -319,7 +319,7 @@ function defaultIfEmpty(items: IterableIterator<any>) {
     return items;
 }
 
-function* reverseTo(items: IterableIterator<any>) {
+function* reverse(items: IterableIterator<any>) {
     const arr = [];
 
     for (let i of items) {

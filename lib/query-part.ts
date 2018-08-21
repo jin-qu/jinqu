@@ -213,8 +213,8 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.defaultIfEmpty);
     }
 
-    static reverseTo() {
-        return this.create(QueryFunc.reverseTo);
+    static reverse() {
+        return this.create(QueryFunc.reverse);
     }
 
     static first<T>(predicate?: Predicate<T>, scopes?: any[]) {
@@ -315,7 +315,7 @@ export const QueryFunc = {
     intersect: 'intersect',
     except: 'except',
     defaultIfEmpty: 'defaultIfEmpty',
-    reverseTo: 'reverseTo',
+    reverse: 'reverse',
 
     first: 'first',
     firstOrDefault: 'firstOrDefault',

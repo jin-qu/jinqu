@@ -57,7 +57,7 @@ export interface IQuery<T> extends IQueryBase, Iterable<T> {
     intersect(other: Array<T> | string, ...scopes): IQuery<T>;
     except(other: Array<T> | string, ...scopes): IQuery<T>;
     defaultIfEmpty(): IQuery<T>;
-    reverseTo(): IQuery<T>;
+    reverse(): IQuery<T>;
 
     first(predicate?: Predicate<T>, ...scopes): T;
     firstOrDefault(predicate?: Predicate<T>, ...scopes): T;
