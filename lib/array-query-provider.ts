@@ -423,7 +423,7 @@ function sequenceEqual(items: IterableIterator<any>, other: IPartArgument) {
     let idx = 0;
 
     for (let i of items) {
-        if (idx++ >= os.length || i != os[i]) return false;
+        if (idx >= os.length || i != os[idx++]) return false;
     }
     
     return idx === os.length;

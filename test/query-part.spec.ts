@@ -271,5 +271,7 @@ describe('Query part tests', () => {
 
     it('should return if array is equal to given array', () => {
         expect([1, 2, 3, 4].sequenceEqual([1, 2, 3, 4])).to.be.true;
+        expect([1, 2, 3, 4, 5].sequenceEqual([1, 2, 3, 4])).to.be.false;
+        expect([1, 2, 3, 4].sequenceEqual([1, 2, 3, 4, 5])).to.be.false;
     });
 });
