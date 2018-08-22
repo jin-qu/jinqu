@@ -78,11 +78,23 @@ describe('Query part tests', () => {
     });
 
     it('should sort order details', () => {
-        const sortedDetails = orders[4].details.asQueryable().orderBy(d => d.supplier).thenByDescending(d => d.count).toArray();
+        const sortedDetails1 = orders[4].details.asQueryable()
+            .orderBy(d => d.supplier)
+            .thenByDescending(d => d.count)
+            .toArray();
 
-        expect(sortedDetails[0]).property('count').to.be.equal(67);
-        expect(sortedDetails[1]).property('count').to.be.equal(13);
-        expect(sortedDetails[2]).property('count').to.be.equal(86);
+        expect(sortedDetails1[0]).property('count').to.be.equal(67);
+        expect(sortedDetails1[1]).property('count').to.be.equal(13);
+        expect(sortedDetails1[2]).property('count').to.be.equal(86);
+
+        const sortedDetails2 = orders[4].details.asQueryable()
+            .orderByDescending(d => d.supplier)
+            .thenBy(d => d.count)
+            .toArray();
+
+        expect(sortedDetails2[0]).property('count').to.be.equal(8);
+        expect(sortedDetails2[1]).property('count').to.be.equal(4);
+        expect(sortedDetails2[2]).property('count').to.be.equal(34);
     });
 
     it('should take only first 3', () => {

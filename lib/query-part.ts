@@ -157,7 +157,7 @@ export class QueryPart implements IQueryPart {
     }
 
     static orderByDescending<T>(keySelector: Func1<T>, scopes: any[]) {
-        return this.create(QueryFunc.orderBy, [identifier(keySelector, scopes)], scopes);
+        return this.create(QueryFunc.orderByDescending, [identifier(keySelector, scopes)], scopes);
     }
 
     static thenBy<T>(keySelector: Func1<T>, scopes: any[]) {
