@@ -56,4 +56,15 @@ describe('Query part tests with strings', () => {
 
         expect(prdCount).to.be.deep.equal([{ product: 'Prd1', count: 2 }, { product: 'Prd2', count: 1 }]);
     });
+
+    it('should sort order details', () => {
+        const sortedDetails = orders[4].details.asQueryable()
+            .orderBy('d => d.supplier')
+            .thenByDescending('d => d.count')
+            .toArray();
+
+        expect(sortedDetails[0]).property('count').to.be.equal(67);
+        expect(sortedDetails[1]).property('count').to.be.equal(13);
+        expect(sortedDetails[2]).property('count').to.be.equal(86);
+    });
 });
