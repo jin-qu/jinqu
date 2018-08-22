@@ -43,4 +43,17 @@ describe('Query part tests with strings', () => {
 
         expect(supCat).to.be.deep.equal([{ supplier: 'ABC', category: 'Cat01' }, { supplier: 'QWE', category: 'Cat02' }]);
     });
+
+    it('should join and group two arrays', () => {
+        const details = orders.asQueryable().selectMany(o => o.details).toArray();
+        const prdCount = [products[0], products[1]].asQueryable().groupJoin(
+            'details',
+            'p => p.no',
+            'd => d.product',
+            '(p, ds) => ({ product: p.no, count: ds.length })',
+            { details }
+        ).toArray();
+
+        expect(prdCount).to.be.deep.equal([{ product: 'Prd1', count: 2 }, { product: 'Prd2', count: 1 }]);
+    });
 });
