@@ -246,4 +246,8 @@ describe('Query part tests with strings', () => {
     it('should return the max value', () => {
         expect(products.asQueryable().max('p => p.no')).to.equal('Prd9');
     });
+
+    it('should return the sum of values', () => {
+        expect(orders.asQueryable().sum('o => o.id')).to.equal(15);
+    });
 });
