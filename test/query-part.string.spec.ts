@@ -250,4 +250,8 @@ describe('Query part tests with strings', () => {
     it('should return the sum of values', () => {
         expect(orders.asQueryable().sum('o => o.id')).to.equal(15);
     });
+
+    it('should return the average of values', () => {
+        expect(orders.asQueryable().average('o => o.id')).to.equal(3);
+    });
 });
