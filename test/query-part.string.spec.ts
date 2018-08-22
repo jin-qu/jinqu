@@ -154,4 +154,13 @@ describe('Query part tests with strings', () => {
 
         expect(concat).property('length').to.equal(1);
     });
+
+    it('should detect differing items between two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+
+        const concat = arr2.asQueryable().except('arr1', { arr1 }).toArray();
+
+        expect(concat).property('length').to.equal(2);
+    });
 });
