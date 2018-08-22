@@ -217,4 +217,13 @@ describe('Query part tests with strings', () => {
         expect([1, 2, 3, 4, 5].asQueryable().sequenceEqual('arr', { arr: [1, 2, 3, 4] })).to.be.false;
         expect([1, 2, 3, 4].asQueryable().sequenceEqual('[1, 2, 3, 4, 5]')).to.be.false;
     });
+
+    it('should return if any item matches the predicate', () => {
+        expect([1, 2, 3, 4].asQueryable().any('i => i > 3')).to.be.true;
+        expect([1, 2, 3, 4].asQueryable().any('i => i > 4')).to.be.false;
+
+        const p5 = products[5];
+        expect(products.asQueryable().any('p => p.name === p5.name', { p5 })).to.be.true;
+        expect(products.asQueryable().any('p => p.name === "None"')).to.be.false;
+    });
 });
