@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import 'mocha';
-import '../index';
 import { Order, orders, products } from './fixture';
 
 describe('Query part tests', () => {
