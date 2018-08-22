@@ -226,4 +226,12 @@ describe('Query part tests with strings', () => {
         expect(products.asQueryable().any('p => p.name === p5.name', { p5 })).to.be.true;
         expect(products.asQueryable().any('p => p.name === "None"')).to.be.false;
     });
+
+    it('should return if all items matches the predicate', () => {
+        expect([1, 2, 3, 4].asQueryable().all('i => i > 0')).to.be.true;
+        expect([1, 2, 3, 4].asQueryable().any('i => i > 4')).to.be.false;
+
+        expect(products.asQueryable().all('p => p.category !== null')).to.be.true;
+        expect(products.asQueryable().all('p => p.name === "None"')).to.be.false;
+    });
 });
