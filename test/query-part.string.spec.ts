@@ -11,4 +11,18 @@ describe('Query part tests with strings', () => {
         expect(result[0].id).to.equal(4);
         expect(result[1].no).to.equal('Ord5');
     });
+
+    it('should select only given members', () => {
+        const ids = orders.asQueryable().select(o => o.id).toArray();
+        expect(ids).to.deep.equal([1, 2, 3, 4, 5]);
+
+        const idNo = orders.asQueryable().select('o => ({ id: o.id, no: o.no })').toArray();
+        expect(idNo).to.deep.equal([
+            { id: 1, no: 'Ord1' },
+            { id: 2, no: 'Ord2' },
+            { id: 3, no: 'Ord3' },
+            { id: 4, no: 'Ord4' },
+            { id: 5, no: 'Ord5' }
+        ]);
+    });
 });
