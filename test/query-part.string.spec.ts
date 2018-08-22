@@ -128,4 +128,12 @@ describe('Query part tests with strings', () => {
 
         expect(concat).property('length').to.equal(5);
     });
+
+    it('should zip two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+
+        const zip = arr1.asQueryable().zip('[{ id: 3 }, { id: 4 }]', '(i1, i2) => i1.id + i2.id').toArray();
+
+        expect(zip).to.deep.equal([4, 6]);
+    });
 });
