@@ -211,4 +211,10 @@ describe('Query part tests with strings', () => {
     it('should throw error for missing single item', () => {
         expect(() => products.asQueryable().single('p => p.category === "None"')).to.throw();
     });
+
+    it('should return if array is equal to given array', () => {
+        expect([1, 2, 3, 4].asQueryable().sequenceEqual('[1, 2, 3, 4]')).to.be.true;
+        expect([1, 2, 3, 4, 5].asQueryable().sequenceEqual('arr', { arr: [1, 2, 3, 4] })).to.be.false;
+        expect([1, 2, 3, 4].asQueryable().sequenceEqual('[1, 2, 3, 4, 5]')).to.be.false;
+    });
 });
