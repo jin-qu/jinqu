@@ -83,4 +83,25 @@ describe('Query part tests with strings', () => {
         expect(firstTwo[0]).property('id').to.be.equal(1);
         expect(firstTwo[1]).property('id').to.be.equal(2);
     });
+
+    it('should skip when id is smaller than 3', () => {
+        const biggerTwo = orders.asQueryable().skipWhile('o => o.id < 3').toArray();
+
+        expect(biggerTwo).property('length').to.be.equal(3);
+        expect(biggerTwo[0]).property('id').to.be.equal(3);
+        expect(biggerTwo[1]).property('id').to.be.equal(4);
+        expect(biggerTwo[2]).property('id').to.be.equal(5);
+    });
+
+    it('should group orders by customer', () => {
+        const prodCat = products
+            .asQueryable()
+            .groupBy('p => p.category', 'g => ({ category: g.key, count: g.length })')
+            .toArray();
+
+        expect(prodCat).property('length').to.equal(3);
+        expect(prodCat[0]).property('count').to.equal(3);
+        expect(prodCat[1]).property('count').to.equal(2);
+        expect(prodCat[2]).property('count').to.equal(4);
+    });
 });
