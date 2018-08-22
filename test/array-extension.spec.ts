@@ -29,5 +29,6 @@ describe('Array extension tests', () => {
         const query = arr.q();
 
         expect(query.where(i => i > 3).count()).to.equal(2);
+        expect(arr.where(i => i > 3).count()).to.equal(2);
     });
 });
