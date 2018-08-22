@@ -476,13 +476,3 @@ function getSingle(items: IterableIterator<any>, predicate: IPartArgument) {
 
     return matches.length ? [true, matches[0]] : [false, null];
 }
-
-declare global {
-    interface Array<T> {
-        asQueryable(): IQuery<T>;
-    }
-}
-
-Array.prototype.asQueryable = function () {
-    return new ArrayQueryProvider(this).createQuery();
-}
