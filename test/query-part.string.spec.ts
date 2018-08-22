@@ -172,4 +172,17 @@ describe('Query part tests with strings', () => {
         expect(defEmp).to.not.equal(arr);
         expect(defEmp).to.deep.equal(arr);
     });
+
+    it('should return first item', () => {
+        const p4 = products[3];
+        expect(products.asQueryable().first('p => p.no === p4.no', { p4 })).to.equal(products[3]);
+    });
+
+    it('should return default for missing first item', () => {
+        expect(products.asQueryable().firstOrDefault('p => p.category === "None"')).to.equal(null);
+    });
+
+    it('should throw error for missing first item', () => {
+        expect(() => products.asQueryable().first('p => p.category === "None"')).to.throw();
+    });
 });
