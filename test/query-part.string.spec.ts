@@ -163,4 +163,13 @@ describe('Query part tests with strings', () => {
 
         expect(concat).property('length').to.equal(2);
     });
+
+    it('should return same sequence for defaultIfEmpty', () => {
+        const arr = [{ id: 1 }, { id: 2 }];
+
+        const defEmp = arr.asQueryable().defaultIfEmpty().toArray();
+
+        expect(defEmp).to.not.equal(arr);
+        expect(defEmp).to.deep.equal(arr);
+    });
 });
