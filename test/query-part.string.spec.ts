@@ -198,4 +198,17 @@ describe('Query part tests with strings', () => {
     it('should throw error for missing last item', () => {
         expect(() => products.asQueryable().last('p => p.category === "None"')).to.throw();
     });
+
+    it('should return single item', () => {
+        const p4 = products[3];
+        expect(products.asQueryable().single('p => p.no === p4No', { p4No: p4.no })).to.equal(p4);
+    });
+
+    it('should return default for missing single item', () => {
+        expect(products.asQueryable().singleOrDefault('p => p.category === "None"')).to.equal(null);
+    });
+
+    it('should throw error for missing single item', () => {
+        expect(() => products.asQueryable().single('p => p.category === "None"')).to.throw();
+    });
 });
