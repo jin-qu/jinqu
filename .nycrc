@@ -4,6 +4,7 @@
     ],
     "exclude": [
         "dist",
+        "lib/types.ts",
         "**/*.d.ts"
     ],
     "extension": [
