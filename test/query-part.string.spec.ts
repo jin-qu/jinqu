@@ -104,4 +104,20 @@ describe('Query part tests with strings', () => {
         expect(prodCat[1]).property('count').to.equal(2);
         expect(prodCat[2]).property('count').to.equal(4);
     });
+
+    it('should eleminate recurring items', () => {
+        const items = [
+            { id: 1, name: 'i1' },
+            { id: 2, name: 'i2' },
+            { id: 1, name: 'i3' },
+            { id: 3, name: 'i4' },
+            { id: 3, name: 'i5' },
+            { id: 2, name: 'i6' },
+            { id: 1, name: 'i7' },
+            { id: 3, name: 'i8' }
+        ];
+        const distItems = items.asQueryable().distinct('(i1, i2) => i1.id === i2.id').toArray();
+
+        expect(distItems).property('length').to.equal(3);
+    });
 });
