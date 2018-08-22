@@ -185,4 +185,17 @@ describe('Query part tests with strings', () => {
     it('should throw error for missing first item', () => {
         expect(() => products.asQueryable().first('p => p.category === "None"')).to.throw();
     });
+
+    it('should return last item', () => {
+        const last = products[products.length - 1];
+        expect(products.asQueryable().last('p => p.no === lastNo', { lastNo: last.no })).to.equal(last);
+    });
+
+    it('should return default for missing last item', () => {
+        expect(products.asQueryable().lastOrDefault('p => p.category === "None"')).to.equal(null);
+    });
+
+    it('should throw error for missing last item', () => {
+        expect(() => products.asQueryable().last('p => p.category === "None"')).to.throw();
+    });
 });
