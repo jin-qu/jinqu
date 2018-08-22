@@ -30,4 +30,17 @@ describe('Query part tests with strings', () => {
         const details = orders.asQueryable().selectMany('o => o.details').toArray();
         expect(details.length).to.equal(16);
     });
+
+    it('should join two arrays', () => {
+        const details = orders[0].details;
+        const supCat = details.asQueryable().joinWith(
+            'products',
+            'd => d.product',
+            'p => p.no',
+            '(d, p) => ({ supplier: d.supplier, category: p.category })',
+            { products }
+        ).toArray();
+
+        expect(supCat).to.be.deep.equal([{ supplier: 'ABC', category: 'Cat01' }, { supplier: 'QWE', category: 'Cat02' }]);
+    });
 });
