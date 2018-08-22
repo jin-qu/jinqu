@@ -242,4 +242,8 @@ describe('Query part tests with strings', () => {
     it('should return the min value', () => {
         expect(products.asQueryable().min('p => p.no')).to.equal('Prd1');
     });
+
+    it('should return the max value', () => {
+        expect(products.asQueryable().max('p => p.no')).to.equal('Prd9');
+    });
 });
