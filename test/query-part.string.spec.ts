@@ -136,4 +136,13 @@ describe('Query part tests with strings', () => {
 
         expect(zip).to.deep.equal([4, 6]);
     });
+
+    it('should union two arrays with eliminating recurring items', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+
+        const concat = arr1.asQueryable().union('arr2', { arr2 }).toArray();
+
+        expect(concat).property('length').to.equal(4);
+    });
 });
