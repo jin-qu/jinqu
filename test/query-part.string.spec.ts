@@ -83,4 +83,12 @@ describe('Query part tests with strings', () => {
         expect(firstTwo[0]).property('id').to.be.equal(1);
         expect(firstTwo[1]).property('id').to.be.equal(2);
     });
+
+    it('should take when id is smaller than 3', () => {
+        const firstTwo = orders.asQueryable().takeWhile('o => o.id < 3').toArray();
+
+        expect(firstTwo).property('length').to.be.equal(2);
+        expect(firstTwo[0]).property('id').to.be.equal(1);
+        expect(firstTwo[1]).property('id').to.be.equal(2);
+    });
 });
