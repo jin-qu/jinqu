@@ -234,4 +234,8 @@ describe('Query part tests with strings', () => {
         expect(products.asQueryable().all('p => p.category !== null')).to.be.true;
         expect(products.asQueryable().all('p => p.name === "None"')).to.be.false;
     });
+
+    it('should return the count of items that matches the predicate', () => {
+        expect([1, 2, 3, 4].asQueryable().count('i => i > 2')).to.equal(2);
+    });
 });
