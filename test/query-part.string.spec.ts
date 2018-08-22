@@ -145,4 +145,13 @@ describe('Query part tests with strings', () => {
 
         expect(concat).property('length').to.equal(4);
     });
+
+    it('should detect shared items between two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+
+        const concat = arr1.asQueryable().intersect('arr2', { arr2 }).toArray();
+
+        expect(concat).property('length').to.equal(1);
+    });
 });
