@@ -120,4 +120,12 @@ describe('Query part tests with strings', () => {
 
         expect(distItems).property('length').to.equal(3);
     });
+
+    it('should concat two arrays', () => {
+        const arr1 = [{ id: 1 }, { id: 2 }];
+
+        const concat = arr1.asQueryable().concatWith('[{ id: 3 }, { id: 4 }, arr1_0]', { arr1_0: arr1[0] }).toArray();
+
+        expect(concat).property('length').to.equal(5);
+    });
 });
