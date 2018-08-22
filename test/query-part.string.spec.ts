@@ -25,4 +25,9 @@ describe('Query part tests with strings', () => {
             { id: 5, no: 'Ord5' }
         ]);
     });
+
+    it('should select all details to one array', () => {
+        const details = orders.asQueryable().selectMany('o => o.details').toArray();
+        expect(details.length).to.equal(16);
+    });
 });
