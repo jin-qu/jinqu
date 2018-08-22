@@ -254,4 +254,12 @@ describe('Query part tests with strings', () => {
     it('should return the average of values', () => {
         expect(orders.asQueryable().average('o => o.id')).to.equal(3);
     });
+
+    it('should return the aggregated value', () => {
+        expect([1, 2, 3, 4].asQueryable().aggregate('(seed, value) => seed + value')).to.equal(10);
+        expect([1, 2, 3, 4].asQueryable().aggregate('(seed, value) => seed + value', 32)).to.equal(42);
+
+        const agg = orders.asQueryable().aggregate('(seed, order) => seed + order.id', 69, 'v => v / 2');
+        expect(agg).to.equal(42);
+    });
 });
