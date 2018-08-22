@@ -6,7 +6,7 @@ import { Order, orders, products } from './fixture';
 describe('Query part tests', () => {
 
     it('should filter the array', () => {
-        const result = orders.where(c => c.id > 3).toArray();
+        const result = orders.asQueryable().where(c => c.id > 3).toArray();
         expect(result).property('length').to.equal(2);
         expect(result[0].id).to.equal(4);
         expect(result[1].no).to.equal('Ord5');
@@ -15,30 +15,30 @@ describe('Query part tests', () => {
     it('should return only given typed items for ofType', () => {
         // primitive test
         const items: any[] = ['1', 2, 'a3', 4, false, '5'];
-        const numbers = items.ofType<Number>(Number).toArray();
+        const numbers = items.asQueryable().ofType<Number>(Number).toArray();
         expect(numbers).to.deep.equal([2, 4]);
 
         // object test
-        const classOrders = orders.ofType<Order>(Order).toArray();
+        const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
     });
 
     it('should cast to given type', () => {
         // primitive test
         const items: any[] = ['1', 2, '3', 4, '5'];
-        const numbers = items.cast<Number>(Number).toArray();
+        const numbers = items.asQueryable().cast<Number>(Number).toArray();
         expect(numbers).to.deep.equal([1, 2, 3, 4, 5]);
 
         // object test
-        const classOrders = [orders[0], orders[2], orders[4]].cast<Order>(Order).toArray();
+        const classOrders = [orders[0], orders[2], orders[4]].asQueryable().cast<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
     });
 
     it('should select only given members', () => {
-        const ids = orders.select(o => o.id).toArray();
+        const ids = orders.asQueryable().select(o => o.id).toArray();
         expect(ids).to.deep.equal([1, 2, 3, 4, 5]);
 
-        const idNo = orders.select(o => ({ id: o.id, no: o.no })).toArray();
+        const idNo = orders.asQueryable().select(o => ({ id: o.id, no: o.no })).toArray();
         expect(idNo).to.deep.equal([
             { id: 1, no: 'Ord1' },
             { id: 2, no: 'Ord2' },
@@ -49,13 +49,13 @@ describe('Query part tests', () => {
     });
 
     it('should select all details to one array', () => {
-        const details = orders.selectMany(o => o.details).toArray();
+        const details = orders.asQueryable().selectMany(o => o.details).toArray();
         expect(details.length).to.equal(16);
     });
 
     it('should join two arrays', () => {
         const details = orders[0].details;
-        const supCat = details.joinWith(
+        const supCat = details.asQueryable().joinWith(
             products,
             d => d.product,
             p => p.no,
@@ -66,8 +66,8 @@ describe('Query part tests', () => {
     });
 
     it('should join and group two arrays', () => {
-        const details = orders.selectMany(o => o.details).toArray();
-        const prdCount = [products[0], products[1]].groupJoin(
+        const details = orders.asQueryable().selectMany(o => o.details).toArray();
+        const prdCount = [products[0], products[1]].asQueryable().groupJoin(
             details,
             p => p.no,
             d => d.product,
@@ -78,7 +78,7 @@ describe('Query part tests', () => {
     });
 
     it('should sort order details', () => {
-        const sortedDetails = orders[4].details.orderBy(d => d.supplier).thenByDescending(d => d.count).toArray();
+        const sortedDetails = orders[4].details.asQueryable().orderBy(d => d.supplier).thenByDescending(d => d.count).toArray();
 
         expect(sortedDetails[0]).property('count').to.be.equal(67);
         expect(sortedDetails[1]).property('count').to.be.equal(13);
@@ -86,7 +86,7 @@ describe('Query part tests', () => {
     });
 
     it('should take only first 3', () => {
-        const firstThree = orders.take(3).toArray();
+        const firstThree = orders.asQueryable().take(3).toArray();
 
         expect(firstThree).property('length').to.be.equal(3);
         expect(firstThree[0]).property('id').to.be.equal(1);
@@ -95,7 +95,7 @@ describe('Query part tests', () => {
     });
 
     it('should take when id is smaller than 3', () => {
-        const firstTwo = orders.takeWhile(o => o.id < 3).toArray();
+        const firstTwo = orders.asQueryable().takeWhile(o => o.id < 3).toArray();
 
         expect(firstTwo).property('length').to.be.equal(2);
         expect(firstTwo[0]).property('id').to.be.equal(1);
@@ -103,7 +103,7 @@ describe('Query part tests', () => {
     });
 
     it('should skip first 3', () => {
-        const skipThree = orders.skip(3).toArray();
+        const skipThree = orders.asQueryable().skip(3).toArray();
 
         expect(skipThree).property('length').to.be.equal(2);
         expect(skipThree[0]).property('id').to.be.equal(4);
@@ -111,7 +111,7 @@ describe('Query part tests', () => {
     });
 
     it('should skip when id is smaller than 3', () => {
-        const biggerTwo = orders.skipWhile(o => o.id < 3).toArray();
+        const biggerTwo = orders.asQueryable().skipWhile(o => o.id < 3).toArray();
 
         expect(biggerTwo).property('length').to.be.equal(3);
         expect(biggerTwo[0]).property('id').to.be.equal(3);
@@ -121,6 +121,7 @@ describe('Query part tests', () => {
 
     it('should group orders by customer', () => {
         const prodCat = products
+            .asQueryable()
             .groupBy(p => p.category, g => ({ category: g.key, count: g.length }))
             .toArray();
 
@@ -132,7 +133,7 @@ describe('Query part tests', () => {
 
     it('should eleminate recurring items', () => {
         const arr = [1, 2, 1, 3, 3, 2, 1, 3];
-        const dist = arr.distinct().toArray();
+        const dist = arr.asQueryable().distinct().toArray();
 
         expect(dist).property('length').to.equal(3);
 
@@ -146,7 +147,7 @@ describe('Query part tests', () => {
             { id: 1, name: 'i7' },
             { id: 3, name: 'i8' }
         ];
-        const distItems = items.distinct((i1, i2) => i1.id === i2.id).toArray();
+        const distItems = items.asQueryable().distinct((i1, i2) => i1.id === i2.id).toArray();
 
         expect(distItems).property('length').to.equal(3);
     });
@@ -155,7 +156,7 @@ describe('Query part tests', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
 
-        const concat = arr1.concatWith(arr2).toArray();
+        const concat = arr1.asQueryable().concatWith(arr2).toArray();
 
         expect(concat).property('length').to.equal(5);
     });
@@ -164,7 +165,7 @@ describe('Query part tests', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }];
 
-        const zip = arr1.zip(arr2, (i1, i2) => i1.id + i2.id).toArray();
+        const zip = arr1.asQueryable().zip(arr2, (i1, i2) => i1.id + i2.id).toArray();
 
         expect(zip).to.deep.equal([4, 6]);
     });
@@ -173,7 +174,7 @@ describe('Query part tests', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
 
-        const concat = arr1.union(arr2).toArray();
+        const concat = arr1.asQueryable().union(arr2).toArray();
 
         expect(concat).property('length').to.equal(4);
     });
@@ -182,7 +183,7 @@ describe('Query part tests', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
 
-        const concat = arr1.intersect(arr2).toArray();
+        const concat = arr1.asQueryable().intersect(arr2).toArray();
 
         expect(concat).property('length').to.equal(1);
     });
@@ -191,7 +192,7 @@ describe('Query part tests', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
 
-        const concat = arr2.except(arr1).toArray();
+        const concat = arr2.asQueryable().except(arr1).toArray();
 
         expect(concat).property('length').to.equal(2);
     });
@@ -199,7 +200,7 @@ describe('Query part tests', () => {
     it('should return same sequence for defaultIfEmpty', () => {
         const arr = [{ id: 1 }, { id: 2 }];
 
-        const defEmp = arr.defaultIfEmpty().toArray();
+        const defEmp = arr.asQueryable().defaultIfEmpty().toArray();
 
         expect(defEmp).to.not.equal(arr);
         expect(defEmp).to.deep.equal(arr);
@@ -214,114 +215,114 @@ describe('Query part tests', () => {
     });
 
     it('should return first item', () => {
-        expect(products.first()).to.equal(products[0]);
-        expect(products.first(p => p.no === products[3].no)).to.equal(products[3]);
+        expect(products.asQueryable().first()).to.equal(products[0]);
+        expect(products.asQueryable().first(p => p.no === products[3].no)).to.equal(products[3]);
     });
 
     it('should return default for missing first item', () => {
-        expect([].firstOrDefault()).to.equal(null);
-        expect(products.firstOrDefault(p => p.category === 'None')).to.equal(null);
+        expect([].asQueryable().firstOrDefault()).to.equal(null);
+        expect(products.asQueryable().firstOrDefault(p => p.category === 'None')).to.equal(null);
     });
 
     it('should throw error for missing first item', () => {
-        expect(() => [].first()).to.throw();
-        expect(() => products.first(p => p.category === 'None')).to.throw();
+        expect(() => [].asQueryable().first()).to.throw();
+        expect(() => products.asQueryable().first(p => p.category === 'None')).to.throw();
     });
 
     it('should return last item', () => {
         const idx = products.length - 1;
-        expect(products.last()).to.equal(products[idx]);
-        expect(products.last(p => p.no === products[idx].no)).to.equal(products[idx]);
+        expect(products.asQueryable().last()).to.equal(products[idx]);
+        expect(products.asQueryable().last(p => p.no === products[idx].no)).to.equal(products[idx]);
     });
 
     it('should return default for missing last item', () => {
-        expect([].lastOrDefault()).to.equal(null);
-        expect(products.lastOrDefault(p => p.category === 'None')).to.equal(null);
+        expect([].asQueryable().lastOrDefault()).to.equal(null);
+        expect(products.asQueryable().lastOrDefault(p => p.category === 'None')).to.equal(null);
     });
 
     it('should throw error for missing last item', () => {
-        expect(() => [].last()).to.throw();
-        expect(() => products.last(p => p.category === 'None')).to.throw();
+        expect(() => [].asQueryable().last()).to.throw();
+        expect(() => products.asQueryable().last(p => p.category === 'None')).to.throw();
     });
 
     it('should return single item', () => {
-        expect([42].single()).to.equal(42);
-        expect(products.single(p => p.no === products[3].no)).to.equal(products[3]);
+        expect([42].asQueryable().single()).to.equal(42);
+        expect(products.asQueryable().single(p => p.no === products[3].no)).to.equal(products[3]);
     });
 
     it('should return default for missing single item', () => {
-        expect([].singleOrDefault()).to.equal(null);
-        expect(products.singleOrDefault(p => p.category === 'None')).to.equal(null);
+        expect([].asQueryable().singleOrDefault()).to.equal(null);
+        expect(products.asQueryable().singleOrDefault(p => p.category === 'None')).to.equal(null);
     });
 
     it('should throw error for missing single item', () => {
-        expect(() => products.single()).to.throw();
-        expect(() => products.single(p => p.category === 'None')).to.throw();
+        expect(() => products.asQueryable().single()).to.throw();
+        expect(() => products.asQueryable().single(p => p.category === 'None')).to.throw();
     });
 
     it('should return given indexed item', () => {
-        expect(products.elementAt(3)).to.equal(products[3]);
-        expect(products.elementAtOrDefault(33)).to.equal(null);
+        expect(products.asQueryable().elementAt(3)).to.equal(products[3]);
+        expect(products.asQueryable().elementAtOrDefault(33)).to.equal(null);
     });
 
     it('should return if array contains the given item', () => {
-        expect(products.contains(products[3])).to.be.true;
-        expect([1, 2, 3, 4].contains(5)).to.be.false;
+        expect(products.asQueryable().contains(products[3])).to.be.true;
+        expect([1, 2, 3, 4].asQueryable().contains(5)).to.be.false;
     });
 
     it('should return if array is equal to given array', () => {
-        expect([1, 2, 3, 4].sequenceEqual([1, 2, 3, 4])).to.be.true;
-        expect([1, 2, 3, 4, 5].sequenceEqual([1, 2, 3, 4])).to.be.false;
-        expect([1, 2, 3, 4].sequenceEqual([1, 2, 3, 4, 5])).to.be.false;
+        expect([1, 2, 3, 4].asQueryable().sequenceEqual([1, 2, 3, 4])).to.be.true;
+        expect([1, 2, 3, 4, 5].asQueryable().sequenceEqual([1, 2, 3, 4])).to.be.false;
+        expect([1, 2, 3, 4].asQueryable().sequenceEqual([1, 2, 3, 4, 5])).to.be.false;
     });
 
     it('should return if any item matches the predicate', () => {
-        expect([1, 2, 3, 4].any()).to.be.true;
-        expect([1, 2, 3, 4].any(i => i > 3)).to.be.true;
-        expect([1, 2, 3, 4].any(i => i > 4)).to.be.false;
+        expect([1, 2, 3, 4].asQueryable().any()).to.be.true;
+        expect([1, 2, 3, 4].asQueryable().any(i => i > 3)).to.be.true;
+        expect([1, 2, 3, 4].asQueryable().any(i => i > 4)).to.be.false;
 
-        expect(products.any(p => p.name === products[4].name)).to.be.true;
-        expect(products.any(p => p.name === 'None')).to.be.false;
+        expect(products.asQueryable().any(p => p.name === products[4].name)).to.be.true;
+        expect(products.asQueryable().any(p => p.name === 'None')).to.be.false;
     });
 
     it('should return if all items matches the predicate', () => {
-        expect([1, 2, 3, 4].all(i => i > 0)).to.be.true;
-        expect([1, 2, 3, 4].any(i => i > 4)).to.be.false;
+        expect([1, 2, 3, 4].asQueryable().all(i => i > 0)).to.be.true;
+        expect([1, 2, 3, 4].asQueryable().any(i => i > 4)).to.be.false;
 
-        expect(products.all(p => p.category !== null)).to.be.true;
-        expect(products.all(p => p.name === 'None')).to.be.false;
+        expect(products.asQueryable().all(p => p.category !== null)).to.be.true;
+        expect(products.asQueryable().all(p => p.name === 'None')).to.be.false;
     });
 
     it('should return the count of items that matches the predicate', () => {
-        expect([1, 2, 3, 4].count()).to.equal(4);
-        expect([1, 2, 3, 4].count(i => i > 2)).to.equal(2);
+        expect([1, 2, 3, 4].asQueryable().count()).to.equal(4);
+        expect([1, 2, 3, 4].asQueryable().count(i => i > 2)).to.equal(2);
     });
 
     it('should return the min value', () => {
-        expect([1, 2, 3, 4].min()).to.equal(1);
-        expect(products.min(p => p.no)).to.equal('Prd1');
+        expect([1, 2, 3, 4].asQueryable().min()).to.equal(1);
+        expect(products.asQueryable().min(p => p.no)).to.equal('Prd1');
     });
 
     it('should return the max value', () => {
-        expect([1, 2, 3, 4].max()).to.equal(4);
-        expect(products.max(p => p.no)).to.equal('Prd9');
+        expect([1, 2, 3, 4].asQueryable().max()).to.equal(4);
+        expect(products.asQueryable().max(p => p.no)).to.equal('Prd9');
     });
 
     it('should return the sum of values', () => {
-        expect([1, 2, 3, 4].sum()).to.equal(10);
-        expect(orders.sum(o => o.id)).to.equal(15);
+        expect([1, 2, 3, 4].asQueryable().sum()).to.equal(10);
+        expect(orders.asQueryable().sum(o => o.id)).to.equal(15);
     });
 
     it('should return the average of values', () => {
-        expect([1, 2, 3, 4].average()).to.equal(2.5);
-        expect(orders.average(o => o.id)).to.equal(3);
+        expect([1, 2, 3, 4].asQueryable().average()).to.equal(2.5);
+        expect(orders.asQueryable().average(o => o.id)).to.equal(3);
     });
 
     it('should return the aggregated value', () => {
-        expect([1, 2, 3, 4].aggregate((seed, value) => seed + value)).to.equal(10);
-        expect([1, 2, 3, 4].aggregate((seed, value) => seed + value, 32)).to.equal(42);
+        expect([1, 2, 3, 4].asQueryable().aggregate((seed, value) => seed + value)).to.equal(10);
+        expect([1, 2, 3, 4].asQueryable().aggregate((seed, value) => seed + value, 32)).to.equal(42);
 
-        const agg = orders.aggregate((seed, order) => seed + order.id, 69, v => v / 2);
+        const agg = orders.asQueryable().aggregate((seed, order) => seed + order.id, 69, v => v / 2);
         expect(agg).to.equal(42);
     });
 });
