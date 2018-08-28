@@ -34,6 +34,17 @@ const numbers = items.asQueryable().cast<Number>(Number).toArray();
 orders.where('c => c.id > value', { value: 3 }).toArray();
 ```
 
+### Iterators & Generators FTW!
+Jinqu queries are Iterable Iterators, you can use queries with *for..of* loop.
+
+```JavaScript
+const query = orders.where(c => c.id > 3);
+
+for (const item of query) {
+  console.log(item.id);
+}
+```
+
 ### Supported Expressions
 where, ofType, cast, select, selectMany, joinWith, groupJoin, orderBy, orderByDescending, thenBy, thenByDescending, take, takeWhile, skip, skipWhile, groupBy, distinct, concatWith, zip, union, intersect, except, defaultIfEmpty, reverse, first, firstOrDefault, last, lastOrDefault, single, singleOrDefault, elementAt, elementAtOrDefault, contains, sequenceEqual, any, all, count, min, max, sum, average, aggregate, toArray
 Array.range, Array.repeat
