@@ -4,3 +4,32 @@
 [![Coverage Status](https://coveralls.io/repos/github/umutozel/jinqu/badge.svg?branch=master)](https://coveralls.io/github/umutozel/jinqu?branch=master)	
 [![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)	
 <a href="https://snyk.io/test/npm/jinqu"><img src="https://snyk.io/test/npm/jinqu/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/npm/jinqu" style="max-width:100%;"></a>
+
+Completely written in TypeScript.
+
+### Let's See
+
+```JavaScript
+// asQueryable creates Query interface
+orders.asQueryable().where(c => c.id > 3).toArray();
+
+// with array extensions we can skip it, or use the shortcut method "q"
+orders.where(c => c.id > 3).toArray();
+orders.q().where(c => c.id > 3).toArray();
+
+
+// we can get values by type
+const items = ['1', 2, 'a3', 4, false, '5'];
+const numbers = items.ofType<Number>(Number).toArray();
+
+
+// we can cast values
+const items = ['1', 2, '3', 4, '5'];
+const numbers = items.asQueryable().cast<Number>(Number).toArray();
+```
+
+### Supports String Expressions
+```JavaScript
+// we can pass variable scopes
+orders.where('c => c.id > value', { value: 3 }).toArray();
+```
