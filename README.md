@@ -33,3 +33,7 @@ const numbers = items.asQueryable().cast<Number>(Number).toArray();
 // we can pass variable scopes
 orders.where('c => c.id > value', { value: 3 }).toArray();
 ```
+
+### Supported Expressions
+where, ofType, cast, select, selectMany, joinWith, groupJoin, orderBy, orderByDescending, thenBy, thenByDescending, take, takeWhile, skip, skipWhile, groupBy, distinct, concatWith, zip, union, intersect, except, defaultIfEmpty, reverse, first, firstOrDefault, last, lastOrDefault, single, singleOrDefault, elementAt, elementAtOrDefault, contains, sequenceEqual, any, all, count, min, max, sum, average, aggregate, toArray
+Array.range, Array.repeat
