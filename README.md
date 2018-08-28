@@ -50,5 +50,5 @@ where, ofType, cast, select, selectMany, joinWith, groupJoin, orderBy, orderByDe
 
 Array.range, Array.repeat
 
-
+### And more...
 It's not just Linq implementation, thanks to [Jokenizer](https://github.com/umutozel/jokenizer) expressions and flexible architecture, we can use Jinqu to create custom querying libraries - like OData, GraphQL or Server-Side Linq. Take a look at [Beetle.js](https://github.com/Beetlejs/beetle.js)
