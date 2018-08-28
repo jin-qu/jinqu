@@ -13,7 +13,7 @@ Completely written in TypeScript.
 // asQueryable creates Query interface
 orders.asQueryable().where(c => c.id > 3).toArray();
 
-// with array extensions we can skip it, or use the shortcut method "q"
+// with array extensions we can skip "asQueryable", or use the shortcut method "q"
 orders.where(c => c.id > 3).toArray();
 orders.q().where(c => c.id > 3).toArray();
 
