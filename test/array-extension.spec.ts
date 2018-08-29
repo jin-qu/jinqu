@@ -19,7 +19,9 @@ describe('Array extension tests', () => {
 
     it('should create all query functions on Array', () => {
         const arr = [];
-        const haveItAll = Object.getOwnPropertyNames(QueryFunc).every(f => f in arr);
+        const haveItAll = Object.getOwnPropertyNames(QueryFunc).every(f => f in arr)
+            && 'joinWith' in arr
+            && 'concatWith' in arr;
 
         expect(haveItAll).to.be.true;
     });
