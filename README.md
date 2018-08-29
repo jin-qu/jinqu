@@ -7,7 +7,7 @@
 
 Completely written in TypeScript.
 
-### Let's See
+# Let's See
 
 ```JavaScript
 // asQueryable creates Query interface
@@ -28,13 +28,13 @@ const items = ['1', 2, '3', 4, '5'];
 const numbers = items.asQueryable().cast<Number>(Number).toArray();
 ```
 
-### Supports String Expressions
+# Supports String Expressions
 ```JavaScript
 // we can pass variable scopes
 orders.where('c => c.id > value', { value: 3 }).toArray();
 ```
 
-### Iterators & Generators FTW!
+# Iterators & Generators FTW!
 Jinqu queries are Iterable, you can use queries with *for..of* loop.
 
 ```JavaScript
@@ -45,10 +45,14 @@ for (const item of query) {
 }
 ```
 
-### Supported Expressions
+# Supported Expressions
 where, ofType, cast, select, selectMany, join, groupJoin, orderBy, orderByDescending, thenBy, thenByDescending, take, takeWhile, skip, skipWhile, groupBy, distinct, concat, zip, union, intersect, except, defaultIfEmpty, reverse, first, firstOrDefault, last, lastOrDefault, single, singleOrDefault, elementAt, elementAtOrDefault, contains, sequenceEqual, any, all, count, min, max, sum, average, aggregate, toArray
 
 Array.range, Array.repeat
 
-### And more...
+# And more...
 It's not just Linq implementation, thanks to [Jokenizer](https://github.com/umutozel/jokenizer) expressions and flexible architecture, we can use Jinqu to create custom querying libraries - like OData, GraphQL or Server-Side Linq. Take a look at [Beetle.js](https://github.com/Beetlejs/beetle.js)
+
+
+# License
+Jokenizer is under the [MIT License](LICENSE).
