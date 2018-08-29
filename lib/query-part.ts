@@ -292,6 +292,10 @@ export class QueryPart implements IQueryPart {
         selector?: Func1<TAccumulate, TResult>, scopes?: any[]) {
         return this.create(QueryFunc.aggregate, [identifier(func, scopes), literal(seed), identifier(selector, scopes)], scopes);
     }
+
+    static toArray() {
+        return this.create(QueryFunc.toArray);
+    }
 }
 
 export const QueryFunc = {
@@ -337,5 +341,6 @@ export const QueryFunc = {
     max: 'max',
     sum: 'sum',
     average: 'average',
-    aggregate: 'aggregate'
+    aggregate: 'aggregate',
+    toArray: 'toArray'
 };

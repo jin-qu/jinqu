@@ -50,6 +50,17 @@ export class ArrayQueryProvider implements IQueryProvider {
         return <any>(orderParts.length ? this.multiOrderBy(value, orderParts) : value);
     }
 
+    executeAsync<TResult = any>(parts: IQueryPart[]): PromiseLike<TResult> {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(this.execute(parts));
+            }
+            catch (e) {
+                reject(e);
+            }
+        });
+    }
+
     handlePart(items: IterableIterator<any>, part: IQueryPart) {
         const f = funcs[part.type];
         if (!f) throw new Error(`Unknown query part type ${part.type}.`);
@@ -430,6 +441,10 @@ const funcs = {
         }
 
         return selector.func ? selector.func(s) : s;
+    },
+    
+    toArray(items: IterableIterator<any>) {
+        return Array.from(items);
     }
 };
 

@@ -108,68 +108,136 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.provider.execute([...this.parts, QueryPart.first(predicate, scopes)]);
     }
 
+    firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.first(predicate, scopes)]);
+    }
+
     firstOrDefault(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
+    }
+
+    firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
     last(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.last(predicate, scopes)]);
     }
 
+    lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.last(predicate, scopes)]);
+    }
+
     lastOrDefault(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.lastOrDefault(predicate, scopes)]);
+    }
+
+    lastOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.lastOrDefault(predicate, scopes)]);
     }
 
     single(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.single(predicate, scopes)]);
     }
 
+    singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.single(predicate, scopes)]);
+    }
+
     singleOrDefault(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.singleOrDefault(predicate, scopes)]);
+    }
+
+    singleOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.singleOrDefault(predicate, scopes)]);
     }
 
     elementAt(index: number): T {
         return this.provider.execute([...this.parts, QueryPart.elementAt(index)]);
     }
 
+    elementAtAsync(index: number): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.elementAt(index)]);
+    }
+
     elementAtOrDefault(index: number): T {
         return this.provider.execute([...this.parts, QueryPart.elementAtOrDefault(index)]);
+    }
+
+    elementAtOrDefaultAsync(index: number): PromiseLike<T> {
+        return this.provider.executeAsync([...this.parts, QueryPart.elementAtOrDefault(index)]);
     }
 
     contains(item: T): boolean {
         return this.provider.execute([...this.parts, QueryPart.contains(item)]);
     }
 
+    containsAsync(item: T): PromiseLike<boolean> {
+        return this.provider.executeAsync([...this.parts, QueryPart.contains(item)]);
+    }
+
     sequenceEqual(other: Array<T> | string, ...scopes): boolean {
         return this.provider.execute([...this.parts, QueryPart.sequenceEqual(other, scopes)]);
+    }
+
+    sequenceEqualAsync(other: Array<T> | string, ...scopes): PromiseLike<boolean> {
+        return this.provider.executeAsync([...this.parts, QueryPart.sequenceEqual(other, scopes)]);
     }
 
     any(predicate?: Predicate<T>, ...scopes): boolean {
         return this.provider.execute([...this.parts, QueryPart.any(predicate, scopes)]);
     }
 
+    anyAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<boolean> {
+        return this.provider.executeAsync([...this.parts, QueryPart.any(predicate, scopes)]);
+    }
+
     all(predicate: Predicate<T>, ...scopes): boolean {
         return this.provider.execute([...this.parts, QueryPart.all(predicate, scopes)]);
+    }
+
+    allAsync(predicate: Predicate<T>, ...scopes): PromiseLike<boolean> {
+        return this.provider.executeAsync([...this.parts, QueryPart.all(predicate, scopes)]);
     }
 
     count(predicate: Predicate<T>, ...scopes): number {
         return this.provider.execute([...this.parts, QueryPart.count(predicate, scopes)]);
     }
 
+    countAsync(predicate: Predicate<T>, ...scopes): PromiseLike<number> {
+        return this.provider.executeAsync([...this.parts, QueryPart.count(predicate, scopes)]);
+    }
+
     min<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult {
         return this.provider.execute([...this.parts, QueryPart.min(selector, scopes)]);
+    }
+
+    minAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult> {
+        return this.provider.executeAsync([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
     max<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult {
         return this.provider.execute([...this.parts, QueryPart.max(selector, scopes)]);
     }
 
+    maxAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult> {
+        return this.provider.executeAsync([...this.parts, QueryPart.max(selector, scopes)]);
+    }
+
     sum(selector?: Func1<T, number>, ...scopes): number {
         return this.provider.execute([...this.parts, QueryPart.sum(selector, scopes)]);
     }
 
+    sumAsync(selector?: Func1<T, number>, ...scopes): PromiseLike<number> {
+        return this.provider.executeAsync([...this.parts, QueryPart.sum(selector, scopes)]);
+    }
+
     average(selector?: Func1<T, number>, ...scopes): number {
         return this.provider.execute([...this.parts, QueryPart.average(selector, scopes)]);
+    }
+
+    averageAsync(selector?: Func1<T, number>, ...scopes): PromiseLike<number> {
+        return this.provider.executeAsync([...this.parts, QueryPart.average(selector, scopes)]);
     }
 
     aggregate<TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
@@ -177,12 +245,21 @@ export class Query<T = any> implements IOrderedQuery<T> {
         return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, selector, scopes)]);
     }
 
-    [Symbol.iterator]() {
-        return <any>this.provider.execute(this.parts);
+    aggregateAsync<TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
+        selector?: Func1<TAccumulate, TResult>, ...scopes): PromiseLike<TResult> {
+        return this.provider.executeAsync([...this.parts, QueryPart.aggregate(func, seed, selector, scopes)]);
     }
 
-    toArray() {
-        return <T[]>Array.from(this);
+    toArray(): T[] {
+        return this.provider.execute([...this.parts, QueryPart.toArray()]);
+    }
+
+    toArrayAsync(): PromiseLike<T[]> {
+        return this.provider.executeAsync([...this.parts, QueryPart.toArray()]);
+    }
+
+    [Symbol.iterator]() {
+        return <any>this.provider.execute(this.parts);
     }
 
     protected create<TResult = T>(part: IQueryPart): IQuery<TResult> {
