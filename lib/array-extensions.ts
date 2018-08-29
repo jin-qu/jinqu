@@ -1,21 +1,26 @@
-import { IQuery } from "./types";
+import { IQuery, IQuerySafe, Func1, Func2 } from "./types";
 import { QueryFunc } from './query-part';
 import { ArrayQueryProvider } from "./array-query-provider";
 
 declare global {
-    interface Array<T> extends IQuery<T> {
+    interface Array<T> extends IQuerySafe<T> {
         q(): IQuery<T>;
+        join<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+            selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+        concat(other: Array<T> | string, ...scopes): IQuery<T>;
     }
 }
 
-Array.prototype.q = function() {
+Array.prototype.q = function () {
     return new ArrayQueryProvider(this).createQuery();
 };
 
 function extendArray(func: string) {
-    if (Array.prototype[func]) return;
+    const f = func === 'join' || func === 'concat' ? func + 'With' : func;
+     
+    if (Array.prototype[f]) return;
 
-    Array.prototype[func] = function () {
+    Array.prototype[f] = function () {
         const q = this.asQueryable();
         return q[func].apply(q, arguments);
     }
@@ -32,7 +37,7 @@ declare global {
 }
 
 if (!Array.hasOwnProperty("range")) {
-    Array.range = function*(start?: number, count?: number) {
+    Array.range = function* (start?: number, count?: number) {
         if (count == null) {
             count = start;
             start = 0;
@@ -40,13 +45,13 @@ if (!Array.hasOwnProperty("range")) {
         if (count < 0)
             throw new Error('Specified argument was out of the range of valid values');
 
-        for (var i = 0; i < count; i++) 
+        for (var i = 0; i < count; i++)
             yield start + i;
     };
 }
 
 if (!Array.hasOwnProperty("repeat")) {
-    Array.repeat = function*(item, count) {
+    Array.repeat = function* (item, count) {
         if (count < 0)
             throw new Error('Specified argument was out of the range of valid values');
 

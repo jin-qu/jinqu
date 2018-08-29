@@ -55,7 +55,7 @@ describe('Query part tests', () => {
 
     it('should join two arrays', () => {
         const details = orders[0].details;
-        const supCat = details.asQueryable().joinWith(
+        const supCat = details.asQueryable().join(
             products,
             d => d.product,
             p => p.no,
@@ -168,7 +168,7 @@ describe('Query part tests', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
 
-        const concat = arr1.asQueryable().concatWith(arr2).toArray();
+        const concat = arr1.asQueryable().concat(arr2).toArray();
 
         expect(concat).property('length').to.equal(5);
     });

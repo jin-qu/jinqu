@@ -120,7 +120,7 @@ const funcs = {
         }
     },
 
-    joinWith: function* (items: IterableIterator<any>, other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
+    join: function* (items: IterableIterator<any>, other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
         const os = getArray(other);
 
         for (let i of items) {
@@ -206,7 +206,7 @@ const funcs = {
         }
     },
 
-    concatWith: function* (items: IterableIterator<any>, other: IPartArgument) {
+    concat: function* (items: IterableIterator<any>, other: IPartArgument) {
         const os = getArray(other);
 
         for (let i of items)

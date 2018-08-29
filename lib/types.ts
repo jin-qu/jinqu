@@ -33,15 +33,19 @@ export interface IQueryBase {
     readonly parts: IQueryPart[];
 }
 
-export interface IQuery<T> extends IQueryBase, Iterable<T> {
+interface IQueryDuplicates<T> {
+    join<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+    concat(other: Array<T> | string, ...scopes): IQuery<T>;
+}
+
+export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     where(predicate: Predicate<T>, ...scopes): IQuery<T>;
     ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult>;
     cast<TResult>(type: Ctor<TResult>): IQuery<TResult>;
     select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
     selectMany<TResult = any>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
-    joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
-    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther> |  string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
@@ -51,8 +55,7 @@ export interface IQuery<T> extends IQueryBase, Iterable<T> {
     skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T>;
     groupBy<TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, ...scopes): IQuery<TResult>;
     distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
-    concatWith(other: Array<T> | string, ...scopes): IQuery<T>;
-    zip<TOther, TResult = any>(other: Array<TOther> | string, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+    zip<TOther, TResult = any>(other: Array<TOther> |  string, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     union(other: Array<T> | string, ...scopes): IQuery<T>;
     intersect(other: Array<T> | string, ...scopes): IQuery<T>;
     except(other: Array<T> | string, ...scopes): IQuery<T>;
@@ -81,6 +84,8 @@ export interface IQuery<T> extends IQueryBase, Iterable<T> {
 
     toArray(): Array<T>;
 }
+
+export type IQuery<T> = IQuerySafe<T> & IQueryDuplicates<T>;
 
 export interface IOrderedQuery<T> extends IQuery<T> {
     thenBy(selector: Func1<T>, ...scopes): IOrderedQuery<T>;

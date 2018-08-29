@@ -33,7 +33,7 @@ describe('Query part tests with strings', () => {
 
     it('should join two arrays', () => {
         const details = orders[0].details;
-        const supCat = details.asQueryable().joinWith(
+        const supCat = details.asQueryable().join(
             'products',
             'd => d.product',
             'p => p.no',
@@ -124,7 +124,7 @@ describe('Query part tests with strings', () => {
     it('should concat two arrays', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
 
-        const concat = arr1.asQueryable().concatWith('[{ id: 3 }, { id: 4 }, arr1_0]', { arr1_0: arr1[0] }).toArray();
+        const concat = arr1.asQueryable().concat('[{ id: 3 }, { id: 4 }, arr1_0]', { arr1_0: arr1[0] }).toArray();
 
         expect(concat).property('length').to.equal(5);
     });

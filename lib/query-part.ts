@@ -124,10 +124,10 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.selectMany, [identifier(selector, scopes)], scopes);
     }
 
-    static joinWith<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    static join<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, scopes: any[]) {
         return this.create(
-            QueryFunc.joinWith,
+            QueryFunc.join,
             [
                 typeof other === 'string' ? identifier(other, scopes) : literal(other),
                 identifier(thisKey, scopes),
@@ -192,8 +192,8 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.distinct, [identifier(comparer, scopes)], scopes);
     }
 
-    static concatWith<T>(other: Array<T> | string, scopes: any[]) {
-        return this.create(QueryFunc.concatWith, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
+    static concat<T>(other: Array<T> | string, scopes: any[]) {
+        return this.create(QueryFunc.concat, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
     }
 
     static zip<T, TOther, TResult = any>(other: Array<TOther> |  string, selector: Func2<T, TOther, TResult>, scopes: any[]) {
@@ -300,7 +300,7 @@ export const QueryFunc = {
     cast: 'cast',
     select: 'select',
     selectMany: 'selectMany',
-    joinWith: 'joinWith',
+    join: 'join',
     groupJoin: 'groupJoin',
     orderBy: 'orderBy',
     orderByDescending: 'orderByDescending',
@@ -312,7 +312,7 @@ export const QueryFunc = {
     skipWhile: 'skipWhile',
     groupBy: 'groupBy',
     distinct: 'distinct',
-    concatWith: 'concatWith',
+    concat: 'concat',
     zip: 'zip',
     union: 'union',
     intersect: 'intersect',
