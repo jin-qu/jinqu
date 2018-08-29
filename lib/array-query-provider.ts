@@ -9,7 +9,8 @@ const descFuncs = [QueryFunc.orderByDescending, QueryFunc.thenByDescending];
 
 export class ArrayQueryProvider implements IQueryProvider {
 
-    constructor(private readonly items: any[]) {
+    constructor(private readonly items: any[] | IterableIterator<any>) {
+        check(items);
     }
 
     createQuery<T>(parts?: IQueryPart[]): Query<T> {
@@ -17,13 +18,10 @@ export class ArrayQueryProvider implements IQueryProvider {
     }
 
     execute<TResult = any>(parts: IQueryPart[]): TResult {
-        const items = this.items;
+        let value = this.items instanceof Array ? this.items[Symbol.iterator]() : this.items;
 
-        if (!parts || !parts.length) return <any>items;
+        if (!parts || !parts.length) return <any>value;
 
-        check(items);
-
-        let value = items[Symbol.iterator]();
         let orderParts = [];
         for (let p of parts) {
             // accumulate consecutive sortings
