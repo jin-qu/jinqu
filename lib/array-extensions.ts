@@ -5,9 +5,9 @@ import { ArrayQueryProvider } from "./array-query-provider";
 declare global {
     interface Array<T> extends IQuerySafe<T> {
         q(): IQuery<T>;
-        join<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
             selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
-        concat(other: Array<T> | string, ...scopes): IQuery<T>;
+        concatWith(other: Array<T> | string, ...scopes): IQuery<T>;
     }
 }
 
