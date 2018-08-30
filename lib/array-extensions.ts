@@ -8,6 +8,7 @@ declare global {
         joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
             selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
         concatWith(other: Array<T> | string, ...scopes): IQuery<T>;
+        reverseTo(): IQuery<T>;
     }
 }
 
@@ -16,7 +17,13 @@ Array.prototype.q = function () {
 };
 
 function extendArray(func: string) {
-    const f = func === 'join' || func === 'concat' ? func + 'With' : func;
+    let f = func;
+    if (func === 'join' || func === 'concat') {
+        f += 'With';
+    }
+    else if (func === 'reverse') {
+        f += 'To';
+    }
      
     if (Array.prototype[f]) return;
 

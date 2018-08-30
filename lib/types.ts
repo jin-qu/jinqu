@@ -38,6 +38,7 @@ interface IQueryDuplicates<T> {
     join<TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     concat(other: Array<T> | string, ...scopes): IQuery<T>;
+    reverse(): IQuery<T>;
 }
 
 export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
@@ -61,7 +62,6 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     intersect(other: Array<T> | string, ...scopes): IQuery<T>;
     except(other: Array<T> | string, ...scopes): IQuery<T>;
     defaultIfEmpty(): IQuery<T>;
-    reverse(): IQuery<T>;
 
     first(predicate?: Predicate<T>, ...scopes): T;
     firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
