@@ -5,7 +5,7 @@
 [![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)	
 <a href="https://snyk.io/test/npm/jinqu"><img src="https://snyk.io/test/npm/jinqu/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/npm/jinqu" style="max-width:100%;"></a>
 
-Completely written in TypeScript.
+Written completely in TypeScript.
 
 # Let's See
 
