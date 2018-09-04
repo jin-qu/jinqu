@@ -21,7 +21,8 @@ describe('Array extension tests', () => {
         const arr = [];
         const haveItAll = Object.getOwnPropertyNames(QueryFunc).every(f => f in arr)
             && 'joinWith' in arr
-            && 'concatWith' in arr;
+            && 'concatWith' in arr
+            && 'reverseTo' in arr;
 
         expect(haveItAll).to.be.true;
     });
