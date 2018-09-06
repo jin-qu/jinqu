@@ -1,9 +1,9 @@
 ## How to contribute to jinqu
 
 #### **Did you find a bug?**
-* Go on, open an [Issue](https://github.com/umutozel/jinqu/issues/new).
+* Go on, open an [Issue](https://github.com/jin-qu/jinqu/issues/new).
 
-* *Ensure the bug was not already reported* by searching on GitHub under [Issues](https://github.com/umutozel/jinqu/issues).
+* *Ensure the bug was not already reported* by searching on GitHub under [Issues](https://github.com/jin-qu/jinqu/issues).
 
 #### **Did you write a patch that fixes a bug?**
 
