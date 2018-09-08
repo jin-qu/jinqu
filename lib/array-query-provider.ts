@@ -3,8 +3,7 @@ import { IQueryProvider, IPartArgument, IQueryPart, IQuery } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
-const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending];
-const thenFuncs = [QueryFunc.thenBy, QueryFunc.thenByDescending];
+const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending, QueryFunc.thenBy, QueryFunc.thenByDescending];
 const descFuncs = [QueryFunc.orderByDescending, QueryFunc.thenByDescending];
 
 export class ArrayQueryProvider implements IQueryProvider {
@@ -22,32 +21,47 @@ export class ArrayQueryProvider implements IQueryProvider {
 
         if (!parts || !parts.length) return <any>value;
 
+        let inlineCountEnabled: boolean;
+        let inlineCount: number;
         let orderParts = [];
+
         for (let p of parts) {
+            if (p.type === QueryFunc.inlineCount) {
+                inlineCountEnabled = true;
+                continue;
+            }
+            else if (inlineCountEnabled && p.type === QueryFunc.take) {
+                const arr = Array.from(value);
+                inlineCount = arr.length;
+                value = arr[Symbol.iterator]();
+            }
+
             // accumulate consecutive sortings
-            if (~thenFuncs.indexOf(p.type)) {
+            if (~orderFuncs.indexOf(p.type)) {
                 orderParts.push(p);
                 continue;
             }
 
-            // if it is not a thenBy, apply previous sortings to items
+            // if it is not a order, apply previous sortings to items
             if (orderParts.length) {
                 value = this.multiOrderBy(value, orderParts);
             }
 
-            if (~orderFuncs.indexOf(p.type)) {
-                // save the new sorting
-                orderParts = [p];
-            }
-            else {
-                // clear sortings
-                orderParts = [];
-                value = this.handlePart(value, p);
-            }
+            // clear sortings
+            orderParts = [];
+            value = this.handlePart(value, p);
         }
 
         // handle remaining sortings
-        return <any>(orderParts.length ? this.multiOrderBy(value, orderParts) : value);
+        if (orderParts.length) {
+            value = this.multiOrderBy(value, orderParts);
+        }
+
+        if (inlineCount && value) {
+            value['$inlineCount'] = inlineCount;
+        }
+
+        return <any>value;
     }
 
     executeAsync<TResult = any>(parts: IQueryPart[]): PromiseLike<TResult> {
@@ -357,7 +371,7 @@ const funcs = {
         let idx = 0;
 
         for (let i of items) {
-            if (idx >= os.length ||  i != os[idx++]) return false;
+            if (idx >= os.length || i != os[idx++]) return false;
         }
 
         return idx === os.length;
@@ -382,7 +396,7 @@ const funcs = {
     count(items: IterableIterator<any>, predicate: IPartArgument) {
         let c = 0;
         for (let i of items) {
-            if (!predicate.func ||  predicate.func(i)) c++;
+            if (!predicate.func || predicate.func(i)) c++;
         }
 
         return c;
@@ -434,7 +448,7 @@ const funcs = {
     },
 
     aggregate(items: IterableIterator<any>, func: IPartArgument, seed: IPartArgument, selector: IPartArgument) {
-        let s = seed.literal ||  0;
+        let s = seed.literal || 0;
 
         for (let i of items) {
             s = func.func(s, i);
@@ -442,7 +456,7 @@ const funcs = {
 
         return selector.func ? selector.func(s) : s;
     },
-    
+
     toArray(items: IterableIterator<any>) {
         return Array.from(items);
     }

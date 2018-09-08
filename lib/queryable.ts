@@ -6,6 +6,10 @@ export class Query<T = any> implements IOrderedQuery<T> {
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
 
+    inlineCount(value = true) {
+        return this.create(QueryPart.inlineCount(value));
+    }
+    
     where(predicate: Predicate<T>, ...scopes): IQuery<T> {
         return this.create(QueryPart.where(predicate, scopes));
     }

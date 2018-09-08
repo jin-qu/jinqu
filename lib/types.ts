@@ -42,6 +42,7 @@ interface IQueryDuplicates<T> {
 }
 
 export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
+    inlineCount(value?: boolean): IQuery<T>;
     where(predicate: Predicate<T>, ...scopes): IQuery<T>;
     ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult>;
     cast<TResult>(type: Ctor<TResult>): IQuery<TResult>;

@@ -104,6 +104,10 @@ export class QueryPart implements IQueryPart {
         return new QueryPart(type, args, scopes);
     }
 
+    static inlineCount(value = true) {
+        return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
+    }
+    
     static where<T>(predicate: Predicate<T>, scopes: any[]) {
         return this.create(QueryFunc.where, [identifier(predicate, scopes)], scopes);
     }
@@ -299,6 +303,7 @@ export class QueryPart implements IQueryPart {
 }
 
 export const QueryFunc = {
+    inlineCount: 'inlineCount',
     where: 'where',
     ofType: 'ofType',
     cast: 'cast',

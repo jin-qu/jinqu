@@ -190,7 +190,7 @@ describe('Query part tests', () => {
 
         expect(concat).property('length').to.equal(4);
     });
-    
+
     it('should detect shared items between two arrays', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
@@ -222,7 +222,7 @@ describe('Query part tests', () => {
         const arr = [1, 2, 1, 3, 3, 2, 1, 3];
         const rev1 = arr.asQueryable().reverse().toArray()
         const rev2 = arr.splice(0, 0).reverse();
-        
+
         expect(rev1).to.deep.equal(rev2);
     });
 
@@ -336,5 +336,15 @@ describe('Query part tests', () => {
 
         const agg = orders.asQueryable().aggregate((seed, order) => seed + order.id, 69, v => v / 2);
         expect(agg).to.equal(42);
+    });
+
+    it('should calculate inlineCount', () => {
+        const result = orders.asQueryable()
+            .inlineCount()
+            .where(c => c.id > 2)
+            .take(2)
+            .toArray();
+        expect(result).property('length').to.equal(2);
+        expect(result.$inlineCount).to.equal(3);
     });
 });
