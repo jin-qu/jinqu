@@ -40,9 +40,15 @@ Jinqu queries are Iterable, you can use queries with *for..of* loop.
 ```JavaScript
 const query = orders.where(c => c.id > 3);
 
-for (const item of query) {
+for (let item of query) {
   console.log(item.id);
 }
+
+// Supports Async Iterators too!
+for await (let item of query) {
+  console.log(item.id);
+}
+
 ```
 
 # Supported Expressions
