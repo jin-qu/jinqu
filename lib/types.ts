@@ -14,6 +14,7 @@ export interface IQueryProvider {
     createQuery(parts?: IQueryPart[]): IQueryBase;
     execute<T = any, TResult = T[]>(parts: IQueryPart[]): TResult;
     executeAsync<T = any, TResult = T[]>(parts: IQueryPart[]): PromiseLike<TResult>;
+    executeAsyncIterator<T = any, TResult = T[]>(parts: IQueryPart[]): AsyncIterator<TResult>;
 }
 
 export interface IPartArgument {
