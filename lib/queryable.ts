@@ -1,7 +1,7 @@
 import { QueryPart } from "./query-part";
 import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery } from './types';
 
-export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
+export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncIterable<T> {
 
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
@@ -263,12 +263,12 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
     }
 
     [Symbol.iterator]() {
-        return <any>this.provider.execute(this.parts);
+        return this.provider.execute<IterableIterator<T>>(this.parts);
     }
 
 
     [Symbol.asyncIterator]() {
-        return this.provider.executeAsyncIterator(this.parts);
+        return this.provider.executeAsyncIterator<T>(this.parts);
     }
 
     protected create<TResult = T>(part: IQueryPart): IQuery<TResult> {

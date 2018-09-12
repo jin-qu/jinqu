@@ -12,9 +12,9 @@ export interface IGrouping<T, TKey> extends Array<T> {
 
 export interface IQueryProvider {
     createQuery(parts?: IQueryPart[]): IQueryBase;
-    execute<T = any, TResult = T[]>(parts: IQueryPart[]): TResult;
-    executeAsync<T = any, TResult = T[]>(parts: IQueryPart[]): PromiseLike<TResult>;
-    executeAsyncIterator<T = any, TResult = T[]>(parts: IQueryPart[]): AsyncIterator<TResult>;
+    execute<TResult = any[]>(parts: IQueryPart[]): TResult;
+    executeAsync<TResult = any[]>(parts: IQueryPart[]): PromiseLike<TResult>;
+    executeAsyncIterator<TResult = any>(parts: IQueryPart[]): AsyncIterator<TResult>;
 }
 
 export interface IPartArgument {
@@ -42,7 +42,7 @@ interface IQueryDuplicates<T> {
     reverse(): IQuery<T>;
 }
 
-export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
+export interface IQuerySafe<T> extends IQueryBase, Iterable<T>, AsyncIterable<T> {
     inlineCount(value?: boolean): IQuery<T>;
     where(predicate: Predicate<T>, ...scopes): IQuery<T>;
     ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult>;
