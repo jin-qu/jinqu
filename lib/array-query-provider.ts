@@ -5,6 +5,21 @@ import { Query } from './queryable';
 
 const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending, QueryFunc.thenBy, QueryFunc.thenByDescending];
 const descFuncs = [QueryFunc.orderByDescending, QueryFunc.thenByDescending];
+const countModifiers = [
+    QueryFunc.aggregate,
+    QueryFunc.concat,
+    QueryFunc.distinct,
+    QueryFunc.except,
+    QueryFunc.groupBy,
+    QueryFunc.groupJoin,
+    QueryFunc.intersect,
+    QueryFunc.join,
+    QueryFunc.ofType,
+    QueryFunc.selectMany,
+    QueryFunc.union,
+    QueryFunc.where,
+    QueryFunc.zip
+];
 
 export class ArrayQueryProvider implements IQueryProvider {
 
@@ -30,19 +45,23 @@ export class ArrayQueryProvider implements IQueryProvider {
                 inlineCountEnabled = true;
                 continue;
             }
-            else if (inlineCountEnabled && p.type === QueryFunc.take) {
-                const arr = Array.from(value);
-                inlineCount = arr.length;
-                value = arr[Symbol.iterator]();
+            else if (p.type === QueryFunc.skip || p.type === QueryFunc.take) {
+                if (inlineCountEnabled && inlineCount == null) {
+                    const arr = Array.from(value);
+                    inlineCount = arr.length;
+                    value = arr[Symbol.iterator]();
+                }
             }
-
-            // accumulate consecutive sortings
-            if (~orderFuncs.indexOf(p.type)) {
+            else if (~countModifiers.indexOf(p.type)) {
+                inlineCount = null;
+            }
+            else if (~orderFuncs.indexOf(p.type)) {
+                // accumulate consecutive sortings
                 orderParts.push(p);
                 continue;
             }
 
-            // if it is not a order, apply previous sortings to items
+            // if it is not an order, apply previous sortings
             if (orderParts.length) {
                 value = this.multiOrderBy(value, orderParts);
             }
@@ -52,13 +71,13 @@ export class ArrayQueryProvider implements IQueryProvider {
             value = this.handlePart(value, p);
         }
 
-        // handle remaining sortings
+        // handle remaining sortings. necessary when last query part is an order
         if (orderParts.length) {
             value = this.multiOrderBy(value, orderParts);
         }
 
-        if (inlineCount && value) {
-            value['$inlineCount'] = inlineCount;
+        if (inlineCountEnabled && value instanceof Array) {
+            value['$inlineCount'] = inlineCount != null ? inlineCount : value.length;
         }
 
         return <any>value;
@@ -77,7 +96,7 @@ export class ArrayQueryProvider implements IQueryProvider {
 
     executeAsyncIterator<TResult = any>(parts: IQueryPart[]) {
         const it = <IterableIterator<TResult>>this.execute(parts);
-        
+
         return {
             next: function () {
                 let ir = it.next();

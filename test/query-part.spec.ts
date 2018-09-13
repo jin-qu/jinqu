@@ -342,6 +342,7 @@ describe('Query part tests', () => {
         const result = orders.asQueryable()
             .inlineCount()
             .where(c => c.id > 2)
+            .skip(1)
             .take(2)
             .toArray();
         expect(result).property('length').to.equal(2);
