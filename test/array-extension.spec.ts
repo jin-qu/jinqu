@@ -8,13 +8,14 @@ describe('Array extension tests', () => {
     it('should create range', () => {
         expect(Array.from(Array.range(1, 5))).to.deep.equal([1, 2, 3, 4, 5]);
         expect(Array.from(Array.range(5))).to.deep.equal([0, 1, 2, 3, 4]);
-        expect(Array.range(1, -1)).to.throw;
-        expect(Array.range(-1)).to.throw;
+
+        expect(() => Array.from(Array.range(1, -1))).to.throw();
+        expect(() => Array.from(Array.range(-1))).to.throw();
     });
 
     it('should should repeat given item', () => {
         expect(Array.from(Array.repeat('JS', 3))).to.deep.equal(['JS', 'JS', 'JS']);
-        expect(Array.repeat('JS', -1)).to.throw;
+        expect(() => Array.from(Array.repeat('JS', -1))).to.throw();
     });
 
     it('should create all query functions on Array', () => {

@@ -107,7 +107,7 @@ export class QueryPart implements IQueryPart {
     static inlineCount(value = true) {
         return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
     }
-    
+
     static where<T>(predicate: Predicate<T>, scopes: any[]) {
         return this.create(QueryFunc.where, [identifier(predicate, scopes)], scopes);
     }
@@ -129,23 +129,19 @@ export class QueryPart implements IQueryPart {
     }
 
     static join<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, scopes: any[]) {
-        return this.create(
-            QueryFunc.join,
-            [
-                typeof other === 'string' ? identifier(other, scopes) : literal(other),
-                identifier(thisKey, scopes),
-                identifier(otherKey, scopes),
-                identifier(selector, scopes)
-            ],
-            scopes
-        );
+            selector: Func2<T, TOther, TResult>, scopes: any[]) {
+        return this.createJoin(QueryFunc.join, other, thisKey, otherKey, selector, scopes);
     }
 
-    static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther> |  string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, scopes: any[]) {
+    static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+            selector: Func2<T, TOther, TResult>, scopes: any[]) {
+        return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
+    }
+
+    private static createJoin<T, TOther, TResult = any, TKey = any>(type: string, other: Array<TOther> | string,
+            thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>, selector: Func2<T, TOther, TResult>, scopes: any[])  {
         return this.create(
-            QueryFunc.groupJoin,
+            type,
             [
                 typeof other === 'string' ? identifier(other, scopes) : literal(other),
                 identifier(thisKey, scopes),
@@ -200,7 +196,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.concat, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
     }
 
-    static zip<T, TOther, TResult = any>(other: Array<TOther> |  string, selector: Func2<T, TOther, TResult>, scopes: any[]) {
+    static zip<T, TOther, TResult = any>(other: Array<TOther> | string, selector: Func2<T, TOther, TResult>, scopes: any[]) {
         return this.create(QueryFunc.zip, [typeof other === 'string' ? identifier(other, scopes) : literal(other), identifier(selector, scopes)], scopes);
     }
 
