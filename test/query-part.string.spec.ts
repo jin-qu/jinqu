@@ -31,32 +31,6 @@ describe('Query part tests with strings', () => {
         expect(details.length).to.equal(16);
     });
 
-    it('should join two arrays', () => {
-        const details = orders[0].details;
-        const supCat = details.asQueryable().join(
-            'products',
-            'd => d.product',
-            'p => p.no',
-            '(d, p) => ({ supplier: d.supplier, category: p.category })',
-            { products }
-        ).toArray();
-
-        expect(supCat).to.be.deep.equal([{ supplier: 'ABC', category: 'Cat01' }, { supplier: 'QWE', category: 'Cat02' }]);
-    });
-
-    it('should join and group two arrays', () => {
-        const details = orders.asQueryable().selectMany(o => o.details).toArray();
-        const prdCount = [products[0], products[1]].asQueryable().groupJoin(
-            'details',
-            'p => p.no',
-            'd => d.product',
-            '(p, ds) => ({ product: p.no, count: ds.length })',
-            { details }
-        ).toArray();
-
-        expect(prdCount).to.be.deep.equal([{ product: 'Prd1', count: 2 }, { product: 'Prd2', count: 1 }]);
-    });
-
     it('should sort order details', () => {
         const sortedDetails = orders[4].details.asQueryable()
             .orderBy('d => d.supplier')
@@ -121,49 +95,6 @@ describe('Query part tests with strings', () => {
         expect(distItems).property('length').to.equal(3);
     });
 
-    it('should concat two arrays', () => {
-        const arr1 = [{ id: 1 }, { id: 2 }];
-
-        const concat = arr1.asQueryable().concat('[{ id: 3 }, { id: 4 }, arr1_0]', { arr1_0: arr1[0] }).toArray();
-
-        expect(concat).property('length').to.equal(5);
-    });
-
-    it('should zip two arrays', () => {
-        const arr1 = [{ id: 1 }, { id: 2 }];
-
-        const zip = arr1.asQueryable().zip('[{ id: 3 }, { id: 4 }]', '(i1, i2) => i1.id + i2.id').toArray();
-
-        expect(zip).to.deep.equal([4, 6]);
-    });
-
-    it('should union two arrays with eliminating recurring items', () => {
-        const arr1 = [{ id: 1 }, { id: 2 }];
-        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
-
-        const concat = arr1.asQueryable().union('arr2', { arr2 }).toArray();
-
-        expect(concat).property('length').to.equal(4);
-    });
-
-    it('should detect shared items between two arrays', () => {
-        const arr1 = [{ id: 1 }, { id: 2 }];
-        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
-
-        const concat = arr1.asQueryable().intersect('arr2', { arr2 }).toArray();
-
-        expect(concat).property('length').to.equal(1);
-    });
-
-    it('should detect differing items between two arrays', () => {
-        const arr1 = [{ id: 1 }, { id: 2 }];
-        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
-
-        const concat = arr2.asQueryable().except('arr1', { arr1 }).toArray();
-
-        expect(concat).property('length').to.equal(2);
-    });
-
     it('should return same sequence for defaultIfEmpty', () => {
         const arr = [{ id: 1 }, { id: 2 }];
 
@@ -210,12 +141,6 @@ describe('Query part tests with strings', () => {
 
     it('should throw error for missing single item', () => {
         expect(() => products.asQueryable().single('p => p.category === "None"')).to.throw();
-    });
-
-    it('should return if array is equal to given array', () => {
-        expect([1, 2, 3, 4].asQueryable().sequenceEqual('[1, 2, 3, 4]')).to.be.true;
-        expect([1, 2, 3, 4, 5].asQueryable().sequenceEqual('arr', { arr: [1, 2, 3, 4] })).to.be.false;
-        expect([1, 2, 3, 4].asQueryable().sequenceEqual('[1, 2, 3, 4, 5]')).to.be.false;
     });
 
     it('should return if any item matches the predicate', () => {

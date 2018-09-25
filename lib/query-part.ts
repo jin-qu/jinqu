@@ -104,42 +104,183 @@ export class QueryPart implements IQueryPart {
         return new QueryPart(type, args, scopes);
     }
 
-    static inlineCount(value = true) {
-        return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
+    static aggregate<T, TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
+        selector?: Func1<TAccumulate, TResult>, scopes?: any[]) {
+        return this.create(QueryFunc.aggregate, [identifier(func, scopes), literal(seed), identifier(selector, scopes)], scopes);
     }
 
-    static where<T>(predicate: Predicate<T>, scopes: any[]) {
-        return this.create(QueryFunc.where, [identifier(predicate, scopes)], scopes);
+    static all<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.all, [identifier(predicate, scopes)], scopes);
     }
 
-    static ofType<TResult>(type: Ctor<TResult>) {
-        return this.create(QueryFunc.ofType, [literal(type)]);
+    static any<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.any, [identifier(predicate, scopes)], scopes);
+    }
+
+    static average<T>(selector?: Func1<T, number>, scopes?: any[]) {
+        return this.create(QueryFunc.average, [identifier(selector, scopes)], scopes);
     }
 
     static cast<TResult>(type: Ctor<TResult>) {
         return this.create(QueryFunc.cast, [literal(type)]);
     }
 
+    static concat<T>(other: Array<T>) {
+        return this.create(QueryFunc.concat, [literal(other)]);
+    }
+
+    static contains<T>(item: T, comparer?: Func2<T, T, boolean>, scopes?: any[]) {
+        return this.create(QueryFunc.contains, [literal(item), identifier(comparer, scopes)]);
+    }
+
+    static count<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.count, [identifier(predicate, scopes)], scopes);
+    }
+
+    static defaultIfEmpty<T>(defaultValue?: T) {
+        return this.create(QueryFunc.defaultIfEmpty, [literal(defaultValue)]);
+    }
+
+    static distinct<T>(comparer?: Func2<T, T, boolean>, scopes?: any[]) {
+        return this.create(QueryFunc.distinct, [identifier(comparer, scopes)], scopes);
+    }
+
+    static elementAt(index: number) {
+        return this.create(QueryFunc.elementAt, [literal(index)]);
+    }
+
+    static elementAtOrDefault(index: number) {
+        return this.create(QueryFunc.elementAtOrDefault, [literal(index)]);
+    }
+
+    static except<T>(other: Array<T>, comparer?: Func2<T, T, boolean>, scopes?: any[]) {
+        return this.create(QueryFunc.except, [literal(other), identifier(comparer, scopes)], scopes);
+    }
+
+    static first<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.first, [identifier(predicate, scopes)], scopes);
+    }
+
+    static firstOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.firstOrDefault, [identifier(predicate, scopes)], scopes);
+    }
+
+    static groupBy<T, TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, scopes: any[]) {
+        return this.create(QueryFunc.groupBy, [identifier(keySelector, scopes), identifier(valueSelector, scopes)], scopes);
+    }
+
+    static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, scopes: any[]) {
+        return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
+    }
+
+    static inlineCount(value = true) {
+        return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
+    }
+
+    static intersect<T>(other: Array<T>, comparer?: Func2<T, T, boolean>, scopes?: any[]) {
+        return this.create(QueryFunc.intersect, [literal(other), identifier(comparer, scopes)], scopes);
+    }
+
+    static join<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, scopes: any[]) {
+        return this.createJoin(QueryFunc.join, other, thisKey, otherKey, selector, scopes);
+    }
+
+    static last<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.last, [identifier(predicate, scopes)], scopes);
+    }
+
+    static lastOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.lastOrDefault, [identifier(predicate, scopes)], scopes);
+    }
+
+    static max<T, TResult = T>(selector?: Func1<T, TResult>, scopes?: any[]) {
+        return this.create(QueryFunc.max, [identifier(selector, scopes)], scopes);
+    }
+
+    static min<T, TResult = T>(selector?: Func1<T, TResult>, scopes?: any[]) {
+        return this.create(QueryFunc.min, [identifier(selector, scopes)], scopes);
+    }
+
+    static ofType<TResult>(type: Ctor<TResult>) {
+        return this.create(QueryFunc.ofType, [literal(type)]);
+    }
+
+    static orderBy<T>(keySelector: Func1<T>, scopes: any[]) {
+        return this.create(QueryFunc.orderBy, [identifier(keySelector, scopes)], scopes);
+    }
+
+    static orderByDescending<T>(keySelector: Func1<T>, scopes: any[]) {
+        return this.create(QueryFunc.orderByDescending, [identifier(keySelector, scopes)], scopes);
+    }
+
+    static reverse() {
+        return this.create(QueryFunc.reverse);
+    }
+
     static select<T, TResult = any>(selector: Func1<T, TResult>, scopes: any[]) {
         return this.create(QueryFunc.select, [identifier(selector, scopes)], scopes);
     }
 
-    static selectMany<T, TResult = any>(selector: Func1<T, TResult>, scopes: any[]) {
-        return this.create(QueryFunc.selectMany, [identifier(selector, scopes)], scopes);
+    static selectMany<T, TCollection = any, TResult = TCollection>(selector: Func1<T, Array<TResult>>, resultSelector?: Func2<T, TCollection, TResult>, scopes?: any[]) {
+        return this.create(QueryFunc.selectMany, [identifier(selector, scopes), identifier(resultSelector, scopes)], scopes);
     }
 
-    static join<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-            selector: Func2<T, TOther, TResult>, scopes: any[]) {
-        return this.createJoin(QueryFunc.join, other, thisKey, otherKey, selector, scopes);
+    static sequenceEqual<T>(other: Array<T>, comparer?: Func2<T, T, boolean>, scopes?: any[]) {
+        return this.create(QueryFunc.sequenceEqual, [literal(other), identifier(comparer, scopes)], scopes);
     }
 
-    static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther> | string, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-            selector: Func2<T, TOther, TResult>, scopes: any[]) {
-        return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
+    static single<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.single, [identifier(predicate, scopes)], scopes);
     }
 
-    private static createJoin<T, TOther, TResult = any, TKey = any>(type: string, other: Array<TOther> | string,
-            thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>, selector: Func2<T, TOther, TResult>, scopes: any[])  {
+    static singleOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
+        return this.create(QueryFunc.singleOrDefault, [identifier(predicate, scopes)], scopes);
+    }
+
+    static skip(count: number) {
+        return this.create(QueryFunc.skip, [literal(count)]);
+    }
+
+    static skipWhile<T>(predicate: Predicate<T>, scopes: any[]) {
+        return this.create(QueryFunc.skipWhile, [identifier(predicate, scopes)], scopes)
+    }
+
+    static sum<T>(selector?: Func1<T, number>, scopes?: any[]) {
+        return this.create(QueryFunc.sum, [identifier(selector, scopes)], scopes);
+    }
+
+    static take(count: number) {
+        return this.create(QueryFunc.take, [literal(count)]);
+    }
+
+    static takeWhile<T>(predicate: Predicate<T>, scopes: any[]) {
+        return this.create(QueryFunc.takeWhile, [identifier(predicate, scopes)], scopes)
+    }
+
+    static thenBy<T>(keySelector: Func1<T>, scopes: any[]) {
+        return this.create(QueryFunc.thenBy, [identifier(keySelector, scopes)], scopes);
+    }
+
+    static thenByDescending<T>(keySelector: Func1<T>, scopes: any[]) {
+        return this.create(QueryFunc.thenByDescending, [identifier(keySelector, scopes)], scopes);
+    }
+
+    static union<T>(other: Array<T>, comparer?: Func2<T, T, boolean>, scopes?: any[]) {
+        return this.create(QueryFunc.union, [literal(other), identifier(comparer, scopes)], scopes);
+    }
+
+    static where<T>(predicate: Predicate<T>, scopes: any[]) {
+        return this.create(QueryFunc.where, [identifier(predicate, scopes)], scopes);
+    }
+
+    static zip<T, TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, scopes: any[]) {
+        return this.create(QueryFunc.zip, [typeof other === 'string' ? identifier(other, scopes) : literal(other), identifier(selector, scopes)], scopes);
+    }
+
+    private static createJoin<T, TOther, TResult = any, TKey = any>(type: string, other: Array<TOther>,
+        thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>, selector: Func2<T, TOther, TResult>, scopes: any[]) {
         return this.create(
             type,
             [
@@ -152,196 +293,54 @@ export class QueryPart implements IQueryPart {
         );
     }
 
-    static orderBy<T>(keySelector: Func1<T>, scopes: any[]) {
-        return this.create(QueryFunc.orderBy, [identifier(keySelector, scopes)], scopes);
-    }
-
-    static orderByDescending<T>(keySelector: Func1<T>, scopes: any[]) {
-        return this.create(QueryFunc.orderByDescending, [identifier(keySelector, scopes)], scopes);
-    }
-
-    static thenBy<T>(keySelector: Func1<T>, scopes: any[]) {
-        return this.create(QueryFunc.thenBy, [identifier(keySelector, scopes)], scopes);
-    }
-
-    static thenByDescending<T>(keySelector: Func1<T>, scopes: any[]) {
-        return this.create(QueryFunc.thenByDescending, [identifier(keySelector, scopes)], scopes);
-    }
-
-    static take(count: number) {
-        return this.create(QueryFunc.take, [literal(count)]);
-    }
-
-    static takeWhile<T>(predicate: Predicate<T>, scopes: any[]) {
-        return this.create(QueryFunc.takeWhile, [identifier(predicate, scopes)], scopes)
-    }
-
-    static skip(count: number) {
-        return this.create(QueryFunc.skip, [literal(count)]);
-    }
-
-    static skipWhile<T>(predicate: Predicate<T>, scopes: any[]) {
-        return this.create(QueryFunc.skipWhile, [identifier(predicate, scopes)], scopes)
-    }
-
-    static groupBy<T, TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, scopes: any[]) {
-        return this.create(QueryFunc.groupBy, [identifier(keySelector, scopes), identifier(valueSelector, scopes)], scopes);
-    }
-
-    static distinct<T>(comparer?: Func2<T, T, boolean>, scopes?: any[]) {
-        return this.create(QueryFunc.distinct, [identifier(comparer, scopes)], scopes);
-    }
-
-    static concat<T>(other: Array<T> | string, scopes: any[]) {
-        return this.create(QueryFunc.concat, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
-    }
-
-    static zip<T, TOther, TResult = any>(other: Array<TOther> | string, selector: Func2<T, TOther, TResult>, scopes: any[]) {
-        return this.create(QueryFunc.zip, [typeof other === 'string' ? identifier(other, scopes) : literal(other), identifier(selector, scopes)], scopes);
-    }
-
-    static union<T>(other: Array<T> | string, scopes: any[]) {
-        return this.create(QueryFunc.union, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
-    }
-
-    static intersect<T>(other: Array<T> | string, scopes: any[]) {
-        return this.create(QueryFunc.intersect, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
-    }
-
-    static except<T>(other: Array<T> | string, scopes: any[]) {
-        return this.create(QueryFunc.except, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
-    }
-
-    static defaultIfEmpty() {
-        return this.create(QueryFunc.defaultIfEmpty);
-    }
-
-    static reverse() {
-        return this.create(QueryFunc.reverse);
-    }
-
-    static first<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.first, [identifier(predicate, scopes)], scopes);
-    }
-
-    static firstOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.firstOrDefault, [identifier(predicate, scopes)], scopes);
-    }
-
-    static last<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.last, [identifier(predicate, scopes)], scopes);
-    }
-
-    static lastOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.lastOrDefault, [identifier(predicate, scopes)], scopes);
-    }
-
-    static single<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.single, [identifier(predicate, scopes)], scopes);
-    }
-
-    static singleOrDefault<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.singleOrDefault, [identifier(predicate, scopes)], scopes);
-    }
-
-    static elementAt(index: number) {
-        return this.create(QueryFunc.elementAt, [literal(index)]);
-    }
-
-    static elementAtOrDefault(index: number) {
-        return this.create(QueryFunc.elementAtOrDefault, [literal(index)]);
-    }
-
-    static contains<T>(item: T) {
-        return this.create(QueryFunc.contains, [literal(item)]);
-    }
-
-    static sequenceEqual<T>(other: Array<T> | string, scopes: any[]) {
-        return this.create(QueryFunc.sequenceEqual, [typeof other === 'string' ? identifier(other, scopes) : literal(other)], scopes);
-    }
-
-    static any<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.any, [identifier(predicate, scopes)], scopes);
-    }
-
-    static all<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.all, [identifier(predicate, scopes)], scopes);
-    }
-
-    static count<T>(predicate?: Predicate<T>, scopes?: any[]) {
-        return this.create(QueryFunc.count, [identifier(predicate, scopes)], scopes);
-    }
-
-    static min<T, TResult = T>(selector?: Func1<T, TResult>, scopes?: any[]) {
-        return this.create(QueryFunc.min, [identifier(selector, scopes)], scopes);
-    }
-
-    static max<T, TResult = T>(selector?: Func1<T, TResult>, scopes?: any[]) {
-        return this.create(QueryFunc.max, [identifier(selector, scopes)], scopes);
-    }
-
-    static sum<T>(selector?: Func1<T, number>, scopes?: any[]) {
-        return this.create(QueryFunc.sum, [identifier(selector, scopes)], scopes);
-    }
-
-    static average<T>(selector?: Func1<T, number>, scopes?: any[]) {
-        return this.create(QueryFunc.average, [identifier(selector, scopes)], scopes);
-    }
-
-    static aggregate<T, TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
-        selector?: Func1<TAccumulate, TResult>, scopes?: any[]) {
-        return this.create(QueryFunc.aggregate, [identifier(func, scopes), literal(seed), identifier(selector, scopes)], scopes);
-    }
-
     static toArray() {
         return this.create(QueryFunc.toArray);
     }
 }
 
 export const QueryFunc = {
-    inlineCount: 'inlineCount',
-    where: 'where',
-    ofType: 'ofType',
+    aggregate: 'aggregate',
+    all: 'all',
+    any: 'any',
+    average: 'average',
     cast: 'cast',
-    select: 'select',
-    selectMany: 'selectMany',
-    join: 'join',
-    groupJoin: 'groupJoin',
-    orderBy: 'orderBy',
-    orderByDescending: 'orderByDescending',
-    thenBy: 'thenBy',
-    thenByDescending: 'thenByDescending',
-    take: 'take',
-    takeWhile: 'takeWhile',
-    skip: 'skip',
-    skipWhile: 'skipWhile',
-    groupBy: 'groupBy',
-    distinct: 'distinct',
     concat: 'concat',
-    zip: 'zip',
-    union: 'union',
-    intersect: 'intersect',
-    except: 'except',
+    contains: 'contains',
+    count: 'count',
     defaultIfEmpty: 'defaultIfEmpty',
-    reverse: 'reverse',
-
-    first: 'first',
-    firstOrDefault: 'firstOrDefault',
-    last: 'last',
-    lastOrDefault: 'lastOrDefault',
-    single: 'single',
-    singleOrDefault: 'singleOrDefault',
+    distinct: 'distinct',
     elementAt: 'elementAt',
     elementAtOrDefault: 'elementAtOrDefault',
-    contains: 'contains',
-    sequenceEqual: 'sequenceEqual',
-    any: 'any',
-    all: 'all',
-    count: 'count',
-    min: 'min',
+    except: 'except',
+    first: 'first',
+    firstOrDefault: 'firstOrDefault',
+    groupBy: 'groupBy',
+    groupJoin: 'groupJoin',
+    inlineCount: 'inlineCount',
+    intersect: 'intersect',
+    join: 'join',
+    last: 'last',
+    lastOrDefault: 'lastOrDefault',
     max: 'max',
+    min: 'min',
+    ofType: 'ofType',
+    orderBy: 'orderBy',
+    orderByDescending: 'orderByDescending',
+    reverse: 'reverse',
+    select: 'select',
+    selectMany: 'selectMany',
+    sequenceEqual: 'sequenceEqual',
+    single: 'single',
+    singleOrDefault: 'singleOrDefault',
+    skip: 'skip',
+    skipWhile: 'skipWhile',
     sum: 'sum',
-    average: 'average',
-    aggregate: 'aggregate',
+    take: 'take',
+    takeWhile: 'takeWhile',
+    thenBy: 'thenBy',
+    thenByDescending: 'thenByDescending',
+    union: 'union',
+    where: 'where',
+    zip: 'zip',
     toArray: 'toArray'
 };

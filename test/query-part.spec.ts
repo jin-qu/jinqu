@@ -278,8 +278,21 @@ describe('Query part tests', () => {
     });
 
     it('should return if array contains the given item', () => {
-        expect(products.asQueryable().contains(products[3])).to.be.true;
-        expect([1, 2, 3, 4].asQueryable().contains(5)).to.be.false;
+        const arr = [1, 2, 1, 3, 3, 2, 1, 3];
+        expect(arr.asQueryable().contains(arr[3])).to.be.true;
+        expect(arr.asQueryable().contains(5)).to.be.false;
+
+        const items = [
+            { id: 1, name: 'i1' },
+            { id: 2, name: 'i2' },
+            { id: 1, name: 'i3' },
+            { id: 3, name: 'i4' },
+            { id: 3, name: 'i5' },
+            { id: 2, name: 'i6' },
+            { id: 1, name: 'i7' },
+            { id: 3, name: 'i8' }
+        ];
+        expect(items.asQueryable().contains(<any>{ id: 3 }, (i1, i2) => i1.id === i2.id)).to.be.true;
     });
 
     it('should return if array is equal to given array', () => {
