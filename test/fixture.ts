@@ -5,6 +5,9 @@ export class Order implements IOrder {
     }
 }
 
+export class ExtendedOrder extends Order {
+}
+
 export interface IOrder {
     id: number;
     no: string;

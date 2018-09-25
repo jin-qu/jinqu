@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Order, orders, products } from './fixture';
-import '..';
+import { ArrayQueryProvider, IQuery } from '..';
+import { Order, orders, products, ExtendedOrder } from './fixture';
+import { QueryPart, PartArgument } from '../lib/query-part';
 
 describe('Query part tests', () => {
 
@@ -32,6 +33,15 @@ describe('Query part tests', () => {
         // object test
         const classOrders = [orders[0], orders[2], orders[4]].asQueryable().cast<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
+
+        const extendedOrders = [new ExtendedOrder(1, '2', 3, new Date(), null, [])];
+        const query: IQuery<Order> = extendedOrders.asQueryable();
+        const result = query.cast<ExtendedOrder>(ExtendedOrder).toArray();
+        expect(extendedOrders).to.deep.equal(result);
+
+        expect([null].asQueryable().cast<Number>(Number).toArray()).to.deep.equal([null]);
+
+        expect(() => ['Morty'].asQueryable().cast<Number>(Number).toArray()).to.throw();
     });
 
     it('should select only given members', () => {
@@ -176,10 +186,13 @@ describe('Query part tests', () => {
     it('should zip two arrays', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
         const arr2 = [{ id: 3 }, { id: 4 }];
+        const arr3 = [{ id: 5 }];
 
-        const zip = arr1.asQueryable().zip(arr2, (i1, i2) => i1.id + i2.id).toArray();
+        const zip1 = arr1.asQueryable().zip(arr2, (i1, i2) => i1.id + i2.id).toArray();
+        const zip2 = arr1.asQueryable().zip(arr3, (i1, i2) => i1.id + i2.id).toArray();
 
-        expect(zip).to.deep.equal([4, 6]);
+        expect(zip1).to.deep.equal([4, 6]);
+        expect(zip2).to.deep.equal([6]);
     });
 
     it('should union two arrays with eliminating recurring items', () => {
@@ -202,11 +215,13 @@ describe('Query part tests', () => {
 
     it('should detect differing items between two arrays', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
-        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+        const arr2 = [{ id: 2 }, { id: 3 }, arr1[0]];
 
-        const concat = arr2.asQueryable().except(arr1).toArray();
+        const except1 = arr2.asQueryable().except(arr1).toArray();
+        expect(except1).property('length').to.equal(2);
 
-        expect(concat).property('length').to.equal(2);
+        const except2 = arr2.asQueryable().except(arr1, (i1, i2) => i1.id == i2.id).toArray();
+        expect(except2).property('length').to.equal(1);
     });
 
     it('should return same sequence for defaultIfEmpty', () => {
@@ -274,6 +289,8 @@ describe('Query part tests', () => {
 
     it('should return given indexed item', () => {
         expect(products.asQueryable().elementAt(3)).to.equal(products[3]);
+        expect(() => products.asQueryable().elementAt(products.length)).to.throw();
+        expect(products.asQueryable().elementAtOrDefault(3)).to.equal(products[3]);
         expect(products.asQueryable().elementAtOrDefault(33)).to.equal(null);
     });
 
@@ -329,7 +346,7 @@ describe('Query part tests', () => {
     });
 
     it('should return the max value', () => {
-        expect([1, 2, 3, 4].asQueryable().max()).to.equal(4);
+        expect([2, 1, 3, 4].asQueryable().max()).to.equal(4);
         expect(products.asQueryable().max(p => p.no)).to.equal('Prd9');
     });
 
@@ -341,6 +358,7 @@ describe('Query part tests', () => {
     it('should return the average of values', () => {
         expect([1, 2, 3, 4].asQueryable().average()).to.equal(2.5);
         expect(orders.asQueryable().average(o => o.id)).to.equal(3);
+        expect([].asQueryable().average()).to.equal(0);
     });
 
     it('should return the aggregated value', () => {
@@ -352,13 +370,76 @@ describe('Query part tests', () => {
     });
 
     it('should calculate inlineCount', () => {
-        const result = orders.asQueryable()
+        const result1 = orders.asQueryable()
             .inlineCount()
             .where(c => c.id > 2)
             .skip(1)
             .take(2)
             .toArray();
+        expect(result1).property('length').to.equal(2);
+        expect(result1.$inlineCount).to.equal(3);
+
+        const result2 = orders.asQueryable().inlineCount().toArray();
+        expect(orders.length).to.equal(result2.$inlineCount);
+    });
+
+    it('should filter iterable', () => {
+        const provider = new ArrayQueryProvider(orders[Symbol.iterator]());
+        const result = provider.createQuery<Order>().where(c => c.id > 3).toArray();
         expect(result).property('length').to.equal(2);
-        expect(result.$inlineCount).to.equal(3);
+        expect(result[0].id).to.equal(4);
+        expect(result[1].no).to.equal('Ord5');
+
+        expect(orders).to.deep.equal(new ArrayQueryProvider(orders).execute(null));
+    });
+
+    it('should sort order details when executed explicitly', () => {
+        const query = orders[4].details.asQueryable()
+            .orderBy(d => d.supplier)
+            .thenByDescending(d => d.count);
+        const sortedDetails = Array.from(query.provider.execute<Order[]>(query.parts));
+
+        expect(sortedDetails[0]).property('count').to.be.equal(67);
+        expect(sortedDetails[1]).property('count').to.be.equal(13);
+        expect(sortedDetails[2]).property('count').to.be.equal(86);
+    });
+
+    it('should throw for unknown part', () => {
+        const query = orders.asQueryable();
+        query.parts.push({ type: '42', args: [], scopes: [] });
+
+        expect(() => query.toArray()).to.throw();
+    });
+
+    it('should throw for null source', () => {
+        expect(() => new ArrayQueryProvider(null)).to.throw();
+    });
+
+    it('should handle literal query part as function', () => {
+        const items = [{ id: 1 }, { id: 2 }];
+        expect(items.asQueryable().select('id').toArray()).to.deep.equal([1, 2]);
+    });
+
+    it('should QueryPart and PartArgument work as expected', () => {
+        expect(() => new QueryPart('')).to.throw();
+        expect(new QueryPart('where')).property('scopes').to.deep.equal([]);
+        
+        const part1 = new PartArgument(null, null, null);
+        expect(part1.func).to.be.null;
+        expect(part1.expStr).to.be.null;
+        expect(part1.exp).to.be.null;
+        expect(part1.scopes).to.be.null;
+
+        const part2 = new PartArgument(c => c%2 == 0, null, null);
+        expect(part2.expStr).not.null;
+    });
+
+    it('should iterate filtered array', () => {
+        const query = orders.asQueryable().where(c => c.id > 3);
+
+        let i = 3;
+        for (let o of query) {
+            expect(o).to.equal(orders[i++]);
+        }
     });
 });

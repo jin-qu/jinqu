@@ -117,7 +117,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
         return this.create(QueryPart.groupJoin(other, thisKey, otherKey, selector, scopes));
     }
 
-    inlineCount(value = true) {
+    inlineCount(value: boolean) {
         return this.create(QueryPart.inlineCount(value));
     }
     
@@ -265,7 +265,6 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
     [Symbol.iterator]() {
         return this.provider.execute<IterableIterator<T>>(this.parts);
     }
-
 
     [Symbol.asyncIterator]() {
         return this.provider.executeAsyncIterator<T>(this.parts);

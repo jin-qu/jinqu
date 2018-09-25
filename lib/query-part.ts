@@ -1,16 +1,14 @@
-import { Expression, tokenize, evaluate } from 'jokenizer';
+import { Expression, tokenize, evaluate, ExpressionType } from 'jokenizer';
 import { Ctor, Func1, Func2, Predicate, IGrouping, IPartArgument, IQueryPart } from './types';
 
 export class PartArgument implements IPartArgument {
 
     constructor(identifier: Function | string, literal, scopes: any[]) {
         if (typeof identifier === 'string') {
-            this._func = null;
             this._expStr = identifier;
         }
         else {
             this._func = identifier;
-            this._expStr = null;
         }
         this._literal = literal;
         this._scopes = scopes;
@@ -21,11 +19,12 @@ export class PartArgument implements IPartArgument {
         if (this._func) return this._func;
         if (!this._expStr) return null;
 
-        const f = evaluate(this.exp, this._scopes);
-        if (typeof f === 'function')
+        if (this.exp.type === ExpressionType.Func) {
+            const f = evaluate(this.exp, this._scopes);
             return this._func = (...args) => f.apply(null, args);
+        }
 
-        return this._func = () => f;
+        return this._func = (...args) => evaluate(this.exp, [...args, ...this._scopes]);
     }
 
     private _expStr;
@@ -174,7 +173,7 @@ export class QueryPart implements IQueryPart {
         return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
     }
 
-    static inlineCount(value = true) {
+    static inlineCount(value?: boolean) {
         return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
     }
 
@@ -276,7 +275,7 @@ export class QueryPart implements IQueryPart {
     }
 
     static zip<T, TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, scopes: any[]) {
-        return this.create(QueryFunc.zip, [typeof other === 'string' ? identifier(other, scopes) : literal(other), identifier(selector, scopes)], scopes);
+        return this.create(QueryFunc.zip, [literal(other), identifier(selector, scopes)], scopes);
     }
 
     private static createJoin<T, TOther, TResult = any, TKey = any>(type: string, other: Array<TOther>,
@@ -284,7 +283,7 @@ export class QueryPart implements IQueryPart {
         return this.create(
             type,
             [
-                typeof other === 'string' ? identifier(other, scopes) : literal(other),
+                literal(other),
                 identifier(thisKey, scopes),
                 identifier(otherKey, scopes),
                 identifier(selector, scopes)

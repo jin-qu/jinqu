@@ -32,9 +32,9 @@ export class ArrayQueryProvider implements IQueryProvider {
     }
 
     execute<TResult = any>(parts: IQueryPart[]): TResult {
-        let value = this.items instanceof Array ? this.items[Symbol.iterator]() : this.items;
+        if (!parts || !parts.length) return <any>this.items;
 
-        if (!parts || !parts.length) return <any>value;
+        let value = this.items instanceof Array ? this.items[Symbol.iterator]() : this.items;
 
         let inlineCountEnabled: boolean;
         let inlineCount: number;
@@ -180,9 +180,14 @@ const funcs = {
 
     cast: function* (items: IterableIterator<any>, ctor: IPartArgument) {
         for (let i of items) {
+            if (i == null) {
+                yield i;
+                continue;
+            }
+            
             if (i !== Object(i)) {
                 const v = ctor.literal(i);
-                if (v === NaN || v === null)
+                if (isNaN(v) || v === null)
                     throw new Error(`Unable to cast ${i}`);
 
                 yield v;
@@ -249,16 +254,19 @@ const funcs = {
     },
 
     elementAtOrDefault(items: IterableIterator<any>, index: IPartArgument) {
-        const v = items[index.literal];
-        return v === void 0 ? null : v;
+        let idx = 0;
+        for (let i of items) {
+            if (idx++ === index.literal) return i;
+        }
+
+        return null;
     },
 
     except: function* (items: IterableIterator<any>, other: IPartArgument, comparer: IPartArgument) {
         const dist = [];
         const c = <(a, b) => boolean>(comparer.func || ((a, b) => a == b));
         for (let i of items) {
-            if (dist.find(d => c(i, d))
-                || other.literal.find(d => c(i, d)))
+            if (dist.find(d => c(i, d)) || other.literal.find(d => c(i, d)))
                 continue;
 
             dist.push(i);
@@ -310,8 +318,7 @@ const funcs = {
         const dist = [];
         const c = <(a, b) => boolean>(comparer.func || ((a, b) => a == b));
         for (let i of items) {
-            if (dist.find(d => comparer.func ? comparer.func(i, d) : (i == d))
-                || !other.literal.find(d => c(i, d)))
+            if (dist.find(d => c(i, d)) || !other.literal.find(d => c(i, d)))
                 continue;
 
             dist.push(i);
