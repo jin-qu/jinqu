@@ -61,4 +61,25 @@ describe('Ajax helper tests', () => {
 
         expect(o).property('url').to.equal('List');
     });
+
+    it('should branch to all paths', () => {
+        const o1: AjaxOptions = {
+            method: 'GET',
+            url: 'Companies',
+            timeout: 1000
+        };
+        const o2: AjaxOptions = {
+            data: { id: 1 },
+            headers: { "AUTH": "42" }
+        };
+
+        expect(mergeAjaxOptions(o1, o2)).to.deep.equal({
+            method: 'GET',
+            url: 'Companies',
+            timeout: 1000,
+            data: { id: 1 },
+            headers: { "AUTH": "42" },
+            params: []
+        });
+    });
 });

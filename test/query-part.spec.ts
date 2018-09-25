@@ -34,10 +34,7 @@ describe('Query part tests', () => {
         const classOrders = [orders[0], orders[2], orders[4]].asQueryable().cast<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
 
-        const extendedOrders = [new ExtendedOrder(1, '2', 3, new Date(), null, [])];
-        const query: IQuery<Order> = extendedOrders.asQueryable();
-        const result = query.cast<ExtendedOrder>(ExtendedOrder).toArray();
-        expect(extendedOrders).to.deep.equal(result);
+        expect(() => orders.asQueryable().cast<ExtendedOrder>(ExtendedOrder).toArray()).to.throw();
 
         expect([null].asQueryable().cast<Number>(Number).toArray()).to.deep.equal([null]);
 
