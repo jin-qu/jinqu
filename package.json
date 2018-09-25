@@ -6,7 +6,8 @@
   "keywords": [
     "linq",
     "query",
-    "eval"
+    "eval",
+    "typescript"
   ],
   "files": [
     "dist",
@@ -20,7 +21,8 @@
     "test": "mocha --opts mocha.opts --reporter spec",
     "cover": "nyc --reporter text-summary mocha --opts mocha.opts --reporter spec",
     "coveralls": "nyc mocha --opts mocha.opts && nyc report --reporter=text-lcov --opts mocha.opts | coveralls",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "npm run build"
   },
   "author": "Umut Özel",
   "license": "MIT",
@@ -41,6 +43,6 @@
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
-    "jokenizer": "^0.1.2"
+    "jokenizer": "^0.1.5"
   }
 }

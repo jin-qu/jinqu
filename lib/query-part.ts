@@ -20,11 +20,11 @@ export class PartArgument implements IPartArgument {
         if (!this._expStr) return null;
 
         if (this.exp.type === ExpressionType.Func) {
-            const f = evaluate(this.exp, this._scopes);
+            const f = evaluate(this.exp, ...this._scopes);
             return this._func = (...args) => f.apply(null, args);
         }
 
-        return this._func = (...args) => evaluate(this.exp, [...args, ...this._scopes]);
+        return this._func = (...args) => evaluate(this.exp, ...args.concat(this._scopes));
     }
 
     private _expStr;
