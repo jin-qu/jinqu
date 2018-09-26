@@ -9,14 +9,11 @@ describe('Jinqu should be able to use', () => {
     it('aggregate', () => {
         expect([1, 2, 3, 4].asQueryable().aggregate((seed, value) => seed + value)).to.equal(10);
         expect([1, 2, 3, 4].asQueryable().aggregate((seed, value) => seed + value, 32)).to.equal(42);
-
-        const agg = orders.asQueryable().aggregate((seed, order) => seed + order.id, 69, v => v / 2);
-        expect(agg).to.equal(42);
     });
 
     it('all', () => {
         expect([1, 2, 3, 4].asQueryable().all(i => i > 0)).to.be.true;
-        expect([1, 2, 3, 4].asQueryable().any(i => i > 4)).to.be.false;
+        expect([1, 2, 3, 4].asQueryable().all(i => i > 4)).to.be.false;
 
         expect(products.asQueryable().all(p => p.category !== null)).to.be.true;
         expect(products.asQueryable().all(p => p.name === 'None')).to.be.false;
@@ -89,16 +86,20 @@ describe('Jinqu should be able to use', () => {
     it('defaultIfEmpty', () => {
         const arr = [{ id: 1 }, { id: 2 }];
 
-        const defEmp = arr.asQueryable().defaultIfEmpty().toArray();
+        const defEmp1 = arr.asQueryable().defaultIfEmpty().toArray();
+        expect(defEmp1).to.not.equal(arr);
+        expect(defEmp1).to.deep.equal(arr);
 
-        expect(defEmp).to.not.equal(arr);
-        expect(defEmp).to.deep.equal(arr);
+        const defEmp2 = [].asQueryable().defaultIfEmpty({ id: 0 }).toArray();
+        expect(defEmp2).to.deep.equal([{ id: 0 }]);
+
+        const defEmp3 = [].asQueryable().defaultIfEmpty(null).toArray();
+        expect(defEmp3).to.be.empty;
     });
 
     it('distinct', () => {
         const arr = [1, 2, 1, 3, 3, 2, 1, 3];
         const dist = arr.asQueryable().distinct().toArray();
-
         expect(dist).property('length').to.equal(3);
 
         const items = [
@@ -112,7 +113,6 @@ describe('Jinqu should be able to use', () => {
             { id: 3, name: 'i8' }
         ];
         const distItems = items.asQueryable().distinct((i1, i2) => i1.id === i2.id).toArray();
-
         expect(distItems).property('length').to.equal(3);
     });
 
@@ -146,20 +146,31 @@ describe('Jinqu should be able to use', () => {
     });
 
     it('firstOrDefault', () => {
+        expect(products.asQueryable().firstOrDefault()).to.equal(products[0]);
         expect([].asQueryable().firstOrDefault()).to.equal(null);
+        expect(products.asQueryable().firstOrDefault(p => p.no == products[2].no)).to.equal(products[2]);
         expect(products.asQueryable().firstOrDefault(p => p.category === 'None')).to.equal(null);
     });
 
     it('groupBy', () => {
-        const prodCat = products
+        const prodCat1 = products
             .asQueryable()
-            .groupBy(p => p.category, g => ({ category: g.key, count: g.length }))
+            .groupBy(p => p.category, (k, g) => ({ category: k, count: g.length }))
             .toArray();
 
-        expect(prodCat).property('length').to.equal(3);
-        expect(prodCat[0]).property('count').to.equal(3);
-        expect(prodCat[1]).property('count').to.equal(2);
-        expect(prodCat[2]).property('count').to.equal(4);
+        expect(prodCat1).property('length').to.equal(3);
+        expect(prodCat1[0]).property('count').to.equal(3);
+        expect(prodCat1[1]).property('count').to.equal(2);
+        expect(prodCat1[2]).property('count').to.equal(4);
+
+        const prodCat2 = products
+            .asQueryable()
+            .groupBy(p => p.category)
+            .toArray();
+
+        expect(prodCat2).property('length').to.equal(3);
+        expect(prodCat2[2]).property('key').to.equal('Cat03');
+        expect(prodCat2[2]).property('length').to.equal(4);
     });
 
     it('groupJoin', () => {
@@ -231,7 +242,7 @@ describe('Jinqu should be able to use', () => {
     });
 
     it('min', () => {
-        expect([1, 2, 3, 4].asQueryable().min()).to.equal(1);
+        expect([2, 1, 3, 4].asQueryable().min()).to.equal(1);
         expect(products.asQueryable().min(p => p.no)).to.equal('Prd1');
     });
 
@@ -309,12 +320,17 @@ describe('Jinqu should be able to use', () => {
         expect(products.asQueryable().single(p => p.no === products[3].no)).to.equal(products[3]);
 
         expect(() => products.asQueryable().single()).to.throw();
+        expect(() => products.asQueryable().take(0).single()).to.throw();
+        expect(() => products.asQueryable().single(p => p.category !== 'None')).to.throw();
         expect(() => products.asQueryable().single(p => p.category === 'None')).to.throw();
     });
 
     it('singleOrDefault', () => {
         expect([].asQueryable().singleOrDefault()).to.equal(null);
         expect(products.asQueryable().singleOrDefault(p => p.category === 'None')).to.equal(null);
+
+        expect(() => products.asQueryable().singleOrDefault()).to.throw();
+        expect(() => products.asQueryable().singleOrDefault(p => p.category !== 'None')).to.throw();
     });
 
     it('skip', () => {
@@ -338,6 +354,7 @@ describe('Jinqu should be able to use', () => {
         expect([1, 2, 3, 4].asQueryable().sum()).to.equal(10);
         expect(orders.asQueryable().sum(o => o.id)).to.equal(15);
     });
+
     it('take', () => {
         const firstThree = orders.asQueryable().take(3).toArray();
 
@@ -379,9 +396,9 @@ describe('Jinqu should be able to use', () => {
         const arr3 = [{ id: 5 }];
 
         const zip1 = arr1.asQueryable().zip(arr2, (i1, i2) => i1.id + i2.id).toArray();
-        const zip2 = arr1.asQueryable().zip(arr3, (i1, i2) => i1.id + i2.id).toArray();
-
         expect(zip1).to.deep.equal([4, 6]);
+        
+        const zip2 = arr1.asQueryable().zip(arr3, (i1, i2) => i1.id + i2.id).toArray();
         expect(zip2).to.deep.equal([6]);
     });
 });

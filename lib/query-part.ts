@@ -103,9 +103,8 @@ export class QueryPart implements IQueryPart {
         return new QueryPart(type, args, scopes);
     }
 
-    static aggregate<T, TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
-        selector?: Func1<TAccumulate, TResult>, scopes?: any[]) {
-        return this.create(QueryFunc.aggregate, [identifier(func, scopes), literal(seed), identifier(selector, scopes)], scopes);
+    static aggregate<T, TAccumulate = any>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, scopes?: any[]) {
+        return this.create(QueryFunc.aggregate, [identifier(func, scopes), literal(seed)], scopes);
     }
 
     static all<T>(predicate?: Predicate<T>, scopes?: any[]) {
@@ -164,12 +163,12 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.firstOrDefault, [identifier(predicate, scopes)], scopes);
     }
 
-    static groupBy<T, TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, scopes: any[]) {
-        return this.create(QueryFunc.groupBy, [identifier(keySelector, scopes), identifier(valueSelector, scopes)], scopes);
+    static groupBy<T, TResult = any, TKey = any>(keySelector: Func1<T, TKey>, elementSelector: Func2<TKey, Array<T>, TResult>, scopes: any[]) {
+        return this.create(QueryFunc.groupBy, [identifier(keySelector, scopes), identifier(elementSelector, scopes)], scopes);
     }
 
     static groupJoin<T, TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, scopes: any[]) {
+        selector: Func2<T, Array<TOther>, TResult>, scopes: any[]) {
         return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
     }
 
@@ -222,8 +221,8 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.select, [identifier(selector, scopes)], scopes);
     }
 
-    static selectMany<T, TCollection = any, TResult = TCollection>(selector: Func1<T, Array<TResult>>, resultSelector?: Func2<T, TCollection, TResult>, scopes?: any[]) {
-        return this.create(QueryFunc.selectMany, [identifier(selector, scopes), identifier(resultSelector, scopes)], scopes);
+    static selectMany<T, TCollection = any, TResult = TCollection>(selector: Func1<T, Array<TResult>>, scopes?: any[]) {
+        return this.create(QueryFunc.selectMany, [identifier(selector, scopes)], scopes);
     }
 
     static sequenceEqual<T>(other: Array<T>, comparer?: Func2<T, T, boolean>, scopes?: any[]) {
@@ -278,8 +277,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.zip, [literal(other), identifier(selector, scopes)], scopes);
     }
 
-    private static createJoin<T, TOther, TResult = any, TKey = any>(type: string, other: Array<TOther>,
-        thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>, selector: Func2<T, TOther, TResult>, scopes: any[]) {
+    private static createJoin(type, other, thisKey, otherKey, selector, scopes: any[]) {
         return this.create(
             type,
             [

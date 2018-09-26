@@ -6,14 +6,12 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
 
-    aggregate<TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
-        selector?: Func1<TAccumulate, TResult>, ...scopes): TResult {
-        return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, selector, scopes)]);
+    aggregate<TAccumulate = any>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate {
+        return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, scopes)]);
     }
 
-    aggregateAsync<TAccumulate = any, TResult = TAccumulate>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate,
-        selector?: Func1<TAccumulate, TResult>, ...scopes): PromiseLike<TResult> {
-        return this.provider.executeAsync([...this.parts, QueryPart.aggregate(func, seed, selector, scopes)]);
+    aggregateAsync<TAccumulate = any>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate> {
+        return this.provider.executeAsync([...this.parts, QueryPart.aggregate(func, seed, scopes)]);
     }
 
     all(predicate: Predicate<T>, ...scopes): boolean {
@@ -108,16 +106,16 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
         return this.provider.executeAsync([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
-    groupBy<TResult = any, TKey = any>(keySelector: Func1<T, TKey>, valueSelector: Func1<IGrouping<T, TKey>, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.groupBy(keySelector, valueSelector, scopes));
+    groupBy<TKey, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.groupBy(keySelector, elementSelector, scopes));
     }
 
-    groupJoin<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
+    groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupJoin(other, thisKey, otherKey, selector, scopes));
     }
 
-    inlineCount(value: boolean) {
+    inlineCount(value?: boolean) {
         return this.create(QueryPart.inlineCount(value));
     }
     
@@ -182,8 +180,8 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
         return this.create(QueryPart.select(selector, scopes));
     }
 
-    selectMany<TCollection = any, TResult = TCollection>(selector: Func1<T, Array<TResult>>, resultSelector?: Func2<T, TCollection, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.selectMany(selector, resultSelector, scopes));
+    selectMany<TCollection = any, TResult = TCollection>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult> {
+        return this.create(QueryPart.selectMany(selector, scopes));
     }
 
     sequenceEqual(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): boolean {

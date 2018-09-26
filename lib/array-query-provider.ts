@@ -141,14 +141,14 @@ export class ArrayQueryProvider implements IQueryProvider {
 
 const funcs = {
 
-    aggregate(items: IterableIterator<any>, func: IPartArgument, seed: IPartArgument, selector: IPartArgument) {
+    aggregate(items: IterableIterator<any>, func: IPartArgument, seed: IPartArgument) {
         let s = seed.literal || 0;
 
         for (let i of items) {
             s = func.func(s, i);
         }
 
-        return selector.func ? selector.func(s) : s;
+        return s;
     },
 
     all(items: IterableIterator<any>, predicate: IPartArgument) {
@@ -184,7 +184,7 @@ const funcs = {
                 yield i;
                 continue;
             }
-            
+
             if (i !== Object(i)) {
                 const v = ctor.literal(i);
                 if (isNaN(v) || v === null)
@@ -212,7 +212,7 @@ const funcs = {
 
     contains(items: IterableIterator<any>, item: IPartArgument, comparer: IPartArgument) {
         for (let i of items) {
-            if (comparer.func ? comparer.func(i, item.literal) : i == item.literal) 
+            if (comparer.func ? comparer.func(i, item.literal) : i == item.literal)
                 return true;
         }
 
@@ -228,8 +228,11 @@ const funcs = {
         return c;
     },
 
-    defaultIfEmpty(items: IterableIterator<any>) {
-        return items;
+    defaultIfEmpty(items: IterableIterator<any>, defaultValue: IPartArgument) {
+        var arr = Array.from(items);
+        if (arr.length) return arr[Symbol.iterator]();
+
+        return defaultValue.literal != null ? [defaultValue.literal] : [];
     },
 
     distinct: function* (items: IterableIterator<any>, comparer: IPartArgument) {
@@ -286,23 +289,29 @@ const funcs = {
         return getFirst(items, predicate)[1];
     },
 
-    groupBy: function* (items: IterableIterator<any>, keySelector: IPartArgument, valueSelector: IPartArgument) {
-        const groups = [];
+    groupBy: function* (items: IterableIterator<any>, keySelector: IPartArgument, elementSelector: IPartArgument) {
+        const groups: Array<{ key, group: any[] }> = [];
         for (let i of items) {
-            const k = keySelector.func(i);
-            const a = groups.find(g => deepEqual(g.key, k));
+            const key = keySelector.func(i);
+            const a = groups.find(g => deepEqual(g.key, key));
             if (!a) {
                 const group = [i];
-                group['key'] = k;
-                groups.push(group);
+                groups.push({ key, group });
             }
             else {
-                a.push(i);
+                a.group.push(i);
             }
         }
 
-        for (let g of groups)
-            yield valueSelector.func(g);
+        for (let g of groups) {
+            if (elementSelector.func) {
+                yield elementSelector.func(g.key, g.group);
+            }
+            else {
+                g.group["key"] = g.key;
+                yield g.group;
+            }
+        }
     },
 
     groupJoin: function* (items: IterableIterator<any>, other: IPartArgument, thisKey: IPartArgument, otherKey: IPartArgument, selector: IPartArgument) {
@@ -486,7 +495,7 @@ const funcs = {
                 yield i;
             }
         }
-        
+
         const os = getArray(other);
         for (let o of os) {
             if (!dist.find(d => c(o, d))) {
