@@ -4,11 +4,11 @@
 [![Coverage Status](https://coveralls.io/repos/github/jin-qu/jinqu/badge.svg?branch=master)](https://coveralls.io/github/jin-qu/jinqu?branch=master)	
 [![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)	
 <a href="https://snyk.io/test/npm/jinqu"><img src="https://snyk.io/test/npm/jinqu/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/npm/jinqu" style="max-width:100%;"></a>
-[![GitHub issues](https://img.shields.io/github/issues/umutozel/jinqu.svg)](https://github.com/umutozel/jinqu/issues)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/umutozel/jinqu/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/jin-qu/jinqu.svg)](https://github.com/jin-qu/jinqu/issues)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/jin-qu/jinqu/master/LICENSE)
 
-[![GitHub stars](https://img.shields.io/github/stars/umutozel/jinqu.svg?style=social&label=Star)](https://github.com/umutozel/jinqu)
-[![GitHub forks](https://img.shields.io/github/forks/umutozel/jinqu.svg?style=social&label=Fork)](https://github.com/umutozel/jinqu)
+[![GitHub stars](https://img.shields.io/github/stars/jin-qu/jinqu.svg?style=social&label=Star)](https://github.com/jin-qu/jinqu)
+[![GitHub forks](https://img.shields.io/github/forks/jin-qu/jinqu.svg?style=social&label=Fork)](https://github.com/jin-qu/jinqu)
 
 Written completely in TypeScript.
 
