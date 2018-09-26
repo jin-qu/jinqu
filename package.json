@@ -39,10 +39,10 @@
     "nyc": "^11.4.1",
     "ts-node": "^7.0.0",
     "tslint": "~5.6.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.0.3"
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
-    "jokenizer": "^0.2.1"
+    "jokenizer": "^0.2.4"
   }
 }

@@ -230,10 +230,19 @@ describe('Jinqu should be able to use string expressions with', () => {
     });
 
     it('where', () => {
-        const result = orders.asQueryable().where('c => c.id > 3').toArray();
-        expect(result).property('length').to.equal(2);
-        expect(result[0].id).to.equal(4);
-        expect(result[1].no).to.equal('Ord5');
+        const result1 = orders.asQueryable().where('c => c.id > 3').toArray();
+        expect(result1).property('length').to.equal(2);
+        expect(result1[0].id).to.equal(4);
+        expect(result1[1].no).to.equal('Ord5');
+
+        const details = orders.asQueryable().selectMany(o => o.details).toArray();
+        const result2 = details.asQueryable()
+            .where('d => (d.count > 20 &&  d.supplier != "QWE") || (d.count < 10 && d.supplier == "TYU")')
+            .toArray();
+        expect(result2).property('length').to.equal(8);
+        expect(result2[0].count).to.equal(63);
+        expect(result2[1].product).to.equal('Prd4');
+        expect(result2[2].supplier).to.equal('ABC');
     });
 
     it('zip', () => {
