@@ -6,11 +6,11 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
 
-    aggregate<TAccumulate = any>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate {
+    aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate {
         return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, scopes)]);
     }
 
-    aggregateAsync<TAccumulate = any>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate> {
+    aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate> {
         return this.provider.executeAsync([...this.parts, QueryPart.aggregate(func, seed, scopes)]);
     }
 
@@ -106,7 +106,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
         return this.provider.executeAsync([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
-    groupBy<TKey, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult> {
+    groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupBy(keySelector, elementSelector, scopes));
     }
 
@@ -180,7 +180,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncItera
         return this.create(QueryPart.select(selector, scopes));
     }
 
-    selectMany<TCollection = any, TResult = TCollection>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult> {
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.selectMany(selector, scopes));
     }
 

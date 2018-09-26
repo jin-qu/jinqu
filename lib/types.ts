@@ -43,8 +43,8 @@ interface IQueryDuplicates<T> {
 }
 
 export interface IQuerySafe<T> extends IQueryBase, Iterable<T>, AsyncIterable<T> {
-    aggregate<TAccumulate = any>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate;
-    aggregateAsync<TAccumulate = any>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
+    aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate;
+    aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
     all(predicate: Predicate<T>, ...scopes): boolean;
     allAsync(predicate: Predicate<T>, ...scopes): PromiseLike<boolean>;
     any(predicate?: Predicate<T>, ...scopes): boolean;
@@ -67,7 +67,7 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T>, AsyncIterable<T>
     firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
     firstOrDefault(predicate?: Predicate<T>, ...scopes): T;
     firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
-    groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult>;
+    groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
     inlineCount(value?: boolean): IQuery<T>;
@@ -84,7 +84,7 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T>, AsyncIterable<T>
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
-    selectMany<TCollection = any, TResult = TCollection>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
     sequenceEqual(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): boolean;
     sequenceEqualAsync(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): PromiseLike<boolean>;
     single(predicate?: Predicate<T>, ...scopes): T;
