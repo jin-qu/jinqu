@@ -3,7 +3,7 @@ import 'mocha';
 import { QueryFunc } from '../lib/query-part';
 import '../lib/array-extensions';
 
-describe('Array extension tests', () => {
+describe('Array extensions', () => {
 
     it('should create range', () => {
         expect(Array.from(Array.range(1, 5))).to.deep.equal([1, 2, 3, 4, 5]);
@@ -13,7 +13,7 @@ describe('Array extension tests', () => {
         expect(() => Array.from(Array.range(-1))).to.throw();
     });
 
-    it('should should repeat given item', () => {
+    it('should repeat given item', () => {
         expect(Array.from(Array.repeat('JS', 3))).to.deep.equal(['JS', 'JS', 'JS']);
         expect(() => Array.from(Array.repeat('JS', -1))).to.throw();
     });

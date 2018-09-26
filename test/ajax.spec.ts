@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { mergeAjaxOptions, AjaxOptions } from '../lib/ajax';
 
-describe('Ajax helper tests', () => {
+describe('Ajax helper', () => {
 
     it('should return null for two null options', () => {
         expect(mergeAjaxOptions(null, null)).to.be.null;

@@ -7,9 +7,9 @@ import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-describe('Query part async iterator tests', () => {
+describe('Jinqu should be able to asynchronously iterate', () => {
 
-    it('should filter the array', async function() {
+    it('filtered array', async function() {
         let i = 0;
         for await (let order of orders.asQueryable().where(o => o.id > 3)) {
             expect(order.id).to.equal(4 + i);
