@@ -190,11 +190,13 @@ describe('Jinqu should be able to use', () => {
 
     it('intersect', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
-        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+        const arr2 = [{ id: 2 }, { id: 3 }, arr1[0]];
 
-        const concat = arr1.asQueryable().intersect(arr2).toArray();
+        const concat1 = arr1.asQueryable().intersect(arr2).toArray();
+        expect(concat1).property('length').to.equal(1);
 
-        expect(concat).property('length').to.equal(1);
+        const concat2 = arr1.asQueryable().intersect(arr2, (i1, i2) => i1.id == i2.id).toArray();
+        expect(concat2).property('length').to.equal(2);
     });
 
     it('join', () => {
@@ -295,6 +297,11 @@ describe('Jinqu should be able to use', () => {
         expect([1, 2, 3, 4].asQueryable().sequenceEqual([1, 2, 3, 4])).to.be.true;
         expect([1, 2, 3, 4, 5].asQueryable().sequenceEqual([1, 2, 3, 4])).to.be.false;
         expect([1, 2, 3, 4].asQueryable().sequenceEqual([1, 2, 3, 4, 5])).to.be.false;
+
+        expect([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+            .asQueryable()
+            .sequenceEqual([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }], (i1, i2) => i1.id == i2.id)
+        ).to.be.true;
     });
 
     it('single', () => {
@@ -350,11 +357,13 @@ describe('Jinqu should be able to use', () => {
 
     it('union', () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
-        const arr2 = [{ id: 3 }, { id: 4 }, arr1[0]];
+        const arr2 = [{ id: 2 }, { id: 3 }, arr1[0]];
 
-        const concat = arr1.asQueryable().union(arr2).toArray();
+        const union1 = arr1.asQueryable().union(arr2).toArray();
+        expect(union1).property('length').to.equal(4);
 
-        expect(concat).property('length').to.equal(4);
+        const union2 = arr1.asQueryable().union(arr2, (i1, i2) => i1.id == i2.id).toArray();
+        expect(union2).property('length').to.equal(3);
     });
 
     it('where', () => {
