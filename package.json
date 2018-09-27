@@ -21,7 +21,8 @@
     "test": "mocha --opts mocha.opts --reporter spec",
     "cover": "nyc --reporter text-summary mocha --opts mocha.opts --reporter spec",
     "coveralls": "nyc mocha --opts mocha.opts && nyc report --reporter=text-lcov --opts mocha.opts | coveralls",
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "npm run build"
   },
   "author": "Umut Özel",
   "license": "MIT",
