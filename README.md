@@ -12,6 +12,11 @@
 
 Written completely in TypeScript.
 
+# Installation
+```
+npm i jinqu
+```
+
 # Let's See
 
 ```JavaScript
