@@ -373,11 +373,11 @@ describe('Jinqu should be able to use', () => {
     });
 
     it('union', () => {
-        const arr1 = [{ id: 1 }, { id: 2 }];
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 1 }];
         const arr2 = [{ id: 2 }, { id: 3 }, arr1[0]];
 
         const union1 = arr1.asQueryable().union(arr2).toArray();
-        expect(union1).property('length').to.equal(4);
+        expect(union1).property('length').to.equal(5);
 
         const union2 = arr1.asQueryable().union(arr2, (i1, i2) => i1.id == i2.id).toArray();
         expect(union2).property('length').to.equal(3);
