@@ -11,7 +11,6 @@ export * from './lib/types';
 declare global {
     interface Array<T> {
         asQueryable(): IQuery<T>;
-        $inlineCount?: number;
     }
 }
 

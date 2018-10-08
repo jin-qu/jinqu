@@ -13,14 +13,15 @@ export interface AjaxOptions {
     data?: any;
     timeout?: number;
     headers?: { [key: string]: string };
+    includeResponse?: boolean;
 }
 
-export interface IRequestProvider<TOptions extends AjaxOptions> {
-    request<TResult>(prms: QueryParameter[], options: TOptions[]): PromiseLike<TResult>;
+export interface IRequestProvider<TOptions extends AjaxOptions, TAttachedInfo = {}> {
+    request<TResult>(prms: QueryParameter[], options: TOptions[]): PromiseLike<TResult & TAttachedInfo>;
 }
 
-export interface IAjaxProvider {
-    ajax<TResult>(options: AjaxOptions): PromiseLike<TResult>;
+export interface IAjaxProvider<TAttachedInfo = {}> {
+    ajax<TResult>(options: AjaxOptions): PromiseLike<TResult & TAttachedInfo>;
 }
 
 export function mergeAjaxOptions(o1: AjaxOptions, o2: AjaxOptions): AjaxOptions {
@@ -33,6 +34,7 @@ export function mergeAjaxOptions(o1: AjaxOptions, o2: AjaxOptions): AjaxOptions 
         method: o2.method || o1.method,
         params: (o1.params || []).concat(o2.params || []),
         timeout: o2.timeout || o1.timeout,
-        url: o2.url || o1.url
+        url: o2.url || o1.url,
+        includeResponse: o2.includeResponse != null ? o2.includeResponse : o1.includeResponse
     };
 }

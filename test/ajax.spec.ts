@@ -29,7 +29,8 @@ describe('Ajax helper', () => {
             params: [
                 { key: '$where', value: 'a => a < 5' }
             ],
-            timeout: 300
+            timeout: 300,
+            includeResponse: true
         };
         const o2: AjaxOptions = {
             data: { name: 'Zaphod' },
@@ -60,6 +61,8 @@ describe('Ajax helper', () => {
         expect(o).property('timeout').to.equal(1000);
 
         expect(o).property('url').to.equal('List');
+
+        expect(o).property('includeResponse').to.be.true;
     });
 
     it('should branch to all paths', () => {
@@ -70,7 +73,8 @@ describe('Ajax helper', () => {
         };
         const o2: AjaxOptions = {
             data: { id: 1 },
-            headers: { "AUTH": "42" }
+            headers: { "AUTH": "42" },
+            includeResponse: false
         };
 
         expect(mergeAjaxOptions(o1, o2)).to.deep.equal({
@@ -79,7 +83,8 @@ describe('Ajax helper', () => {
             timeout: 1000,
             data: { id: 1 },
             headers: { "AUTH": "42" },
-            params: []
+            params: [],
+            includeResponse: false
         });
     });
 });
