@@ -18,10 +18,10 @@ describe('Ajax helper', () => {
         expect(mergeAjaxOptions(null, o2)).to.equal(o2);
     });
 
-    it('should merge two options', () => {
+    it('should merge two options 1', () => {
         const o1: AjaxOptions = {
             data: { id: 5 },
-            headers: { 
+            headers: {
                 'Content-Type': 'application/javascript',
                 'Accept': 'json'
             },
@@ -29,12 +29,11 @@ describe('Ajax helper', () => {
             params: [
                 { key: '$where', value: 'a => a < 5' }
             ],
-            timeout: 300,
-            includeResponse: true
+            timeout: 300
         };
         const o2: AjaxOptions = {
             data: { name: 'Zaphod' },
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Auth': '12345'
             },
@@ -48,7 +47,7 @@ describe('Ajax helper', () => {
 
         expect(o).property('data').property('id').to.equal(5);
         expect(o).property('data').property('name').to.equal('Zaphod');
-        
+
         expect(o).property('headers').property('Content-Type').to.equal('application/json');
         expect(o).property('headers').property('Accept').to.equal('json');
         expect(o).property('headers').property('Auth').to.equal('12345');
@@ -61,11 +60,9 @@ describe('Ajax helper', () => {
         expect(o).property('timeout').to.equal(1000);
 
         expect(o).property('url').to.equal('List');
-
-        expect(o).property('includeResponse').to.be.true;
     });
 
-    it('should branch to all paths', () => {
+    it('should merge two options 2', () => {
         const o1: AjaxOptions = {
             method: 'GET',
             url: 'Companies',
@@ -73,8 +70,7 @@ describe('Ajax helper', () => {
         };
         const o2: AjaxOptions = {
             data: { id: 1 },
-            headers: { "AUTH": "42" },
-            includeResponse: false
+            headers: { "AUTH": "42" }
         };
 
         expect(mergeAjaxOptions(o1, o2)).to.deep.equal({
@@ -83,8 +79,17 @@ describe('Ajax helper', () => {
             timeout: 1000,
             data: { id: 1 },
             headers: { "AUTH": "42" },
-            params: [],
-            includeResponse: false
+            params: []
         });
+    });
+
+    it('should merge two options 3', () => {
+        const o1: AjaxOptions = {
+            data: { id: 1 }
+        };
+        const o2: AjaxOptions = {
+        };
+
+        expect(mergeAjaxOptions(o1, o2)).property('data').to.equal(o1.data);
     });
 });

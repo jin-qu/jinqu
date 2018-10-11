@@ -1,7 +1,7 @@
 import { QueryPart } from "./query-part";
 import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery, InlineCountInfo } from './types';
 
-export class Query<T = any, TAttachedInfo = {}> implements IOrderedQuery<T, TAttachedInfo>, Iterable<T>, AsyncIterable<T> {
+export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, AsyncIterable<T> {
 
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
@@ -38,11 +38,11 @@ export class Query<T = any, TAttachedInfo = {}> implements IOrderedQuery<T, TAtt
         return this.provider.executeAsync([...this.parts, QueryPart.average(selector, scopes)]);
     }
 
-    cast<TResult>(type: Ctor<TResult>): IQuery<TResult, TAttachedInfo> {
+    cast<TResult>(type: Ctor<TResult>): IQuery<TResult> {
         return this.create(QueryPart.cast(type));
     }
 
-    concat(other: Array<T>): IQuery<T, TAttachedInfo> {
+    concat(other: Array<T>): IQuery<T> {
         return this.create(QueryPart.concat(other));
     }
 
@@ -62,86 +62,86 @@ export class Query<T = any, TAttachedInfo = {}> implements IOrderedQuery<T, TAtt
         return this.provider.executeAsync([...this.parts, QueryPart.count(predicate, scopes)]);
     }
 
-    defaultIfEmpty(defaultValue?: T): IQuery<T, TAttachedInfo> {
+    defaultIfEmpty(defaultValue?: T): IQuery<T> {
         return this.create(QueryPart.defaultIfEmpty(defaultValue));
     }
 
-    distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TAttachedInfo> {
+    distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
         return this.create(QueryPart.distinct(comparer, scopes));
     }
 
-    elementAt(index: number): T & TAttachedInfo {
+    elementAt(index: number): T {
         return this.provider.execute([...this.parts, QueryPart.elementAt(index)]);
     }
 
-    elementAtAsync(index: number): PromiseLike<T & TAttachedInfo> {
+    elementAtAsync(index: number): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.elementAt(index)]);
     }
 
-    elementAtOrDefault(index: number): T & TAttachedInfo {
+    elementAtOrDefault(index: number): T {
         return this.provider.execute([...this.parts, QueryPart.elementAtOrDefault(index)]);
     }
 
-    elementAtOrDefaultAsync(index: number): PromiseLike<T & TAttachedInfo> {
+    elementAtOrDefaultAsync(index: number): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.elementAtOrDefault(index)]);
     }
 
-    except(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TAttachedInfo> {
+    except(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
         return this.create(QueryPart.except(other, comparer, scopes));
     }
 
-    first(predicate?: Predicate<T>, ...scopes): T & TAttachedInfo {
+    first(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.first(predicate, scopes)]);
     }
 
-    firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TAttachedInfo> {
+    firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.first(predicate, scopes)]);
     }
 
-    firstOrDefault(predicate?: Predicate<T>, ...scopes): T & TAttachedInfo {
+    firstOrDefault(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
-    firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TAttachedInfo> {
+    firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
     groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>, 
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult, TAttachedInfo> {
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupBy(keySelector, elementSelector, scopes));
     }
 
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult, TAttachedInfo> {
+        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupJoin(other, thisKey, otherKey, selector, scopes));
     }
 
-    inlineCount(value?: boolean): IQuery<T, TAttachedInfo> {
+    inlineCount(value?: boolean): IQuery<T> {
         return this.create(QueryPart.inlineCount(value));
     }
     
-    intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TAttachedInfo> {
+    intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
         return this.create(QueryPart.intersect(other, comparer, scopes));
     }
 
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TAttachedInfo> {
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.join(other, thisKey, otherKey, selector, scopes));
     }
 
-    last(predicate?: Predicate<T>, ...scopes): T & TAttachedInfo {
+    last(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.last(predicate, scopes)]);
     }
 
-    lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TAttachedInfo> {
+    lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.last(predicate, scopes)]);
     }
 
-    lastOrDefault(predicate?: Predicate<T>, ...scopes): T & TAttachedInfo {
+    lastOrDefault(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.lastOrDefault(predicate, scopes)]);
     }
 
-    lastOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TAttachedInfo> {
+    lastOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.lastOrDefault(predicate, scopes)]);
     }
 
@@ -161,27 +161,27 @@ export class Query<T = any, TAttachedInfo = {}> implements IOrderedQuery<T, TAtt
         return this.provider.executeAsync([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
-    ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult, TAttachedInfo> {
+    ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult> {
         return this.create(QueryPart.ofType(type));
     }
 
-    orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TAttachedInfo> {
+    orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
         return <any>this.create(QueryPart.orderBy(keySelector, scopes));
     }
 
-    orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TAttachedInfo> {
+    orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
         return <any>this.create(QueryPart.orderByDescending(keySelector, scopes));
     }
 
-    reverse(): IQuery<T, TAttachedInfo> {
+    reverse(): IQuery<T> {
         return this.create(QueryPart.reverse());
     }
 
-    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TAttachedInfo> {
+    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.select(selector, scopes));
     }
 
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult, TAttachedInfo> {
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.selectMany(selector, scopes));
     }
 
@@ -193,27 +193,27 @@ export class Query<T = any, TAttachedInfo = {}> implements IOrderedQuery<T, TAtt
         return this.provider.executeAsync([...this.parts, QueryPart.sequenceEqual(other, comparer, scopes)]);
     }
 
-    single(predicate?: Predicate<T>, ...scopes): T & TAttachedInfo {
+    single(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.single(predicate, scopes)]);
     }
 
-    singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TAttachedInfo> {
+    singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.single(predicate, scopes)]);
     }
 
-    singleOrDefault(predicate?: Predicate<T>, ...scopes): T & TAttachedInfo {
+    singleOrDefault(predicate?: Predicate<T>, ...scopes): T {
         return this.provider.execute([...this.parts, QueryPart.singleOrDefault(predicate, scopes)]);
     }
 
-    singleOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TAttachedInfo> {
+    singleOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.singleOrDefault(predicate, scopes)]);
     }
 
-    skip(count: number): IQuery<T, TAttachedInfo> {
+    skip(count: number): IQuery<T> {
         return this.create(QueryPart.skip(count));
     }
 
-    skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TAttachedInfo> {
+    skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T> {
         return this.create(QueryPart.skipWhile(predicate, scopes));
     }
 
@@ -225,39 +225,39 @@ export class Query<T = any, TAttachedInfo = {}> implements IOrderedQuery<T, TAtt
         return this.provider.executeAsync([...this.parts, QueryPart.sum(selector, scopes)]);
     }
 
-    take(count: number): IQuery<T, TAttachedInfo> {
+    take(count: number): IQuery<T> {
         return this.create(QueryPart.take(count));
     }
 
-    takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TAttachedInfo> {
+    takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T> {
         return this.create(QueryPart.takeWhile(predicate, scopes));
     }
 
-    thenBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TAttachedInfo> {
+    thenBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
         return <any>this.create(QueryPart.thenBy(keySelector, scopes));
     }
 
-    thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TAttachedInfo> {
+    thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
         return <any>this.create(QueryPart.thenByDescending(keySelector, scopes));
     }
 
-    union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TAttachedInfo> {
+    union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
         return this.create(QueryPart.union(other, comparer, scopes));
     }
 
-    where(predicate: Predicate<T>, ...scopes): IQuery<T, TAttachedInfo> {
+    where(predicate: Predicate<T>, ...scopes): IQuery<T> {
         return this.create(QueryPart.where(predicate, scopes));
     }
 
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TAttachedInfo> {
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.zip(other, selector, scopes));
     }
 
-    toArray(): T[] & InlineCountInfo & TAttachedInfo {
+    toArray(): T[] & InlineCountInfo {
         return this.provider.execute([...this.parts, QueryPart.toArray()]);
     }
 
-    toArrayAsync(): PromiseLike<T[] & InlineCountInfo & TAttachedInfo> {
+    toArrayAsync(): PromiseLike<T[] & InlineCountInfo> {
         return this.provider.executeAsync([...this.parts, QueryPart.toArray()]);
     }
 
@@ -269,7 +269,7 @@ export class Query<T = any, TAttachedInfo = {}> implements IOrderedQuery<T, TAtt
         return this.provider.executeAsyncIterator<T>(this.parts);
     }
 
-    protected create<TResult = T>(part: IQueryPart): IQuery<TResult, TAttachedInfo> {
+    protected create<TResult = T>(part: IQueryPart): IQuery<TResult> {
         return <any>this.provider.createQuery([...this.parts, part]);
     }
 }
