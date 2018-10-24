@@ -1,6 +1,6 @@
 {
   "name": "jinqu",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Querying infrastructure for JavaScript, with Linq style",
   "main": "dist/index.js",
   "keywords": [
@@ -42,6 +42,6 @@
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
-    "jokenizer": "^0.2.4"
+    "jokenizer": "^0.2.6"
   }
 }
