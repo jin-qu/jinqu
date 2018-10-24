@@ -14,7 +14,6 @@ export interface IQueryProvider {
     createQuery(parts?: IQueryPart[]): IQueryBase;
     execute<TResult = any[]>(parts: IQueryPart[]): TResult;
     executeAsync<TResult = any[]>(parts: IQueryPart[]): PromiseLike<TResult>;
-    executeAsyncIterator<TResult = any>(parts: IQueryPart[]): AsyncIterator<TResult>;
 }
 
 export interface IPartArgument {
@@ -46,7 +45,7 @@ interface IQueryDuplicates<T> {
     reverse(): IQuery<T>;
 }
 
-export interface IQuerySafe<T> extends IQueryBase, Iterable<T>, AsyncIterable<T> {
+export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate;
     aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
     all(predicate: Predicate<T>, ...scopes): boolean;

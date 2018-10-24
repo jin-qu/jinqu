@@ -94,27 +94,6 @@ export class ArrayQueryProvider implements IQueryProvider {
         });
     }
 
-    executeAsyncIterator<TResult = any>(parts: IQueryPart[]) {
-        const it = <IterableIterator<TResult>>this.execute(parts);
-
-        return {
-            next: function () {
-                let ir = it.next();
-                if (ir.done) {
-                    return Promise.resolve({
-                        value: null,
-                        done: true
-                    });
-                } else {
-                    return Promise.resolve({
-                        value: ir.value,
-                        done: false
-                    });
-                }
-            }
-        };
-    }
-
     handlePart(items: IterableIterator<any>, part: IQueryPart) {
         const f = funcs[part.type];
         if (!f) throw new Error(`Unknown query part type ${part.type}.`);

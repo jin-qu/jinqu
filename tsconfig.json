@@ -8,8 +8,7 @@
     "declaration": true,
     "downlevelIteration": true,
     "lib": [
-      "es2015",
-      "esnext.asynciterable"
+      "es2015"
     ]
   },
   "compileOnSave": true,
