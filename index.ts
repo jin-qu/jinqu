@@ -1,5 +1,6 @@
 import { IQuery } from './lib/types';
 import { ArrayQueryProvider } from './lib/array-query-provider';
+import './lib/array-extensions';
 
 export * from './lib/ajax';
 export * from './lib/array-extensions';
