@@ -24,7 +24,7 @@ const countModifiers = [
 export class ArrayQueryProvider implements IQueryProvider {
 
     constructor(private readonly items: any[] | IterableIterator<any>) {
-        check(items);
+        if (!items) throw new TypeError('Cannot query null array.');
     }
 
     createQuery<T>(parts?: IQueryPart[]): Query<T> {
@@ -505,10 +505,6 @@ const funcs = {
         return Array.from(items);
     }
 };
-
-function check(items) {
-    if (!items) throw new TypeError('Cannot query null array.');
-}
 
 function getArray(arg: IPartArgument) {
     return arg.literal as any[];

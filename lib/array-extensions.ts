@@ -13,7 +13,7 @@ declare global {
 }
 
 Array.prototype.q = function () {
-    return new ArrayQueryProvider(this).createQuery();
+    return this.asQueryable();
 };
 
 function extendArray(func: string) {
