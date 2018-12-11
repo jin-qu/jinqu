@@ -71,4 +71,4 @@ It's not just Linq implementation, thanks to [Jokenizer](https://github.com/umut
 
 
 # License
-Jinqu is under the [MIT License](LICENSE).
+jinqu is under the [MIT License](LICENSE).
