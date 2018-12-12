@@ -1,7 +1,7 @@
-## Change list
+# Change list
 
 *Please provide briefly described change list which are you going to propose.*
- 
+
 ## Types of changes
 
 What types of changes are you proposing/introducing?
