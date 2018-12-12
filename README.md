@@ -1,8 +1,8 @@
 # Jinqu - Querying infrastructure for JavaScript, with Linq style
 
 [![Build Status](https://travis-ci.org/jin-qu/jinqu.svg?branch=master)](https://travis-ci.org/jin-qu/jinqu)
-[![Coverage Status](https://coveralls.io/repos/github/jin-qu/jinqu/badge.svg?branch=master)](https://coveralls.io/github/jin-qu/jinqu?branch=master)	
-[![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)	
+[![Coverage Status](https://coveralls.io/repos/github/jin-qu/jinqu/badge.svg?branch=master)](https://coveralls.io/github/jin-qu/jinqu?branch=master)
+[![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)
 <a href="https://snyk.io/test/npm/jinqu"><img src="https://snyk.io/test/npm/jinqu/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/npm/jinqu" style="max-width:100%;"></a>
 [![GitHub issues](https://img.shields.io/github/issues/jin-qu/jinqu.svg)](https://github.com/jin-qu/jinqu/issues)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/jin-qu/jinqu/master/LICENSE)
@@ -12,12 +12,11 @@
 
 Written completely in TypeScript.
 
-# Installation
-```
-npm i jinqu
-```
+## Installation
 
-# Let's See
+> npm i jinqu
+
+## Let's See
 
 ```JavaScript
 // asQueryable creates Query interface
@@ -27,24 +26,24 @@ orders.asQueryable().where(c => c.id > 3).toArray();
 orders.where(c => c.id > 3).toArray();
 orders.q().where(c => c.id > 3).toArray();
 
-
 // we can get values by type
 const items = ['1', 2, 'a3', 4, false, '5'];
 const numbers = items.ofType<Number>(Number).toArray();
-
 
 // we can cast values
 const items = ['1', 2, '3', 4, '5'];
 const numbers = items.asQueryable().cast<Number>(Number).toArray();
 ```
 
-# Supports String Expressions
+## Supports String Expressions
+
 ```JavaScript
 // we can pass variable scopes
 orders.where('c => c.id > value', { value: 3 }).toArray();
 ```
 
-# Iterators & Generators FTW!
+## Iterators & Generators FTW
+
 Jinqu queries are Iterable, you can use queries with *for..of* loop.
 
 ```JavaScript
@@ -58,17 +57,18 @@ for (let item of query) {
 for await (let item of query) {
   console.log(item.id);
 }
-
 ```
 
-# Supported Expressions
+## Supported Expressions
+
 where, ofType, cast, select, selectMany, join, groupJoin, orderBy, orderByDescending, thenBy, thenByDescending, take, takeWhile, skip, skipWhile, groupBy, distinct, concat, zip, union, intersect, except, defaultIfEmpty, reverse, first, firstOrDefault, last, lastOrDefault, single, singleOrDefault, elementAt, elementAtOrDefault, contains, sequenceEqual, any, all, count, min, max, sum, average, aggregate, toArray
 
 Array.range, Array.repeat
 
-# And more...
+## And more
+
 It's not just Linq implementation, thanks to [Jokenizer](https://github.com/umutozel/jokenizer) expressions and flexible architecture, we can use Jinqu to create custom querying libraries - like OData, GraphQL or Server-Side Linq. Take a look at [Beetle.js](https://github.com/Beetlejs/beetle.js)
 
+## License
 
-# License
 jinqu is under the [MIT License](LICENSE).
