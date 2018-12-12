@@ -1,6 +1,5 @@
 import { IQuery, IQuerySafe, Func1, Func2 } from "./types";
 import { QueryFunc } from './query-part';
-import { ArrayQueryProvider } from "./array-query-provider";
 
 declare global {
     interface Array<T> extends IQuerySafe<T> {
@@ -35,8 +34,7 @@ Object.getOwnPropertyNames(QueryFunc).forEach(extendArray);
 
 declare global {
     interface ArrayConstructor {
-        range(start: number, count: number): IterableIterator<number>;
-        range(count: number): IterableIterator<number>;
+        range(start: number, count?: number): IterableIterator<number>;
         repeat<T = any>(item: T, count: number): IterableIterator<T>;
     }
 }
