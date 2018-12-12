@@ -70,7 +70,7 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
     firstOrDefault(predicate?: Predicate<T>, ...scopes): T;
     firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
-    groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>, 
+    groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;

@@ -106,7 +106,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
-    groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>, 
+    groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult> {
         return this.create(QueryPart.groupBy(keySelector, elementSelector, scopes));
     }
