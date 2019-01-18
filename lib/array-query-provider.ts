@@ -1,5 +1,6 @@
 import deepEqual = require('deep-equal');
-import { IQueryProvider, IPartArgument, IQueryPart, IQuery } from './types';
+import { plainToClass } from 'class-transformer';
+import { IQueryProvider, IPartArgument, IQueryPart, IQuery, Ctor } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
@@ -27,13 +28,15 @@ export class ArrayQueryProvider implements IQueryProvider {
         if (!items) throw new TypeError('Cannot query null array.');
     }
 
-    createQuery<T>(parts?: IQueryPart[]): Query<T> {
-        return new Query<T>(this, parts);
+    createQuery<T>(parts?: IQueryPart[], ctor?: Ctor<T>): Query<T> {
+        const query = new Query<T>(this, parts);
+        return ctor ? (<any>query.cast(ctor)) : query;
     }
 
     execute<TResult = any>(parts: IQueryPart[]): TResult {
         if (!parts || !parts.length) return <any>this.items;
 
+        let ctor: Ctor<any> = null;
         let value = this.items instanceof Array ? this.items[Symbol.iterator]() : this.items;
 
         let inlineCountEnabled: boolean;
@@ -60,6 +63,9 @@ export class ArrayQueryProvider implements IQueryProvider {
                 orderParts.push(p);
                 continue;
             }
+            else if (p.type === QueryFunc.cast) {
+                ctor = p.args[0].literal;
+            }
 
             // if it is not an order, apply previous sortings
             if (orderParts.length) {
@@ -80,7 +86,7 @@ export class ArrayQueryProvider implements IQueryProvider {
             value['$inlineCount'] = inlineCount != null ? inlineCount : value.length;
         }
 
-        return <any>value;
+        return ctor ? plainToClass(ctor, value) : value;
     }
 
     executeAsync<TResult = any>(parts: IQueryPart[]): PromiseLike<TResult> {

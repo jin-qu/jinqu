@@ -23,7 +23,7 @@ function extendArray(func: string) {
     else if (func === 'reverse') {
         f += 'To';
     }
-     
+
     Array.prototype[f] = Array.prototype[f] || function () {
         const q = this.asQueryable();
         return q[func].apply(q, arguments);

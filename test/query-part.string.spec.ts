@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Order, orders, products } from './fixture';
+import { Order, orders, products, OrderNo } from './fixture';
 import '..';
 
 describe('Jinqu should be able to use string expressions with', () => {
@@ -166,14 +166,18 @@ describe('Jinqu should be able to use string expressions with', () => {
         const ids = orders.asQueryable().select('o => o.id').toArray();
         expect(ids).to.deep.equal([1, 2, 3, 4, 5]);
 
-        const idNo = orders.asQueryable().select('o => ({ id: o.id, no: o.no })').toArray();
+        const token = 'abc';
+        const idNo = orders.asQueryable().select('o => ({ id: o.id, no: o.no, token: token })', { token }).toArray();
         expect(idNo).to.deep.equal([
-            { id: 1, no: 'Ord1' },
-            { id: 2, no: 'Ord2' },
-            { id: 3, no: 'Ord3' },
-            { id: 4, no: 'Ord4' },
-            { id: 5, no: 'Ord5' }
+            { id: 1, no: 'Ord1', token: 'abc' },
+            { id: 2, no: 'Ord2', token: 'abc' },
+            { id: 3, no: 'Ord3', token: 'abc' },
+            { id: 4, no: 'Ord4', token: 'abc' },
+            { id: 5, no: 'Ord5', token: 'abc' }
         ]);
+
+        const no = orders.asQueryable().select<OrderNo>('o => ({ no: o.no })', OrderNo).toArray();
+        no.forEach(n => expect(n).to.be.instanceOf(OrderNo));
     });
 
     it('selectMany', () => {

@@ -1,5 +1,5 @@
 import { QueryPart } from "./query-part";
-import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery, InlineCountInfo } from './types';
+import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery, InlineCountInfo, IPartArgument } from './types';
 
 export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
 
@@ -107,13 +107,17 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
     }
 
     groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.groupBy(keySelector, elementSelector, scopes));
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes);
+    groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>,
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        return this.fixCtorArg(s => QueryPart.groupBy(keySelector, elementSelector, s), ctor, scopes);
     }
 
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.groupJoin(other, thisKey, otherKey, selector, scopes));
+        selector: Func2<T, Array<TOther>, TResult>, ...scopes);
+    groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, Array<TOther>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        return this.fixCtorArg(s => QueryPart.groupJoin(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
     inlineCount(value?: boolean): IQuery<T> {
@@ -125,8 +129,10 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
     }
 
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.join(other, thisKey, otherKey, selector, scopes));
+        selector: Func2<T, TOther, TResult>, ...scopes);
+    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        return this.fixCtorArg(s => QueryPart.join(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
     last(predicate?: Predicate<T>, ...scopes): T {
@@ -162,7 +168,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
     }
 
     ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult> {
-        return this.create(QueryPart.ofType(type));
+        return (<IQuery<TResult>>this.create(QueryPart.ofType(type))).cast(type);
     }
 
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
@@ -177,12 +183,14 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.create(QueryPart.reverse());
     }
 
-    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.select(selector, scopes));
+    select<TResult = any>(selector: Func1<T, TResult>, ...scopes);
+    select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        return this.fixCtorArg(s => QueryPart.select(selector, s), ctor, scopes);
     }
 
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.selectMany(selector, scopes));
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes);
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        return this.fixCtorArg(s => QueryPart.selectMany(selector, s), ctor, scopes);
     }
 
     sequenceEqual(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): boolean {
@@ -249,16 +257,19 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.create(QueryPart.where(predicate, scopes));
     }
 
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult> {
-        return this.create(QueryPart.zip(other, selector, scopes));
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes);
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        return this.fixCtorArg(s => QueryPart.zip(other, selector, s), ctor, scopes);
     }
 
-    toArray(): T[] & InlineCountInfo {
-        return this.provider.execute([...this.parts, QueryPart.toArray()]);
+    toArray(ctor?: Ctor<T>): T[] & InlineCountInfo {
+        const query = ctor ? this.cast(ctor) : this;
+        return query.provider.execute([...query.parts, QueryPart.toArray()]);
     }
 
-    toArrayAsync(): PromiseLike<T[] & InlineCountInfo> {
-        return this.provider.executeAsync([...this.parts, QueryPart.toArray()]);
+    toArrayAsync(ctor?: Ctor<T>): PromiseLike<T[] & InlineCountInfo> {
+        const query = ctor ? this.cast(ctor) : this;
+        return query.provider.executeAsync([...query.parts, QueryPart.toArray()]);
     }
 
     [Symbol.iterator]() {
@@ -267,5 +278,15 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
 
     protected create<TResult = T>(part: IQueryPart): IQuery<TResult> {
         return <any>this.provider.createQuery([...this.parts, part]);
+    }
+
+    protected fixCtorArg(partCurry: (scopes: any[]) => IQueryPart, ctor: Ctor<any>, scopes: any[]) {
+        if (ctor && typeof ctor !== 'function') {
+            scopes = [ctor, ...scopes];
+            ctor = null;
+        }
+
+        const query = this.create(partCurry(scopes));
+        return ctor ? query.cast(ctor) : query;
     }
 }

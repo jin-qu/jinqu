@@ -1,18 +1,8 @@
-export class Order implements IOrder {
-
-    constructor(public id: number, public no: string, public price: number,
-        public date: Date, public customer: Customer, public details: IOrderDetail[]) {
-    }
-}
-
-export class ExtendedOrder extends Order {
-}
-
 export interface IOrder {
     id: number;
     no: string;
     price: number;
-    customer: Customer;
+    customer: ICustomer;
     date: Date;
     details: IOrderDetail[];
 }
@@ -23,12 +13,32 @@ export interface IOrderDetail {
     count: number;
 }
 
-export interface Customer {
+export interface ICustomer {
     no: string;
 }
 
-export interface Product {
+export interface IProduct {
     no: string;
+    name: string;
+    category: string;
+}
+
+export class Order implements IOrder {
+
+    constructor(public id: number, public no: string, public price: number,
+        public date: Date, public customer: ICustomer, public details: IOrderDetail[]) {
+    }
+}
+
+export class ExtendedOrder extends Order {
+}
+
+export class OrderNo {
+    no: string;
+}
+
+export class Product implements IProduct {
+    no: string; 
     name: string;
     category: string;
 }
@@ -140,7 +150,7 @@ export const orders: IOrder[] = [
     ])
 ];
 
-export const products: Product[] = [
+export const products: IProduct[] = [
     {
         no: 'Prd1',
         name: 'Product 01',

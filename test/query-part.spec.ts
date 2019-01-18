@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
-import { ArrayQueryProvider, IQuery } from '..';
-import { Order, orders, products, ExtendedOrder } from './fixture';
-import { QueryPart, PartArgument } from '../lib/query-part';
+import '..';
+import { Order, orders, products, ExtendedOrder, OrderNo } from './fixture';
 
 describe('Jinqu should be able to use', () => {
 
@@ -44,9 +43,12 @@ describe('Jinqu should be able to use', () => {
         const classOrders = [orders[0], orders[2], orders[4]].asQueryable().cast<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
 
-        expect(() => orders.asQueryable().cast<ExtendedOrder>(ExtendedOrder).toArray()).to.throw();
+        const protoFixedOrders = orders.asQueryable().cast<Order>(Order).toArray();
+        protoFixedOrders.forEach(pfo => expect(pfo).to.be.instanceOf(Order));
 
         expect([null].asQueryable().cast<Number>(Number).toArray()).to.deep.equal([null]);
+
+        expect(() => orders.asQueryable().cast<ExtendedOrder>(ExtendedOrder).toArray()).to.throw();
 
         expect(() => ['Morty'].asQueryable().cast<Number>(Number).toArray()).to.throw();
     });
@@ -289,14 +291,18 @@ describe('Jinqu should be able to use', () => {
         const ids = orders.asQueryable().select(o => o.id).toArray();
         expect(ids).to.deep.equal([1, 2, 3, 4, 5]);
 
-        const idNo = orders.asQueryable().select(o => ({ id: o.id, no: o.no })).toArray();
+        const token = 'abc';
+        const idNo = orders.asQueryable().select(o => ({ id: o.id, no: o.no, token: token }), { token }).toArray();
         expect(idNo).to.deep.equal([
-            { id: 1, no: 'Ord1' },
-            { id: 2, no: 'Ord2' },
-            { id: 3, no: 'Ord3' },
-            { id: 4, no: 'Ord4' },
-            { id: 5, no: 'Ord5' }
+            { id: 1, no: 'Ord1', token: 'abc' },
+            { id: 2, no: 'Ord2', token: 'abc' },
+            { id: 3, no: 'Ord3', token: 'abc' },
+            { id: 4, no: 'Ord4', token: 'abc' },
+            { id: 5, no: 'Ord5', token: 'abc' }
         ]);
+
+        const no = orders.asQueryable().select(o => ({ no: o.no }), OrderNo).toArray();
+        no.forEach(n => expect(n).to.be.instanceOf(OrderNo));
     });
 
     it('selectMany', () => {

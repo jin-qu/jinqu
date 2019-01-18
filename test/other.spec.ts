@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import { QueryPart, PartArgument, ArrayQueryProvider } from '..';
-import { orders, Order } from './fixture';
+import { orders, Order, products, Product } from './fixture';
 
 describe('Jinqu should', () => {
 
@@ -63,5 +63,30 @@ describe('Jinqu should', () => {
 
         const part2 = new PartArgument(c => c % 2 == 0, null, null);
         expect(part2.expStr).not.null;
+    });
+
+    it('fix prototype 1', () => {
+        const provider = new ArrayQueryProvider(products);
+        const result = provider.createQuery<Product>(void 0, Product).toArray();
+
+        result.forEach(r => expect(r).to.be.instanceOf(Product));
+    });
+
+    it('fix prototype 2', () => {
+        const result = products.asQueryable().cast(Product).toArray();
+
+        result.forEach(r => expect(r).to.be.instanceOf(Product));
+    });
+
+    it('fix prototype 3', () => {
+        const result = products.asQueryable().toArray(Product);
+
+        result.forEach(r => expect(r).to.be.instanceOf(Product));
+    });
+
+    it('fix prototype 4', async () => {
+        const result = await products.asQueryable().toArrayAsync(Product);
+
+        result.forEach(r => expect(r).to.be.instanceOf(Product));
     });
 });

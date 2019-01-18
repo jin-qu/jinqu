@@ -19,7 +19,7 @@ export interface IQueryProvider {
 export interface IPartArgument {
     readonly func: Function;
     readonly exp: Expression;
-    readonly literal;
+    readonly literal: any;
     readonly scopes: any[];
 }
 
@@ -42,6 +42,8 @@ interface IQueryDuplicates<T> {
     concat(other: Array<T>): IQuery<T>;
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult>;
     reverse(): IQuery<T>;
 }
 
@@ -72,8 +74,12 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
     groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult>;
+    groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>,
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
+    groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, Array<TOther>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult>;
     inlineCount(value?: boolean): IQuery<T>;
     intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
     last(predicate?: Predicate<T>, ...scopes): T;
@@ -88,7 +94,9 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
+    select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult>;
     selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<T>, ...scopes): IQuery<TResult>;
     sequenceEqual(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): boolean;
     sequenceEqualAsync(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): PromiseLike<boolean>;
     single(predicate?: Predicate<T>, ...scopes): T;
@@ -104,9 +112,10 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
     where(predicate: Predicate<T>, ...scopes): IQuery<T>;
     zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult>;
 
-    toArray(): Array<T> & InlineCountInfo;
-    toArrayAsync(): PromiseLike<Array<T> & InlineCountInfo>;
+    toArray(ctor?: Ctor<T>): Array<T> & InlineCountInfo;
+    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Array<T> & InlineCountInfo>;
 }
 
 export type IQuery<T> = IQuerySafe<T> & IQueryDuplicates<T>;
