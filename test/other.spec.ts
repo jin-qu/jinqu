@@ -73,18 +73,24 @@ describe('Jinqu should', () => {
     });
 
     it('fix prototype 2', () => {
-        const result = products.asQueryable().cast(Product).toArray();
+        const result = products.asQueryable(Product).toArray();
 
         result.forEach(r => expect(r).to.be.instanceOf(Product));
     });
 
     it('fix prototype 3', () => {
+        const result = products.asQueryable().cast(Product).toArray();
+
+        result.forEach(r => expect(r).to.be.instanceOf(Product));
+    });
+
+    it('fix prototype 4', () => {
         const result = products.asQueryable().toArray(Product);
 
         result.forEach(r => expect(r).to.be.instanceOf(Product));
     });
 
-    it('fix prototype 4', async () => {
+    it('fix prototype 5', async () => {
         const result = await products.asQueryable().toArrayAsync(Product);
 
         result.forEach(r => expect(r).to.be.instanceOf(Product));
