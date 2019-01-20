@@ -1,9 +1,9 @@
-import { IQuery, IQuerySafe, Func1, Func2 } from "./types";
+import { IQuery, IQuerySafe, Func1, Func2, Ctor } from "./types";
 import { QueryFunc } from './query-part';
 
 declare global {
     interface Array<T> extends IQuerySafe<T> {
-        q(): IQuery<T>;
+        q(ctor?: Ctor<T>): IQuery<T>;
         joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
             selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
         concatWith(other: Array<T>): IQuery<T>;
@@ -11,8 +11,8 @@ declare global {
     }
 }
 
-Array.prototype.q = function () {
-    return this.asQueryable();
+Array.prototype.q = function (ctor?: Ctor<any>) {
+    return this.asQueryable(ctor);
 };
 
 function extendArray(func: string) {

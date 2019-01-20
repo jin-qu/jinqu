@@ -1,4 +1,4 @@
-import { IQuery } from './lib/types';
+import { IQuery, Ctor } from './lib/types';
 import { ArrayQueryProvider } from './lib/array-query-provider';
 import './lib/array-extensions';
 
@@ -11,10 +11,11 @@ export * from './lib/types';
 
 declare global {
     interface Array<T> {
-        asQueryable(): IQuery<T>;
+        asQueryable(ctor?: Ctor<T>): IQuery<T>;
     }
 }
 
-Array.prototype.asQueryable = function () {
-    return new ArrayQueryProvider(this).createQuery();
+Array.prototype.asQueryable = function (ctor: Ctor<any>) {
+    const query = new ArrayQueryProvider(this).createQuery();
+    return ctor ? query.cast(ctor) : query;
 }

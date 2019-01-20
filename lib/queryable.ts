@@ -107,16 +107,16 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
     }
 
     groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes);
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult>;
     groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult> {
         return this.fixCtorArg(s => QueryPart.groupBy(keySelector, elementSelector, s), ctor, scopes);
     }
 
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ...scopes);
+        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        selector: Func2<T, Array<TOther>, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
         return this.fixCtorArg(s => QueryPart.groupJoin(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
@@ -129,7 +129,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
     }
 
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes);
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
         return this.fixCtorArg(s => QueryPart.join(other, thisKey, otherKey, selector, s), ctor, scopes);
@@ -183,12 +183,12 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.create(QueryPart.reverse());
     }
 
-    select<TResult = any>(selector: Func1<T, TResult>, ...scopes);
+    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
     select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
         return this.fixCtorArg(s => QueryPart.select(selector, s), ctor, scopes);
     }
 
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes);
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
     selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
         return this.fixCtorArg(s => QueryPart.selectMany(selector, s), ctor, scopes);
     }
@@ -257,7 +257,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.create(QueryPart.where(predicate, scopes));
     }
 
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes);
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
     zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
         return this.fixCtorArg(s => QueryPart.zip(other, selector, s), ctor, scopes);
     }
