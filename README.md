@@ -28,11 +28,16 @@ Jinqu works perfectly in both Javascript and Typescript, but is optimized for Ty
 
 ## Code Examples
 
-Here's an example of filtering an array:
+First, make sure you've imported jinqu. You actually only need to this once, such as in the entry point for your application, to ensure the Array prototype extensions are set up.
 
-```Typescript
+```typescript
+import 'jinqu'
+```
+Now let's filter an array:
+
+```typescript
 const array = [1,2,3,4,5]
-const filtered = array.where(c => n % 2 == 0).toArray()
+const query = array.where(c => n % 2 == 0).toArray()
 for (var n of query)
     console.log (n) // outputs 2,4
 ```
@@ -44,7 +49,7 @@ const query = array
     .where(c => n % 2 == 0)
     .orderByDescending (n => n))
     .toArray()
-for (var n of result)
+for (var n of query)
   console.log (n) // outputs 4,2
 ```
 Importantly, results aren't evaluated until `toArray` is called.
