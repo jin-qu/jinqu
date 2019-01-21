@@ -61,13 +61,56 @@ The additional argument is a *variable scope* that lets you pass in variables dy
 The full range of LINQ operators are supported:
 
 ```typescript
-where, ofType, cast, select, selectMany, join, groupJoin, orderBy, orderByDescending, thenBy, thenByDescending, take, takeWhile, skip, skipWhile, groupBy, distinct, concat, zip, union, intersect, except, defaultIfEmpty, reverse, first, firstOrDefault, last, lastOrDefault, single, singleOrDefault, elementAt, elementAtOrDefault, contains, sequenceEqual, any, all, count, min, max, sum, average, aggregate, toArray
+where  
+ofType  
+cast  
+select  
+selectMany  
+join  
+groupJoin  
+orderBy  
+orderByDescending  
+thenBy  
+thenByDescending  
+take  
+takeWhile  
+skip  
+skipWhile  
+groupBy  
+distinct  
+concat  
+zip  
+union  
+intersect  
+except  
+defaultIfEmpty  
+reverse  
+first  
+firstOrDefault  
+last  
+lastOrDefault  
+single  
+singleOrDefault  
+elementAt  
+elementAtOrDefault  
+contains  
+sequenceEqual  
+any  
+all  
+count  
+min  
+max  
+sum  
+average  
+aggregate  
+toArray
 ```
 
 As well as:
 
 ```typescript
-Array.range, Array.repeat
+range  
+repeat
 ```
 
 ## Remote Query Providers
@@ -85,6 +128,19 @@ const result = await remoteQuery.toArrayAsync()
 for (var item of result)
    ...
 ```
+## Array Prototype Extensions
+
+Jinqu query operators build queries with a simple model: they take a query type as an input, transform it, and output another query type. However, the very first operator in a query needs to take an array type as the original source for the query. To make this work, jinqu extends the Array prototype.
+
+Extending the array prototype is very convenient, but occasionally has conflict issues with Array's built-in prototype or other 3rd party prototype extensions.
+
+To overcome this, you can call `asQueryable` or the convenience `q` for short, to ensure you're working with an `IQuery<T>` type:
+
+```typescript
+[1,2,3].asQueryable().reverse()
+[1,2,3].q().reverse() // same as above
+```
+In addition, the `concat`, `join`, and `reverse` methdos (which are built into the Array prototype), have special support: call `concatWith`, `joinWith`, and `reverseTo`, to start a query with these operators on the array type.
 
 ## License
 
