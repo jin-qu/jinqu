@@ -1,4 +1,4 @@
-# Jinqu - Querying infrastructure for JavaScript, with Linq style
+# Jinqu - LINQ for Javascript
 
 [![Build Status](https://travis-ci.org/jin-qu/jinqu.svg?branch=master)](https://travis-ci.org/jin-qu/jinqu)
 [![Coverage Status](https://coveralls.io/repos/github/jin-qu/jinqu/badge.svg?branch=master)](https://coveralls.io/github/jin-qu/jinqu?branch=master)
@@ -11,65 +11,81 @@
 [![GitHub stars](https://img.shields.io/github/stars/jin-qu/jinqu.svg?style=social&label=Star)](https://github.com/jin-qu/jinqu)
 [![GitHub forks](https://img.shields.io/github/forks/jin-qu/jinqu.svg?style=social&label=Fork)](https://github.com/jin-qu/jinqu)
 
-Written completely in TypeScript.
+Jinqu, based on the LINQ design, is the ultimate querying API for Javscript & Typescript. It provides:
+
+* LINQ syntax
+* Lazy (i.e. deferred) Evaluation
+* Local and Remote Evaluation w/ provider model for libraries implementing remote evaluation (e.g. `jinqu-odata`)
+* Static Typing (in Typescript)
+* Dynamic queries (in strings)
+* Even works on IE 11 (with transpilation)
+
+Jinqu works perfectly in both Javascript and Typescript, but is optimized for Typescript. Jinqu is itself written in Typescript.
 
 ## Installation
 
-> npm i jinqu
+> npm install jinqu
 
-## Let's See
+## Code Examples
+
+Here's an example of filtering an array:
+
+```Typescript
+const array = [1,2,3,4,5]
+const filtered = array.where(c => n % 2 == 0).toArray()
+for (var n of query)
+    console.log (n) // outputs 2,4
+```
+We can *chain* query operators:
+
+```typescript
+const array = [1,2,3,4,5]
+const query = array
+    .where(c => n % 2 == 0)
+    .orderByDescending (n => n))
+    .toArray()
+for (var n of result)
+  console.log (n) // outputs 4,2
+```
+Importantly, results aren't evaluated until `toArray` is called.
+
+## Dynamic Expressions
 
 ```JavaScript
-// asQueryable creates Query interface
-orders.asQueryable().where(c => c.id > 3).toArray();
-
-// with array extensions we can skip "asQueryable", or use the shortcut method "q"
-orders.where(c => c.id > 3).toArray();
-orders.q().where(c => c.id > 3).toArray();
-
-// we can get values by type
-const items = ['1', 2, 'a3', 4, false, '5'];
-const numbers = items.ofType<Number>(Number).toArray();
-
-// we can cast values
-const items = ['1', 2, '3', 4, '5'];
-const numbers = items.asQueryable().cast<Number>(Number).toArray();
+const filtered = orders.where('c => c.id > value', { value: 3 })
 ```
+The additional argument is a *variable scope* that lets you pass in variables dynamically.
 
-## Supports String Expressions
+## Supported Query Operators
 
-```JavaScript
-// we can pass variable scopes
-orders.where('c => c.id > value', { value: 3 }).toArray();
-```
+The full range of LINQ operators are supported:
 
-## Iterators & Generators FTW
-
-Jinqu queries are Iterable, you can use queries with *for..of* loop.
-
-```JavaScript
-const query = orders.where(c => c.id > 3);
-
-for (let item of query) {
-  console.log(item.id);
-}
-
-// Supports Async Iterators too!
-for await (let item of query) {
-  console.log(item.id);
-}
-```
-
-## Supported Expressions
-
+```typescript
 where, ofType, cast, select, selectMany, join, groupJoin, orderBy, orderByDescending, thenBy, thenByDescending, take, takeWhile, skip, skipWhile, groupBy, distinct, concat, zip, union, intersect, except, defaultIfEmpty, reverse, first, firstOrDefault, last, lastOrDefault, single, singleOrDefault, elementAt, elementAtOrDefault, contains, sequenceEqual, any, all, count, min, max, sum, average, aggregate, toArray
+```
 
+As well as:
+
+```typescript
 Array.range, Array.repeat
+```
 
-## And more
+## Remote Query Providers
 
-It's not just Linq implementation, thanks to [Jokenizer](https://github.com/umutozel/jokenizer) expressions and flexible architecture, we can use Jinqu to create custom querying libraries - like OData, GraphQL or Server-Side Linq. Take a look at [Beetle.js](https://github.com/Beetlejs/beetle.js)
+Jinqu has the following remote providers:
+
+ * [Jinqu-OData](https://github.com/jin-qu/jinqu-odata) - Query OData endpoints
+ * [Linquest](https://github.com/jin-qu/linquest) - Query Remote LINQ endpoints
+
+Remote queries always return promises so are awaited. So rather than `toArray` to obtain the results of the query, you'll call `toArrayAsync`:
+
+```typescript
+...
+const result = await remoteQuery.toArrayAsync()
+for (var item of result)
+   ...
+```
 
 ## License
 
-jinqu is under the [MIT License](LICENSE).
+jinqu is licensed with the [MIT License](LICENSE).
