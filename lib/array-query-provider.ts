@@ -369,11 +369,13 @@ const funcs = {
     },
 
     ofType: function* (items: IterableIterator<any>, ctor: IPartArgument) {
+        const type = ctor.literal;
         for (let i of items) {
             if (i !== Object(i)) {
-                if (ctor.literal(i) === i)
+                // if type is no reference type, convert and compare
+                if (type(i) === i)
                     yield i;
-            } else if (i instanceof ctor.literal)
+            } else if (i instanceof type)
                 yield i;
         }
     },
