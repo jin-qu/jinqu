@@ -251,7 +251,7 @@ describe('Jinqu should be able to use', () => {
     it('ofType', () => {
         // primitive test
         const items: any[] = ['1', 2, 'a3', 4, false, '5'];
-        const numbers = items.asQueryable().ofType<Number>(Number).toArray();
+        const numbers = items.asQueryable().ofType(Number).toArray();
         expect(numbers).to.deep.equal([2, 4]);
 
         // object test
