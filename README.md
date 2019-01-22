@@ -47,7 +47,7 @@ We can *chain* query operators:
 const array = [1,2,3,4,5]
 const query = array
     .where(c => n % 2 == 0)
-    .orderByDescending (n => n))
+    .orderByDescending (n => n)
     .toArray()
 for (var n of query)
   console.log (n) // outputs 4,2
