@@ -250,13 +250,19 @@ describe('Jinqu should be able to use', () => {
 
     it('ofType', () => {
         // primitive test
-        const items: any[] = ['1', 2, 'a3', 4, false, '5'];
+        const items = ['1', 2, 'a3', 4, false, '5'];
 
-        const numbers = items.asQueryable().ofType(Number).toArray();
-        expect(numbers).to.deep.equal([2, 4]);
+        const numbers1 = (items as any[]).asQueryable().ofType(Number).toArray();
+        expect(numbers1).to.deep.equal([2, 4]);
+        const numbers2 = items.asQueryable().ofType(0).toArray();
+        expect(numbers2).to.deep.equal([2, 4]);
 
-        const strings = items.asQueryable().ofType(String).toArray();
-        expect(strings).to.deep.equal(['1', 'a3', '5']);
+        const strings1 = (items as any[]).asQueryable().ofType(String).toArray();
+        expect(strings1).to.deep.equal(['1', 'a3', '5']);
+        const strings2 = items.asQueryable().ofType('').toArray();
+        expect(strings2).to.deep.equal(['1', 'a3', '5']);
+
+        expect(() => items.ofType(null)).to.throw();
 
         // object test
         const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();

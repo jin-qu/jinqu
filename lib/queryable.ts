@@ -167,8 +167,11 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
-    ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult> {
-        return (<IQuery<TResult>>this.create(QueryPart.ofType(type))).cast(type);
+    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult> {
+        if (type == null) throw new Error('Value cannot be null. Parameter name: type');
+        
+        const ctor: Ctor<TResult> = typeof type === 'function' ? type : <any>type.constructor;
+        return (<IQuery<TResult>>this.create(QueryPart.ofType(ctor))).cast(ctor);
     }
 
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {

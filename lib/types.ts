@@ -90,7 +90,7 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     maxAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult>;
     min<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult;
     minAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult>;
-    ofType<TResult extends T>(type: Ctor<TResult>): IQuery<TResult>;
+    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult>;
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
