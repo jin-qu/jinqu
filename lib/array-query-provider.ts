@@ -172,7 +172,7 @@ const funcs = {
 
             if (i !== Object(i)) {
                 const v = ctor.literal(i);
-                if (isNaN(v) || v === null)
+                if (v == null || (ctor.literal === Number && isNaN(v)))
                     throw new Error(`Unable to cast ${i}`);
 
                 yield v;
@@ -372,7 +372,7 @@ const funcs = {
         const type = ctor.literal;
         for (let i of items) {
             if (i !== Object(i)) {
-                // if type is no reference type, convert and compare
+                // if type is not a reference type, convert and compare
                 if (type(i) === i)
                     yield i;
             } else if (i instanceof type)
