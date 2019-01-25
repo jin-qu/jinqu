@@ -5,6 +5,7 @@ export type Ctor<T> = new (...args) => T;
 export type Func1<T1, T2 = any> = ((p1: T1) => T2) | string;
 export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
 export type Predicate<T> = Func1<T, boolean>;
+export type TypePredicate<T> = (t: any) => t is T
 
 export interface IGrouping<T, TKey> extends Array<T> {
     key: TKey;
@@ -90,7 +91,7 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     maxAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult>;
     min<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult;
     minAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult>;
-    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult>;
+    ofType<TResult extends T>(type: Ctor<TResult> | TResult | TypePredicate<TResult>): IQuery<TResult>;
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
     select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;

@@ -1,6 +1,6 @@
 import deepEqual = require('deep-equal');
 import { plainToClass } from 'class-transformer';
-import { IQueryProvider, IPartArgument, IQueryPart, IQuery, Ctor } from './types';
+import { IQueryProvider, IPartArgument, IQueryPart, Ctor } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
@@ -55,7 +55,7 @@ export class ArrayQueryProvider implements IQueryProvider {
                     value = arr[Symbol.iterator]();
                 }
             }
-            else if (~countModifiers.indexOf(p.type)) {
+            else if (~countModifiers.indexOf(p.type)) {
                 inlineCount = null;
             }
             else if (~orderFuncs.indexOf(p.type)) {
@@ -172,7 +172,7 @@ const funcs = {
 
             if (i !== Object(i)) {
                 const v = ctor.literal(i);
-                if (v == null || (ctor.literal === Number && isNaN(v)))
+                if (v == null || (ctor.literal === Number && isNaN(v)))
                     throw new Error(`Unable to cast ${i}`);
 
                 yield v;
@@ -371,12 +371,23 @@ const funcs = {
     ofType: function* (items: IterableIterator<any>, ctor: IPartArgument) {
         const type = ctor.literal;
         for (let i of items) {
+            // if type is primitive
             if (i !== Object(i)) {
-                // if type is not a reference type, convert and compare
                 if (type(i) === i)
                     yield i;
-            } else if (i instanceof type)
-                yield i;
+            } else {
+                if (i instanceof type)
+                    yield i;
+                else {
+                    try {
+                        if (type(i))
+                            yield i;
+                    }
+                    catch (e) { 
+                        // ignored. might throw error for ES6 classes
+                    }
+                }
+            }
         }
     },
 

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import '..';
-import { Order, orders, products, ExtendedOrder, OrderNo } from './fixture';
+import { Order, orders, products, ExtendedOrder, OrderNo, IOrder, IProduct } from './fixture';
 
 describe('Jinqu should be able to use', () => {
 
@@ -267,6 +267,16 @@ describe('Jinqu should be able to use', () => {
         // object test
         const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
+
+        // type guard
+        function isProduct(item): item is IProduct {
+            return item && item.category != null;
+        }
+        
+        const orderProducts = (orders as (IOrder | IProduct)[]).concat(products);
+        const products2 = orderProducts.ofType(isProduct).toArray();
+
+        expect(products).to.be.deep.eq(products2);
     });
 
     it('orderBy, orderByDescending, thenBy, thenByDescending', () => {

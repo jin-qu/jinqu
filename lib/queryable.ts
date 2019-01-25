@@ -1,5 +1,5 @@
 import { QueryPart } from "./query-part";
-import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery, InlineCountInfo, IPartArgument } from './types';
+import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery, InlineCountInfo, TypePredicate } from './types';
 
 export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
 
@@ -167,9 +167,9 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
-    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult> {
+    ofType<TResult extends T>(type: Ctor<TResult> | TResult | TypePredicate<TResult>): IQuery<TResult> {
         if (type == null) throw new Error('Value cannot be null. Parameter name: type');
-        
+                
         const ctor: Ctor<TResult> = typeof type === 'function' ? type : <any>type.constructor;
         return (<IQuery<TResult>>this.create(QueryPart.ofType(ctor))).cast(ctor);
     }
