@@ -550,7 +550,7 @@ function getSingle(items: IterableIterator<any>, predicate: IPartArgument) {
 }
 
 function isCtor(func) {
-    if (typeof func === 'function') return false;
+    if (typeof func !== 'function') return false;
     if (func.prototype == null) return false;
 
     return !/return(?=([^"]*"[^"]*")*[^"]*$)/.test('' + func);
