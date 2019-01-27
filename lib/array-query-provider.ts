@@ -1,6 +1,6 @@
 import deepEqual = require('deep-equal');
 import { plainToClass } from 'class-transformer';
-import { IQueryProvider, IPartArgument, IQueryPart, Ctor } from './types';
+import { IQueryProvider, IPartArgument, IQueryPart, Ctor, Predicate } from './types';
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
@@ -308,6 +308,14 @@ const funcs = {
         }
     },
 
+    guard: function* (items: IterableIterator<any>, typeGuard: IPartArgument) {
+        const predicate = <(i) => boolean>typeGuard.literal;
+        for (let i of items) {
+            if (predicate(i))
+                yield i;
+        }
+    },
+
     intersect: function* (items: IterableIterator<any>, other: IPartArgument, comparer: IPartArgument) {
         const dist = [];
         const c = <(a, b) => boolean>(comparer.func || ((a, b) => a == b));
@@ -370,9 +378,12 @@ const funcs = {
 
     ofType: function* (items: IterableIterator<any>, ctor: IPartArgument) {
         const type = ctor.literal;
-        const predicate: (i) => boolean = isCtor(type) ? ctorCheck(type) : type;
         for (let i of items) {
-            if (predicate(i)) 
+            // if type is primitive
+            if (i !== Object(i)) {
+                if (type(i) === i)
+                    yield i;
+            } else if (i instanceof type)
                 yield i;
         }
     },
@@ -548,26 +559,3 @@ function getSingle(items: IterableIterator<any>, predicate: IPartArgument) {
 
     return matches.length ? [true, matches[0]] : [false, null];
 }
-
-function isCtor(func) {
-    if (typeof func !== 'function') return false;
-    if (func.prototype == null) return false;
-
-    return !/return(?=([^"]*"[^"]*")*[^"]*$)/.test('' + func);
-}
-
-function ctorCheck(type: Function) {
-
-    return function (i) {
-        // if type is primitive
-        if (i !== Object(i)) {
-            if (type(i) === i)
-                return true;
-        } else {
-            if (i instanceof type)
-                return true;
-        }
-
-        return false;
-    }
-} 

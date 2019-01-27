@@ -169,8 +169,15 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
 
     ofType<TResult extends T>(type: Ctor<TResult> | TResult | TypePredicate<TResult>): IQuery<TResult> {
         if (type == null) throw new Error('Value cannot be null. Parameter name: type');
-                
-        const ctor: Ctor<TResult> = typeof type === 'function' ? type : <any>type.constructor;
+
+        let ctor = <Ctor<TResult>>type;
+        if (typeof type !== 'function') {
+            ctor = <any>type.constructor;
+        }
+        else if (!isCtor(type)) {
+            return this.create(QueryPart.guard(<any>type));
+        }
+        
         return (<IQuery<TResult>>this.create(QueryPart.ofType(ctor))).cast(ctor);
     }
 
@@ -292,4 +299,10 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         const query = this.create(partCurry(scopes));
         return ctor ? query.cast(ctor) : query;
     }
+}
+
+function isCtor(func) {
+    if (func.prototype == null) return false;
+
+    return !('' + func).includes('return');
 }

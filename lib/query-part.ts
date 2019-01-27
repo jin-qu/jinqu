@@ -172,6 +172,10 @@ export class QueryPart implements IQueryPart {
         return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
     }
 
+    static guard(typeGuard: (i) => boolean) {
+        return this.create(QueryFunc.guard, [literal(typeGuard)]);
+    }
+
     static inlineCount(value?: boolean) {
         return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
     }
@@ -313,6 +317,7 @@ export const QueryFunc = {
     firstOrDefault: 'firstOrDefault',
     groupBy: 'groupBy',
     groupJoin: 'groupJoin',
+    guard: 'guard',
     inlineCount: 'inlineCount',
     intersect: 'intersect',
     join: 'join',
