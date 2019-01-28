@@ -113,6 +113,12 @@ toArray
 
 As well as:
 
+```typescript```
+ofGuardedType
+```
+
+And also:
+
 ```typescript
 range  
 repeat
@@ -146,6 +152,33 @@ To overcome this, you can call `asQueryable` or the convenience `q` for short, t
 [1,2,3].q().reverse() // same as above
 ```
 In addition, the `concat`, `join`, and `reverse` methdos (which are built into the Array prototype), have special support: call `concatWith`, `joinWith`, and `reverseTo`, to start a query with these operators on the array type.
+
+## ofType and ofGuardedType
+
+`ofType` and `ofGuardedType` filter elements of a specified type. The type arguments you must supply are a little different to what you might expect if you come from a C# background, but will make sense to you when you get a feel for the Typescript type system.
+
+ * `ofType` takes either a:
+   * constructor to filter class instances
+   * default value to filter primitive types
+ * `ofGuardedType` takes a:
+    * Typescript type guard (See [Typescript Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html)) to filter values by a condition indicative of type
+
+Their usage is as follows:
+
+```typescript
+class Panda {
+    constructor (public id: number) {}
+}
+
+function isNumber(x: any): x is number {
+    return typeof x === "number"
+}
+
+const array = ["1", 2, new Panda(3), "4", 5, new Panda(6)]
+const justPandas = array.ofType(Panda) // panda 3, panda 6 - using constructor type filter
+const justStrings = array.ofType("") // "1", "4" - using default value type filter 
+const justNumbers = array.ofGuardedType(isNumber) // 2, 5 - using type guard filter
+```
 
 ## License
 
