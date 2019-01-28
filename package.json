@@ -1,6 +1,6 @@
 {
   "name": "jinqu",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "description": "Querying infrastructure for JavaScript, with Linq style",
   "main": "dist/index.js",
   "keywords": [
