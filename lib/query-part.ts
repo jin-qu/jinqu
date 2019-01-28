@@ -172,10 +172,6 @@ export class QueryPart implements IQueryPart {
         return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
     }
 
-    static guard(typeGuard: (i) => boolean) {
-        return this.create(QueryFunc.guard, [literal(typeGuard)]);
-    }
-
     static inlineCount(value?: boolean) {
         return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
     }
@@ -203,6 +199,10 @@ export class QueryPart implements IQueryPart {
 
     static min<T, TResult = T>(selector?: Func1<T, TResult>, scopes?: any[]) {
         return this.create(QueryFunc.min, [identifier(selector, scopes)], scopes);
+    }
+
+    static ofGuardedType(typeGuard: (i) => boolean) {
+        return this.create(QueryFunc.ofGuardedType, [literal(typeGuard)]);
     }
 
     static ofType<TResult>(type: Ctor<TResult>) {
@@ -317,7 +317,6 @@ export const QueryFunc = {
     firstOrDefault: 'firstOrDefault',
     groupBy: 'groupBy',
     groupJoin: 'groupJoin',
-    guard: 'guard',
     inlineCount: 'inlineCount',
     intersect: 'intersect',
     join: 'join',
@@ -325,6 +324,7 @@ export const QueryFunc = {
     lastOrDefault: 'lastOrDefault',
     max: 'max',
     min: 'min',
+    ofGuardedType: 'ofGuardedType',
     ofType: 'ofType',
     orderBy: 'orderBy',
     orderByDescending: 'orderByDescending',

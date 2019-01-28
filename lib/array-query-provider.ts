@@ -308,14 +308,6 @@ const funcs = {
         }
     },
 
-    guard: function* (items: IterableIterator<any>, typeGuard: IPartArgument) {
-        const predicate = <(i) => boolean>typeGuard.literal;
-        for (let i of items) {
-            if (predicate(i))
-                yield i;
-        }
-    },
-
     intersect: function* (items: IterableIterator<any>, other: IPartArgument, comparer: IPartArgument) {
         const dist = [];
         const c = <(a, b) => boolean>(comparer.func || ((a, b) => a == b));
@@ -374,6 +366,14 @@ const funcs = {
         }
 
         return min;
+    },
+
+    ofGuardedType: function* (items: IterableIterator<any>, typeGuard: IPartArgument) {
+        const predicate = <(i) => boolean>typeGuard.literal;
+        for (let i of items) {
+            if (predicate(i))
+                yield i;
+        }
     },
 
     ofType: function* (items: IterableIterator<any>, ctor: IPartArgument) {

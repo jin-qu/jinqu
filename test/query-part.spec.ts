@@ -248,6 +248,18 @@ describe('Jinqu should be able to use', () => {
         expect(products.asQueryable().min(p => p.no)).to.equal('Prd1');
     });
 
+    it('ofGuardedType', () => {
+        // type guard
+        function isProduct(item): item is IProduct {
+            return item && item.category != null;
+        }
+        
+        const orderProducts = (orders as (IOrder | IProduct)[]).concat(products);
+        const products2 = orderProducts.ofGuardedType(isProduct).toArray();
+
+        expect(products).to.be.deep.eq(products2);
+    });
+
     it('ofType', () => {
         // primitive test
         const items = ['1', 2, 'a3', 4, false, '5'];
@@ -267,16 +279,6 @@ describe('Jinqu should be able to use', () => {
         // object test
         const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
-
-        // type guard
-        function isProduct(item): item is IProduct {
-            return item && item.category != null;
-        }
-        
-        const orderProducts = (orders as (IOrder | IProduct)[]).concat(products);
-        const products2 = orderProducts.ofType(isProduct).toArray();
-
-        expect(products).to.be.deep.eq(products2);
     });
 
     it('orderBy, orderByDescending, thenBy, thenByDescending', () => {

@@ -1,7 +1,10 @@
 import { QueryPart } from "./query-part";
-import { Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, IQuery, IOrderedQuery, InlineCountInfo, TypePredicate } from './types';
+import { 
+    Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, 
+    IQuery, IOrderedQuery, InlineCountInfo, TypePredicate, IArrayQuery 
+} from './types';
 
-export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
+export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, IArrayQuery {
 
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
@@ -167,17 +170,12 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
-    ofType<TResult extends T>(type: Ctor<TResult> | TResult | TypePredicate<TResult>): IQuery<TResult> {
-        if (type == null) throw new Error('Value cannot be null. Parameter name: type');
+    ofGuardedType<TResult>(checker: TypePredicate<TResult>) {
+        return this.create(QueryPart.ofGuardedType(<any>checker));
+    }
 
-        let ctor = <Ctor<TResult>>type;
-        if (typeof type !== 'function') {
-            ctor = <any>type.constructor;
-        }
-        else if (!isCtor(type)) {
-            return this.create(QueryPart.guard(<any>type));
-        }
-        
+    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult> {
+        let ctor: any = typeof type === 'function' ? type : type.constructor;
         return (<IQuery<TResult>>this.create(QueryPart.ofType(ctor))).cast(ctor);
     }
 
@@ -299,10 +297,4 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         const query = this.create(partCurry(scopes));
         return ctor ? query.cast(ctor) : query;
     }
-}
-
-function isCtor(func) {
-    if (func.prototype == null) return false;
-
-    return !('' + func).includes('return');
 }

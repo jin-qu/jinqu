@@ -1,8 +1,8 @@
-import { IQuery, IQuerySafe, Func1, Func2, Ctor } from "./types";
+import { IQuery, IQuerySafe, Func1, Func2, Ctor, IArrayQuery } from "./types";
 import { QueryFunc } from './query-part';
 
 declare global {
-    interface Array<T> extends IQuerySafe<T> {
+    interface Array<T> extends IQuerySafe<T>, IArrayQuery {
         q(ctor?: Ctor<T>): IQuery<T>;
         joinWith<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
             selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
