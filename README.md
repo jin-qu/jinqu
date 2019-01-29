@@ -113,7 +113,7 @@ toArray
 
 As well as:
 
-```typescript```
+```typescript
 ofGuardedType
 ```
 
