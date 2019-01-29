@@ -1,10 +1,10 @@
 import { QueryPart } from "./query-part";
 import { 
     Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, 
-    IQuery, IOrderedQuery, InlineCountInfo, TypePredicate, IArrayQuery 
+    IQuery, IOrderedQuery, InlineCountInfo, TypePredicate 
 } from './types';
 
-export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, IArrayQuery {
+export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
 
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
