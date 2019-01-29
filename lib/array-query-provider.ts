@@ -4,6 +4,7 @@ import { IQueryProvider, IPartArgument, IQueryPart, Ctor, Predicate } from './ty
 import { QueryFunc } from './query-part';
 import { Query } from './queryable';
 
+const primitives = [Number, Boolean, String];
 const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending, QueryFunc.thenBy, QueryFunc.thenByDescending];
 const descFuncs = [QueryFunc.orderByDescending, QueryFunc.thenByDescending];
 const countModifiers = [
@@ -378,9 +379,10 @@ const funcs = {
 
     ofType: function* (items: IterableIterator<any>, ctor: IPartArgument) {
         const type = ctor.literal;
+        const isPrimitive = ~primitives.indexOf(type);
         for (let i of items) {
             // if type is primitive
-            if (i !== Object(i)) {
+            if (isPrimitive && i !== Object(i)) {
                 if (type(i) === i)
                     yield i;
             } else if (i instanceof type)

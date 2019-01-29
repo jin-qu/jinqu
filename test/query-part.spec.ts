@@ -262,7 +262,9 @@ describe('Jinqu should be able to use', () => {
 
     it('ofType', () => {
         // primitive test
-        const items = ['1', 2, 'a3', 4, false, '5'];
+        const o1 = new Order(1, '1', 1, new Date(), null, []);
+        const o2 = new Order(2, '2', 2, new Date(), null, []);
+        const items = ['1', 2, 'a3', o1, 4, false, '5', o2];
 
         const numbers1 = (items as any[]).asQueryable().ofType(Number).toArray();
         expect(numbers1).to.deep.equal([2, 4]);
@@ -279,6 +281,9 @@ describe('Jinqu should be able to use', () => {
         // object test
         const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
+
+        expect(items.ofType(Order).toArray()).to.deep.equal([o1, o2]);
+        expect(items.ofType(o1).toArray()).to.deep.equal([o1, o2]);
     });
 
     it('orderBy, orderByDescending, thenBy, thenByDescending', () => {
