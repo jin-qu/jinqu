@@ -2,7 +2,7 @@ import deepEqual = require('deep-equal');
 import { plainToClass } from 'class-transformer';
 import { IQueryProvider, IPartArgument, IQueryPart, Ctor, Predicate } from './types';
 import { QueryFunc } from './query-part';
-import { Query } from './queryable';
+import { Query } from './query';
 
 const primitives = [Number, Boolean, String];
 const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending, QueryFunc.thenBy, QueryFunc.thenByDescending];

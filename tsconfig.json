@@ -10,7 +10,6 @@
       "es2015"
     ]
   },
-  "compileOnSave": true,
   "include": [
     "./index.ts",
     "./lib/**/*.ts"
