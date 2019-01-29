@@ -170,7 +170,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T>, IArrayQuer
         return this.provider.executeAsync([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
-    ofGuardedType<TResult>(checker: TypePredicate<TResult>) {
+    ofGuardedType<TResult>(checker: TypePredicate<TResult>): IQuery<TResult> {
         return this.create(QueryPart.ofGuardedType(<any>checker));
     }
 

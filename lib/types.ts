@@ -49,7 +49,7 @@ interface IQueryDuplicates<T> {
 }
 
 export interface IArrayQuery {
-    ofGuardedType<TResult>(checker: TypePredicate<TResult>);
+    ofGuardedType<TResult>(checker: TypePredicate<TResult>): IQuery<TResult>;
 }
 
 export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
