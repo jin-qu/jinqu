@@ -6,6 +6,7 @@
     "outDir": "./dist",
     "declaration": true,
     "downlevelIteration": true,
+    "sourceMap": true,
     "lib": [
       "es2015"
     ]
