@@ -4,7 +4,7 @@ import {
     IQuery, IOrderedQuery, InlineCountInfo, TypePredicate 
 } from './types';
 
-export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
+export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, Iterable<T> {
 
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
@@ -41,11 +41,11 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.average(selector, scopes)]);
     }
 
-    cast<TResult>(type: Ctor<TResult>): IQuery<TResult> {
+    cast<TResult>(type: Ctor<TResult>): IQuery<TResult, TExtra> {
         return this.create(QueryPart.cast(type));
     }
 
-    concat(other: Array<T>): IQuery<T> {
+    concat(other: Array<T>): IQuery<T, TExtra> {
         return this.create(QueryPart.concat(other));
     }
 
@@ -65,92 +65,92 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.count(predicate, scopes)]);
     }
 
-    defaultIfEmpty(defaultValue?: T): IQuery<T> {
+    defaultIfEmpty(defaultValue?: T): IQuery<T, TExtra> {
         return this.create(QueryPart.defaultIfEmpty(defaultValue));
     }
 
-    distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
+    distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra> {
         return this.create(QueryPart.distinct(comparer, scopes));
     }
 
-    elementAt(index: number): T {
+    elementAt(index: number): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.elementAt(index)]);
     }
 
-    elementAtAsync(index: number): PromiseLike<T> {
+    elementAtAsync(index: number): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.elementAt(index)]);
     }
 
-    elementAtOrDefault(index: number): T {
+    elementAtOrDefault(index: number): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.elementAtOrDefault(index)]);
     }
 
-    elementAtOrDefaultAsync(index: number): PromiseLike<T> {
+    elementAtOrDefaultAsync(index: number): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.elementAtOrDefault(index)]);
     }
 
-    except(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
+    except(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra> {
         return this.create(QueryPart.except(other, comparer, scopes));
     }
 
-    first(predicate?: Predicate<T>, ...scopes): T {
+    first(predicate?: Predicate<T>, ...scopes): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.first(predicate, scopes)]);
     }
 
-    firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+    firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.first(predicate, scopes)]);
     }
 
-    firstOrDefault(predicate?: Predicate<T>, ...scopes): T {
+    firstOrDefault(predicate?: Predicate<T>, ...scopes): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
-    firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+    firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
     groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult>;
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult, TExtra>;
     groupBy<TKey = any, TResult = IGrouping<T, TKey>>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg(s => QueryPart.groupBy(keySelector, elementSelector, s), ctor, scopes);
     }
 
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
+        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult, TExtra>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        selector: Func2<T, Array<TOther>, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg(s => QueryPart.groupJoin(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
-    inlineCount(value?: boolean): IQuery<T> {
+    inlineCount(value?: boolean): IQuery<T, TExtra & InlineCountInfo> {
         return this.create(QueryPart.inlineCount(value));
     }
     
-    intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
+    intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra> {
         return this.create(QueryPart.intersect(other, comparer, scopes));
     }
 
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+        selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg(s => QueryPart.join(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
-    last(predicate?: Predicate<T>, ...scopes): T {
+    last(predicate?: Predicate<T>, ...scopes): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.last(predicate, scopes)]);
     }
 
-    lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+    lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.last(predicate, scopes)]);
     }
 
-    lastOrDefault(predicate?: Predicate<T>, ...scopes): T {
+    lastOrDefault(predicate?: Predicate<T>, ...scopes): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.lastOrDefault(predicate, scopes)]);
     }
 
-    lastOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+    lastOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.lastOrDefault(predicate, scopes)]);
     }
 
@@ -170,34 +170,34 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.min(selector, scopes)]);
     }
 
-    ofGuardedType<TResult>(checker: TypePredicate<TResult>): IQuery<TResult> {
+    ofGuardedType<TResult>(checker: TypePredicate<TResult>): IQuery<TResult, TExtra> {
         return this.create(QueryPart.ofGuardedType(<any>checker));
     }
 
-    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult> {
+    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult, TExtra> {
         let ctor: any = typeof type === 'function' ? type : type.constructor;
-        return (<IQuery<TResult>>this.create(QueryPart.ofType(ctor))).cast(ctor);
+        return (<IQuery<TResult, TExtra>>this.create(QueryPart.ofType(ctor))).cast(ctor);
     }
 
-    orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
+    orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
         return <any>this.create(QueryPart.orderBy(keySelector, scopes));
     }
 
-    orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
+    orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
         return <any>this.create(QueryPart.orderByDescending(keySelector, scopes));
     }
 
-    reverse(): IQuery<T> {
+    reverse(): IQuery<T, TExtra> {
         return this.create(QueryPart.reverse());
     }
 
-    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
-    select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TExtra>;
+    select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg(s => QueryPart.select(selector, s), ctor, scopes);
     }
 
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult, TExtra>;
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg(s => QueryPart.selectMany(selector, s), ctor, scopes);
     }
 
@@ -209,27 +209,27 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.sequenceEqual(other, comparer, scopes)]);
     }
 
-    single(predicate?: Predicate<T>, ...scopes): T {
+    single(predicate?: Predicate<T>, ...scopes): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.single(predicate, scopes)]);
     }
 
-    singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+    singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.single(predicate, scopes)]);
     }
 
-    singleOrDefault(predicate?: Predicate<T>, ...scopes): T {
+    singleOrDefault(predicate?: Predicate<T>, ...scopes): T & TExtra {
         return this.provider.execute([...this.parts, QueryPart.singleOrDefault(predicate, scopes)]);
     }
 
-    singleOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T> {
+    singleOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra> {
         return this.provider.executeAsync([...this.parts, QueryPart.singleOrDefault(predicate, scopes)]);
     }
 
-    skip(count: number): IQuery<T> {
+    skip(count: number): IQuery<T, TExtra> {
         return this.create(QueryPart.skip(count));
     }
 
-    skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T> {
+    skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra> {
         return this.create(QueryPart.skipWhile(predicate, scopes));
     }
 
@@ -241,41 +241,41 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.executeAsync([...this.parts, QueryPart.sum(selector, scopes)]);
     }
 
-    take(count: number): IQuery<T> {
+    take(count: number): IQuery<T, TExtra> {
         return this.create(QueryPart.take(count));
     }
 
-    takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T> {
+    takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra> {
         return this.create(QueryPart.takeWhile(predicate, scopes));
     }
 
-    thenBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
+    thenBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
         return <any>this.create(QueryPart.thenBy(keySelector, scopes));
     }
 
-    thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T> {
+    thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
         return <any>this.create(QueryPart.thenByDescending(keySelector, scopes));
     }
 
-    union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T> {
+    union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra> {
         return this.create(QueryPart.union(other, comparer, scopes));
     }
 
-    where(predicate: Predicate<T>, ...scopes): IQuery<T> {
+    where(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra> {
         return this.create(QueryPart.where(predicate, scopes));
     }
 
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult> {
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg(s => QueryPart.zip(other, selector, s), ctor, scopes);
     }
 
-    toArray(ctor?: Ctor<T>): T[] & InlineCountInfo {
+    toArray(ctor?: Ctor<T>): T[] & TExtra {
         const query = ctor ? this.cast(ctor) : this;
         return query.provider.execute([...query.parts, QueryPart.toArray()]);
     }
 
-    toArrayAsync(ctor?: Ctor<T>): PromiseLike<T[] & InlineCountInfo> {
+    toArrayAsync(ctor?: Ctor<T>): PromiseLike<T[] & TExtra> {
         const query = ctor ? this.cast(ctor) : this;
         return query.provider.executeAsync([...query.parts, QueryPart.toArray()]);
     }
@@ -284,7 +284,7 @@ export class Query<T = any> implements IOrderedQuery<T>, Iterable<T> {
         return this.provider.execute<IterableIterator<T>>(this.parts);
     }
 
-    protected create<TResult = T>(part: IQueryPart): IQuery<TResult> {
+    protected create<TResult = T>(part: IQueryPart): IQuery<TResult, TExtra> {
         return <any>this.provider.createQuery([...this.parts, part]);
     }
 

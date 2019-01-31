@@ -39,16 +39,16 @@ export interface InlineCountInfo {
     $inlineCount?: number;
 }
 
-interface IQueryDuplicates<T> {
-    concat(other: Array<T>): IQuery<T>;
+interface IQueryDuplicates<T, TExtra = {}> {
+    concat(other: Array<T>): IQuery<T, TExtra>;
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
     join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult>;
-    reverse(): IQuery<T>;
+        selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
+    reverse(): IQuery<T, TExtra>;
 }
 
-export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
+export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate;
     aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
     all(predicate: Predicate<T>, ...scopes): boolean;
@@ -57,72 +57,72 @@ export interface IQuerySafe<T> extends IQueryBase, Iterable<T> {
     anyAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<boolean>;
     average(selector?: Func1<T, number>, ...scopes): number;
     averageAsync(selector?: Func1<T, number>, ...scopes): PromiseLike<number>;
-    cast<TResult>(type: Ctor<TResult>): IQuery<TResult>;
+    cast<TResult>(type: Ctor<TResult>): IQuery<TResult, TExtra>;
     contains(item: T, comparer?: Func2<T, T, boolean>, ...scopes): boolean;
     containsAsync(item: T, comparer?: Func2<T, T, boolean>, ...scopes): PromiseLike<boolean>;
     count(predicate?: Predicate<T>, ...scopes): number;
     countAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<number>;
-    defaultIfEmpty(defaultValue?: T): IQuery<T>;
-    distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
-    elementAt(index: number): T;
-    elementAtAsync(index: number): PromiseLike<T>;
-    elementAtOrDefault(index: number): T;
-    elementAtOrDefaultAsync(index: number): PromiseLike<T>;
-    except(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
-    first(predicate?: Predicate<T>, ...scopes): T;
-    firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
-    firstOrDefault(predicate?: Predicate<T>, ...scopes): T;
-    firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
+    defaultIfEmpty(defaultValue?: T): IQuery<T, TExtra>;
+    distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
+    elementAt(index: number): T & TExtra;
+    elementAtAsync(index: number): PromiseLike<T & TExtra>;
+    elementAtOrDefault(index: number): T & TExtra;
+    elementAtOrDefaultAsync(index: number): PromiseLike<T & TExtra>;
+    except(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
+    first(predicate?: Predicate<T>, ...scopes): T & TExtra;
+    firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra>;
+    firstOrDefault(predicate?: Predicate<T>, ...scopes): T & TExtra;
+    firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra>;
     groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult>;
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult, TExtra>;
     groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult>;
+        elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult>;
+        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult, TExtra>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult>;
-    inlineCount(value?: boolean): IQuery<T>;
-    intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
-    last(predicate?: Predicate<T>, ...scopes): T;
-    lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
-    lastOrDefault(predicate?: Predicate<T>, ...scopes): T;
-    lastOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
+        selector: Func2<T, Array<TOther>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
+    inlineCount(value?: boolean): IQuery<T, TExtra & InlineCountInfo>;
+    intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
+    last(predicate?: Predicate<T>, ...scopes): T & TExtra;
+    lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra>;
+    lastOrDefault(predicate?: Predicate<T>, ...scopes): T & TExtra;
+    lastOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra>;
     max<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult;
     maxAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult>;
     min<TResult = T>(selector?: Func1<T, TResult>, ...scopes): TResult;
     minAsync<TResult = T>(selector?: Func1<T, TResult>, ...scopes): PromiseLike<TResult>;
-    ofGuardedType<TResult>(checker: TypePredicate<TResult>): IQuery<TResult>;
-    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult>;
-    orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
-    orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
-    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult>;
-    select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult>;
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult>;
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<T>, ...scopes): IQuery<TResult>;
+    ofGuardedType<TResult>(checker: TypePredicate<TResult>): IQuery<TResult, TExtra>;
+    ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult, TExtra>;
+    orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
+    orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
+    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TExtra>;
+    select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult, TExtra>;
+    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
     sequenceEqual(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): boolean;
     sequenceEqualAsync(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): PromiseLike<boolean>;
-    single(predicate?: Predicate<T>, ...scopes): T;
-    singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
-    singleOrDefault(predicate?: Predicate<T>, ...scopes): T;
-    singleOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T>;
-    skip(count: number): IQuery<T>;
-    skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T>;
+    single(predicate?: Predicate<T>, ...scopes): T & TExtra;
+    singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra>;
+    singleOrDefault(predicate?: Predicate<T>, ...scopes): T & TExtra;
+    singleOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<T & TExtra>;
+    skip(count: number): IQuery<T, TExtra>;
+    skipWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
     sum(selector?: Func1<T, number>, ...scopes): number;
     sumAsync(selector?: Func1<T, number>, ...scopes): PromiseLike<number>;
-    take(count: number): IQuery<T>;
-    takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T>;
-    union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T>;
-    where(predicate: Predicate<T>, ...scopes): IQuery<T>;
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult>;
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult>;
+    take(count: number): IQuery<T, TExtra>;
+    takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
+    union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
+    where(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
+    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
 
-    toArray(ctor?: Ctor<T>): Array<T> & InlineCountInfo;
-    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Array<T> & InlineCountInfo>;
+    toArray(ctor?: Ctor<T>): Array<T> & TExtra;
+    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Array<T> & TExtra>;
 }
 
-export type IQuery<T> = IQuerySafe<T> & IQueryDuplicates<T>;
+export type IQuery<T, TExtra = {}> = IQuerySafe<T, TExtra> & IQueryDuplicates<T, TExtra>;
 
-export interface IOrderedQuery<T> extends IQuery<T> {
-    thenBy(selector: Func1<T>, ...scopes): IOrderedQuery<T>;
-    thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T>;
+export interface IOrderedQuery<T, TExtra = {}> extends IQuery<T, TExtra> {
+    thenBy(selector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
+    thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
 }
