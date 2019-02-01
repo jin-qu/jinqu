@@ -172,8 +172,8 @@ export class QueryPart implements IQueryPart {
         return this.createJoin(QueryFunc.groupJoin, other, thisKey, otherKey, selector, scopes);
     }
 
-    static inlineCount(value?: boolean) {
-        return this.create(QueryFunc.inlineCount, [literal(value !== false)]);
+    static inlineCount() {
+        return this.create(QueryFunc.inlineCount, [literal(true)]);
     }
 
     static intersect<T>(other: Array<T>, comparer?: Func2<T, T, boolean>, scopes?: any[]) {

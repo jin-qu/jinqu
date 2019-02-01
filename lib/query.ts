@@ -123,8 +123,8 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
         return this.fixCtorArg(s => QueryPart.groupJoin(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
-    inlineCount(value?: boolean): IQuery<T, TExtra & InlineCountInfo> {
-        return this.create(QueryPart.inlineCount(value));
+    inlineCount(): IQuery<T, TExtra & InlineCountInfo> {
+        return this.create(QueryPart.inlineCount());
     }
     
     intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra> {

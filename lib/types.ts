@@ -82,7 +82,7 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
         selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult, TExtra>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, Array<TOther>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
-    inlineCount(value?: boolean): IQuery<T, TExtra & InlineCountInfo>;
+    inlineCount(): IQuery<T, TExtra & InlineCountInfo>;
     intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
     last(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
     lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
