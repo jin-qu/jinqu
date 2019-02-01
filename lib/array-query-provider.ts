@@ -7,8 +7,27 @@ import { Query } from './query';
 const primitives = [Number, Boolean, String];
 const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending, QueryFunc.thenBy, QueryFunc.thenByDescending];
 const descFuncs = [QueryFunc.orderByDescending, QueryFunc.thenByDescending];
-const countModifiers = [
+const executors = [
     QueryFunc.aggregate,
+    QueryFunc.all,
+    QueryFunc.any,
+    QueryFunc.average,
+    QueryFunc.contains,
+    QueryFunc.elementAt,
+    QueryFunc.elementAtOrDefault,
+    QueryFunc.first,
+    QueryFunc.firstOrDefault,
+    QueryFunc.last,
+    QueryFunc.lastOrDefault,
+    QueryFunc.max,
+    QueryFunc.min,
+    QueryFunc.sequenceEqual,
+    QueryFunc.single,
+    QueryFunc.singleOrDefault,
+    QueryFunc.sum,
+    QueryFunc.toArray
+];
+const countModifiers = [
     QueryFunc.concat,
     QueryFunc.distinct,
     QueryFunc.except,
@@ -16,12 +35,14 @@ const countModifiers = [
     QueryFunc.groupJoin,
     QueryFunc.intersect,
     QueryFunc.join,
+    QueryFunc.ofGuardedType,
     QueryFunc.ofType,
-    QueryFunc.selectMany,
+    QueryFunc.skipWhile,
+    QueryFunc.takeWhile,
     QueryFunc.union,
     QueryFunc.where,
     QueryFunc.zip
-];
+]
 
 export class ArrayQueryProvider implements IQueryProvider {
 
@@ -41,31 +62,34 @@ export class ArrayQueryProvider implements IQueryProvider {
         let value = this.items instanceof Array ? this.items[Symbol.iterator]() : this.items;
 
         let inlineCountEnabled: boolean;
-        let inlineCount: number;
         let orderParts = [];
+        let inlineCount;
 
         for (let p of parts) {
             if (p.type === QueryFunc.inlineCount) {
                 inlineCountEnabled = true;
                 continue;
             }
-            else if (p.type === QueryFunc.skip || p.type === QueryFunc.take) {
-                if (inlineCountEnabled && inlineCount == null) {
-                    const arr = Array.from(value);
-                    inlineCount = arr.length;
-                    value = arr[Symbol.iterator]();
-                }
-            }
-            else if (~countModifiers.indexOf(p.type)) {
-                inlineCount = null;
-            }
             else if (~orderFuncs.indexOf(p.type)) {
                 // accumulate consecutive sortings
                 orderParts.push(p);
                 continue;
             }
+            else if (p.type === QueryFunc.skip || p.type === QueryFunc.take) {
+                if (inlineCountEnabled && inlineCount == null) {
+                    [inlineCount, value] = getCount(value);
+                }
+            }
             else if (p.type === QueryFunc.cast) {
                 ctor = p.args[0].literal;
+            }
+            else if (~executors.indexOf(p.type)) {
+                if (inlineCountEnabled && inlineCount == null) {
+                    [inlineCount, value] = getCount(value);
+                }
+            }
+            else if (~countModifiers.indexOf(p.type)) {
+                inlineCount = null;
             }
 
             // if it is not an order, apply previous sortings
@@ -83,8 +107,13 @@ export class ArrayQueryProvider implements IQueryProvider {
             value = this.multiOrderBy(value, orderParts);
         }
 
-        if (inlineCountEnabled && value instanceof Array) {
-            value['$inlineCount'] = inlineCount != null ? inlineCount : value.length;
+        if (inlineCountEnabled) {
+            if (value instanceof Array) {
+                value['$inlineCount'] = inlineCount;
+            }
+            else {
+                value = <any>{ value, $inlineCount: inlineCount }
+            }
         }
 
         return ctor ? plainToClass(ctor, value) : value;
@@ -369,7 +398,7 @@ const funcs = {
         return min;
     },
 
-    ofGuardedType: function* (items: IterableIterator<any>, typeGuard: IPartArgument) {
+    ofGuardedType: function* (items: IterableIterator<any>, typeGuard: IPartArgument) {
         const predicate = <(i) => boolean>typeGuard.literal;
         for (let i of items) {
             if (predicate(i))
@@ -560,4 +589,9 @@ function getSingle(items: IterableIterator<any>, predicate: IPartArgument) {
     }
 
     return matches.length ? [true, matches[0]] : [false, null];
+}
+
+function getCount<T>(it: IterableIterator<T>): [number, IterableIterator<T>] {
+    const arr = Array.from(it);
+    return [arr.length, arr[Symbol.iterator]()];
 }

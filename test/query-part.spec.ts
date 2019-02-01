@@ -199,6 +199,10 @@ describe('Jinqu should be able to use', () => {
 
         const result2 = orders.asQueryable().inlineCount().toArray();
         expect(orders.length).to.equal(result2.$inlineCount);
+
+        const result3 = orders.inlineCount().any();
+        expect(result3.$inlineCount).to.equal(orders.length);
+        expect(result3.value).to.be.true;
     });
 
     it('intersect', () => {
