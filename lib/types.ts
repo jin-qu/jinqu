@@ -74,9 +74,9 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
     firstOrDefault(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
     firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
-    groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>,
+    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    groupBy<TResult = IGrouping<TKey, T>, TKey = any>(keySelector: Func1<T, TKey>,
+    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
     groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult, TExtra>;
