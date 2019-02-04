@@ -43,8 +43,11 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
+    "array.prototype.find": "^2.0.4",
     "class-transformer": "^0.2.0",
     "deep-equal": "^1.0.1",
-    "jokenizer": "^0.2.6"
+    "es6-object-assign": "^1.1.0",
+    "jokenizer": "^0.2.6",
+    "promise-polyfill": "^8.1.0"
   }
 }
