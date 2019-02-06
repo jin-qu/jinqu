@@ -270,12 +270,12 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
         return this.fixCtorArg(s => QueryPart.zip(other, selector, s), ctor, scopes);
     }
 
-    toArray(ctor?: Ctor<T>): T[] & TExtra {
+    toArray(ctor?: Ctor<T>): Result<T[], TExtra> {
         const query = ctor ? this.cast(ctor) : this;
         return query.provider.execute([...query.parts, QueryPart.toArray()]);
     }
 
-    toArrayAsync(ctor?: Ctor<T>): PromiseLike<T[] & TExtra> {
+    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Result<T[], TExtra>> {
         const query = ctor ? this.cast(ctor) : this;
         return query.provider.executeAsync([...query.parts, QueryPart.toArray()]);
     }

@@ -194,11 +194,12 @@ describe('Jinqu should be able to use', () => {
             .skip(1)
             .take(2)
             .toArray();
-        expect(result1).property('length').to.equal(2);
+        expect(result1.value).to.have.length(2);
         expect(result1.$inlineCount).to.equal(3);
 
         const result2 = orders.asQueryable().inlineCount().toArray();
-        expect(orders.length).to.equal(result2.$inlineCount);
+        expect(result2.value).to.have.length(5);
+        expect(result2.$inlineCount).to.equal(orders.length);
 
         const result3 = orders.inlineCount().any();
         expect(result3.$inlineCount).to.equal(orders.length);

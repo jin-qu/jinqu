@@ -107,16 +107,13 @@ export class ArrayQueryProvider implements IQueryProvider {
             value = this.multiOrderBy(value, orderParts);
         }
 
+        value = ctor ? plainToClass(ctor, value) : value;
+
         if (inlineCountEnabled) {
-            if (value instanceof Array) {
-                value['$inlineCount'] = inlineCount;
-            }
-            else {
-                value = <any>{ value, $inlineCount: inlineCount }
-            }
+            value = <any>{ value, $inlineCount: inlineCount }
         }
 
-        return ctor ? plainToClass(ctor, value) : value;
+        return <any>value;
     }
 
     executeAsync<TResult = any>(parts: IQueryPart[]): PromiseLike<TResult> {

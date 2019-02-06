@@ -5,8 +5,9 @@ export type Ctor<T> = new (...args) => T;
 export type Func1<T1, T2 = any> = ((p1: T1) => T2) | string;
 export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
 export type Predicate<T> = Func1<T, boolean>;
-export type TypePredicate<T> = (t: any) => t is T
-export type Result<T, TExtra> = {} extends TExtra ? T : { value: T } & TExtra;
+export type TypePredicate<T> = (t: any) => t is T;
+export type Value<T> = { value: T };
+export type Result<T, TExtra> = {} extends TExtra ? T : Value<T> & TExtra;
 
 export interface IGrouping<T, TKey> extends Array<T> {
     key: TKey;
@@ -117,8 +118,8 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
     zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
 
-    toArray(ctor?: Ctor<T>): Array<T> & TExtra;
-    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Array<T> & TExtra>;
+    toArray(ctor?: Ctor<T>): Result<Array<T>, TExtra>;
+    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Result<Array<T>, TExtra>>;
 }
 
 export type IQuery<T, TExtra = {}> = IQuerySafe<T, TExtra> & IQueryDuplicates<T, TExtra>;
