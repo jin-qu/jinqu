@@ -38,7 +38,7 @@ export interface IQueryBase {
 }
 
 export interface InlineCountInfo {
-    $inlineCount: number;
+    readonly inlineCount: number;
 }
 
 interface IQueryDuplicates<T, TExtra = {}> {

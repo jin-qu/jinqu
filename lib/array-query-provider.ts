@@ -110,7 +110,7 @@ export class ArrayQueryProvider implements IQueryProvider {
         value = ctor ? plainToClass(ctor, value) : value;
 
         if (inlineCountEnabled) {
-            value = <any>{ value, $inlineCount: inlineCount }
+            value = <any>{ value, inlineCount }
         }
 
         return <any>value;
