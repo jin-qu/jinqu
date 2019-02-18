@@ -2,7 +2,7 @@ import { QueryPart } from "./query-part";
 import { 
     Ctor, Func1, Func2, Predicate, IGrouping, IQueryProvider, IQueryPart, 
     IQuery, IOrderedQuery, InlineCountInfo, TypePredicate, Result 
-} from './types';
+} from './shared';
 
 export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, Iterable<T> {
 

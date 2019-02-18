@@ -1,5 +1,5 @@
 import { Expression, tokenize, evaluate, ExpressionType } from 'jokenizer';
-import { Ctor, Func1, Func2, Predicate, IPartArgument, IQueryPart } from './types';
+import { Ctor, Func1, Func2, Predicate, IPartArgument, IQueryPart } from './shared';
 
 export class PartArgument implements IPartArgument {
 

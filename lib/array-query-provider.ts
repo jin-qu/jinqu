@@ -1,6 +1,6 @@
 import deepEqual = require('deep-equal');
 import { plainToClass } from 'class-transformer';
-import { IQueryProvider, IPartArgument, IQueryPart, Ctor, Predicate } from './types';
+import { IQueryProvider, IPartArgument, IQueryPart, Ctor } from './shared';
 import { QueryFunc } from './query-part';
 import { Query } from './query';
 

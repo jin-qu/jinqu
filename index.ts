@@ -4,7 +4,7 @@ import 'es6-object-assign/auto';
 import 'es6-promise/auto';
 import 'es6-symbol/implement';
 
-import { IQuery, Ctor } from './lib/types';
+import { IQuery, Ctor } from './lib/shared';
 import { ArrayQueryProvider } from './lib/array-query-provider';
 import './lib/array-extensions';
 
@@ -13,7 +13,7 @@ export * from './lib/array-extensions';
 export * from './lib/array-query-provider';
 export * from './lib/query-part';
 export * from './lib/query';
-export * from './lib/types';
+export * from './lib/shared';
 
 declare global {
     interface Array<T> {

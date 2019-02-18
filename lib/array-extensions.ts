@@ -1,4 +1,4 @@
-import { IQuery, IQuerySafe, Func1, Func2, Ctor } from "./types";
+import { IQuery, IQuerySafe, Func1, Func2, Ctor } from "./shared";
 import { QueryFunc } from './query-part';
 
 declare global {
