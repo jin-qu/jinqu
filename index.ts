@@ -1,3 +1,9 @@
+import find = require('array.prototype.find');
+find.shim();
+import 'es6-object-assign/auto';
+import 'es6-promise/auto';
+import 'es6-symbol/implement';
+
 import { IQuery, Ctor } from './lib/types';
 import { ArrayQueryProvider } from './lib/array-query-provider';
 import './lib/array-extensions';
