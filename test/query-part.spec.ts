@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import '..';
+import '../index';
 import { Order, orders, products, ExtendedOrder, OrderNo, IOrder, IProduct } from './fixture';
 
 describe('Jinqu should be able to use', () => {

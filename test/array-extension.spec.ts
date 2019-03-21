@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { QueryFunc } from '../lib/query-part';
-import '../lib/array-extensions';
+import { QueryFunc } from '../index';
 
 describe('Array extensions', () => {
 

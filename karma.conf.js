@@ -6,7 +6,8 @@ module.exports = function (config) {
     config.set({
         frameworks: ["mocha", "karma-typescript"],
 
-        files: [{
+        files: ["index.ts",
+            {
                 pattern: "lib/**/*.ts"
             },
             {

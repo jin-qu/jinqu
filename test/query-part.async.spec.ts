@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import { orders, products } from './fixture';
-import '..';
+import '../index';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');

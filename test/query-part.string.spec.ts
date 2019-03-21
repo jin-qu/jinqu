@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
-import { Order, orders, products, OrderNo } from './fixture';
-import '..';
+import '../index';
+import { orders, products, OrderNo } from './fixture';
 
 describe('Jinqu should be able to use string expressions with', () => {
 

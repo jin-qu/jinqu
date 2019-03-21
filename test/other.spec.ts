@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { QueryPart, PartArgument, ArrayQueryProvider } from '..';
+import { QueryPart, PartArgument, ArrayQueryProvider } from '../index';
 import { orders, Order, products, Product } from './fixture';
 
 describe('Jinqu should', () => {

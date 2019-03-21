@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { mergeAjaxOptions, AjaxOptions } from '../lib/ajax';
+import { mergeAjaxOptions, AjaxOptions } from '../index';
 
 describe('Ajax helper', () => {
 
