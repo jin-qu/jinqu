@@ -59,6 +59,6 @@
     "es6-object-assign": "^1.1.0",
     "es6-promise": "^4.2.6",
     "es6-symbol": "^3.1.1",
-    "jokenizer": "^0.2.6"
+    "jokenizer": "^0.3.0"
   }
 }
