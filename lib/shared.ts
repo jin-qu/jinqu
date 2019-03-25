@@ -6,7 +6,7 @@ export type Func1<T1, T2 = any> = ((p1: T1) => T2) | string;
 export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
 export type Predicate<T> = Func1<T, boolean>;
 export type TypePredicate<T> = (t: any) => t is T;
-export type Value<T> = { value: T };
+export interface Value<T> { value: T; }
 export type Result<T, TExtra> = {} extends TExtra ? T : Value<T> & TExtra;
 
 export interface IGrouping<T, TKey> extends Array<T> {
@@ -20,6 +20,7 @@ export interface IQueryProvider {
 }
 
 export interface IPartArgument {
+    // tslint:disable-next-line:ban-types
     readonly func: Function;
     readonly exp: Expression;
     readonly literal: any;
@@ -42,17 +43,21 @@ export interface InlineCountInfo {
 }
 
 interface IQueryDuplicates<T, TExtra = {}> {
-    concat(other: Array<T>): IQuery<T, TExtra>;
-    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    concat(other: T[]): IQuery<T, TExtra>;
+    join<TOther, TResult = any, TKey = any>(
+        other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    join<TOther, TResult = any, TKey = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+    join<TOther, TResult = any, TKey = any>(
+        other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
     reverse(): IQuery<T, TExtra>;
 }
 
 export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
-    aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): TAccumulate;
-    aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>, seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
+    aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
+                                    seed?: TAccumulate, ...scopes): TAccumulate;
+    aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
+                                         seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
     all(predicate: Predicate<T>, ...scopes): Result<boolean, TExtra>;
     allAsync(predicate: Predicate<T>, ...scopes): PromiseLike<Result<boolean, TExtra>>;
     any(predicate?: Predicate<T>, ...scopes): Result<boolean, TExtra>;
@@ -70,21 +75,35 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     elementAtAsync(index: number): PromiseLike<Result<T, TExtra>>;
     elementAtOrDefault(index: number): Result<T, TExtra>;
     elementAtOrDefaultAsync(index: number): PromiseLike<Result<T, TExtra>>;
-    except(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
+    except(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
     first(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
     firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
     firstOrDefault(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
     firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
-    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(keySelector: Func1<T, TKey>,
-        elementSelector?: Func2<TKey, Array<T>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
-    groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    groupJoin<TOther, TKey = any, TResult = any>(other: Array<TOther>, thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-        selector: Func2<T, Array<TOther>, TResult>, ctor?: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
+    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(
+        keySelector: Func1<T, TKey>,
+        elementSelector?: Func2<TKey, T[], TResult>,
+        ...scopes): IQuery<TResult, TExtra>;
+    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(
+        keySelector: Func1<T, TKey>,
+        elementSelector?: Func2<TKey, T[], TResult>,
+        ctor?: Ctor<TResult>,
+        ...scopes): IQuery<TResult, TExtra>;
+    groupJoin<TOther, TKey = any, TResult = any>(
+        other: TOther[],
+        thisKey: Func1<T, TKey>,
+        otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther[], TResult>,
+        ...scopes): IQuery<TResult, TExtra>;
+    groupJoin<TOther, TKey = any, TResult = any>(
+        other: TOther[],
+        thisKey: Func1<T, TKey>,
+        otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther[], TResult>,
+        ctor?: Ctor<TResult>,
+        ...scopes): IQuery<TResult, TExtra>;
     inlineCount(): IQuery<T, TExtra & InlineCountInfo>;
-    intersect(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
+    intersect(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
     last(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
     lastAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
     lastOrDefault(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
@@ -99,10 +118,10 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
     select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TExtra>;
     select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ...scopes): IQuery<TResult, TExtra>;
-    selectMany<TResult>(selector: Func1<T, Array<TResult>>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
-    sequenceEqual(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): Result<boolean, TExtra>;
-    sequenceEqualAsync(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): PromiseLike<Result<boolean, TExtra>>;
+    selectMany<TResult>(selector: Func1<T, TResult[]>, ...scopes): IQuery<TResult, TExtra>;
+    selectMany<TResult>(selector: Func1<T, TResult[]>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
+    sequenceEqual(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): Result<boolean, TExtra>;
+    sequenceEqualAsync(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): PromiseLike<Result<boolean, TExtra>>;
     single(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
     singleAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
     singleOrDefault(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
@@ -113,13 +132,15 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     sumAsync(selector?: Func1<T, number>, ...scopes): PromiseLike<Result<number, TExtra>>;
     take(count: number): IQuery<T, TExtra>;
     takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
-    union(other: Array<T>, comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
+    union(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
     where(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    zip<TOther, TResult = any>(other: Array<TOther>, selector: Func2<T, TOther, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
+    zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
+                               ...scopes): IQuery<TResult, TExtra>;
+    zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
+                               ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
 
-    toArray(ctor?: Ctor<T>): Result<Array<T>, TExtra>;
-    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Result<Array<T>, TExtra>>;
+    toArray(ctor?: Ctor<T>): Result<T[], TExtra>;
+    toArrayAsync(ctor?: Ctor<T>): PromiseLike<Result<T[], TExtra>>;
 }
 
 export type IQuery<T, TExtra = {}> = IQuerySafe<T, TExtra> & IQueryDuplicates<T, TExtra>;
