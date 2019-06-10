@@ -1,5 +1,7 @@
 import { expect } from "chai";
 import "mocha";
+
+import "./shim";
 import { QueryFunc } from "../index";
 
 // tslint:disable:no-unused-expression

@@ -1,5 +1,7 @@
 import { expect } from "chai";
 import "mocha";
+
+import "./shim";
 import "../index";
 import { ExtendedOrder, IOrder, IProduct, Order, OrderNo, orders, products } from "./fixture";
 
