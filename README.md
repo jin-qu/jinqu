@@ -28,11 +28,30 @@ Jinqu works perfectly in both Javascript and Typescript, but is optimized for Ty
 
 ## Code Examples
 
-First, make sure you've imported jinqu. You actually only need to this once, such as in the entry point for your application, to ensure the Array prototype extensions are set up.
+First, make sure you've imported jinqu. This will add **asQueryable** method to Array Prototype.
 
 ```typescript
 import 'jinqu'
 ```
+
+We need to call **asQueryable** to create a query for an Array.
+
+```typescript
+const array = [1,2,3,4,5]
+const query = array.asQueryable().where(c => n % 2 == 0).toArray()
+for (var n of query)
+    console.log (n) // outputs 2,4
+```
+
+If you want to use query methods directly, you need to install and import **jinqu-array-extensions** package.
+
+> npm i jinqu-array-extensions
+
+```typescript
+import 'jinqu-array-extensions'
+```
+
+You actually only need to do this once, such as in the entry point for your application, to ensure the Array prototype extensions are set up.
 
 Now let's filter an array:
 
