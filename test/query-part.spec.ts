@@ -2,6 +2,7 @@ import { expect } from "chai";
 import "mocha";
 
 import "./shim";
+// tslint:disable-next-line:ordered-imports
 import "../index";
 import { ExtendedOrder, IOrder, IProduct, Order, OrderNo, orders, products } from "./fixture";
 
@@ -287,7 +288,7 @@ describe("Jinqu should be able to use", () => {
         const strings2 = items.asQueryable().ofType("").toArray();
         expect(strings2).to.deep.equal(["1", "a3", "5"]);
 
-        expect(() => items.ofType(null)).to.throw();
+        expect(() => items.asQueryable().ofType(null)).to.throw();
 
         // object test
         const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();

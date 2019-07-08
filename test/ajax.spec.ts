@@ -2,6 +2,7 @@ import { expect } from "chai";
 import "mocha";
 
 import "./shim";
+// tslint:disable-next-line:ordered-imports
 import { AjaxOptions, mergeAjaxOptions } from "../index";
 
 // tslint:disable:no-unused-expression
