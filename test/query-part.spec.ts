@@ -206,7 +206,7 @@ describe("Jinqu should be able to use", () => {
         expect(result2.value).to.have.length(5);
         expect(result2.inlineCount).to.equal(orders.length);
 
-        const result3 = orders.inlineCount().any();
+        const result3 = orders.asQueryable().inlineCount().any();
         expect(result3.inlineCount).to.equal(orders.length);
         expect(result3.value).to.be.true;
     });
@@ -266,7 +266,7 @@ describe("Jinqu should be able to use", () => {
         }
 
         const orderProducts = (orders as Array<IOrder | IProduct>).concat(products);
-        const products2 = orderProducts.ofGuardedType(isProduct).toArray();
+        const products2 = orderProducts.asQueryable().ofGuardedType(isProduct).toArray();
 
         expect(products).to.be.deep.eq(products2);
     });
@@ -293,8 +293,8 @@ describe("Jinqu should be able to use", () => {
         const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();
         expect(classOrders).to.deep.equal([orders[0], orders[2], orders[4]]);
 
-        expect(items.ofType(Order).toArray()).to.deep.equal([o1, o2]);
-        expect(items.ofType(o1).toArray()).to.deep.equal([o1, o2]);
+        expect(items.asQueryable().ofType(Order).toArray()).to.deep.equal([o1, o2]);
+        expect(items.asQueryable().ofType(o1).toArray()).to.deep.equal([o1, o2]);
     });
 
     it("orderBy, orderByDescending, thenBy, thenByDescending", () => {
