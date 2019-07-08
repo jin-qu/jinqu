@@ -7,6 +7,7 @@ module.exports = function (config) {
         frameworks: ["mocha", "chai-as-promised", "chai", "karma-typescript"],
 
         files: [
+            "test/shim.ts",
             "index.ts",
             {
                 pattern: "lib/**/*.ts"

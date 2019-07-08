@@ -180,6 +180,46 @@ const justStrings = array.ofType("") // "1", "4" - using default value type filt
 const justNumbers = array.ofGuardedType(isNumber) // 2, 5 - using type guard filter
 ```
 
+## Old Browsers
+
+Jinqu uses [Array.from](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from), [Array.prototype.find](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find), [Iterators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators), [Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign), [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) and [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol). If you want to be able to use **Jinqu** with older browsers, you need to polyfill/shim these features.
+
+Here are the polyfill packages used for testing:
+
+* array-from
+* array.prototype.find
+* es6-iterator
+* es6-object-assign
+* es6-promise
+* es6-symbol
+
+And here is the integration code ([test/shim.ts](https://github.com/jin-qu/jinqu/blob/master/test/shim.ts)).
+
+```typescript
+import find = require("array.prototype.find");
+find.shim();
+
+import ArrayIterator = require("es6-iterator/array");
+import "es6-object-assign/auto";
+import "es6-promise/auto";
+import "es6-symbol/implement";
+if (![][Symbol.iterator]) {
+    Array.prototype[Symbol.iterator] = function() {
+        return new ArrayIterator(this);
+    };
+}
+import arrayFrom = require("array-from");
+if (!Array.from) {
+    Array.from = arrayFrom;
+}
+```
+
+You can test compatibility on a Windows computer like this:
+
+```shell
+npm run karma
+```
+
 ## License
 
 jinqu is licensed with the [MIT License](LICENSE).
