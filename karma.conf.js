@@ -4,7 +4,7 @@ const browsers = process.platform === "win32"
 
 module.exports = function (config) {
     config.set({
-        frameworks: ["mocha", "chai-as-promised", "chai", "karma-typescript"],
+        frameworks: ["mocha", "chai", "karma-typescript"],
 
         files: [
             "test/shim.ts",
