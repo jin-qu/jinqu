@@ -61,8 +61,8 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "class-transformer": "^0.2.0",
+    "class-transformer": "^0.2.3",
     "deep-equal": "^1.0.1",
-    "jokenizer": "^0.3.0"
+    "jokenizer": "^0.4.0"
   }
 }
