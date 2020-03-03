@@ -27,7 +27,7 @@ export interface IAjaxProvider<TResponse> {
 }
 
 export interface IRequestProvider<TOptions extends AjaxOptions> {
-    request<TResult, TExtra>(prms: QueryParameter[], options: TOptions[]): PromiseLike<Result<TResult, TExtra>>;
+    request<TResult>(prms: QueryParameter[], options: TOptions[]): PromiseLike<TResult>;
 }
 
 export function mergeAjaxOptions(o1: AjaxOptions, o2: AjaxOptions): AjaxOptions {
