@@ -11,7 +11,7 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
-                                           seed?: TAccumulate, ...scopes): TAccumulate {
+                                            seed?: TAccumulate, ...scopes): TAccumulate {
         return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, scopes)]);
     }
 
@@ -185,7 +185,7 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
 
     public ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult, TExtra> {
         const ctor: any = typeof type === "function" ? type : type.constructor;
-        return (this.create(QueryPart.ofType(ctor)) as IQuery<TResult, TExtra>).cast(ctor);
+        return this.create(QueryPart.ofType(ctor)).cast(ctor);
     }
 
     public orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {

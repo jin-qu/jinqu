@@ -1,4 +1,4 @@
-import { Result, Value } from "./shared";
+import { Value } from "./shared";
 
 // jinqu can also be used as an Http request provider
 
