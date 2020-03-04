@@ -20,7 +20,7 @@ describe("Jinqu should", () => {
     });
 
     it("iterate filtered array", () => {
-        const query = orders.asQueryable().where((c) => c.id > 3);
+        const query = orders.asQueryable().inlineCount().where((c) => c.id > 3);
 
         let i = 3;
         for (const o of query) {

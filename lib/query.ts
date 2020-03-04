@@ -11,12 +11,12 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
-                                            seed?: TAccumulate, ...scopes): TAccumulate {
+        seed?: TAccumulate, ...scopes): TAccumulate {
         return this.provider.execute([...this.parts, QueryPart.aggregate(func, seed, scopes)]);
     }
 
     public aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
-                                                seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate> {
+        seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate> {
         return this.provider.executeAsync([...this.parts, QueryPart.aggregate(func, seed, scopes)]);
     }
 
@@ -113,20 +113,20 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public groupBy<TKey = any, TResult = IGrouping<T, TKey>>(
-            keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, T[], TResult>, ...scopes)
-            : IQuery<TResult, TExtra>;
+        keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, T[], TResult>, ...scopes)
+        : IQuery<TResult, TExtra>;
     public groupBy<TKey = any, TResult = IGrouping<T, TKey>>(
-            keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, T[], TResult>, ctor?: Ctor<TResult>, ...scopes)
-            : IQuery<TResult, TExtra> {
+        keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, T[], TResult>, ctor?: Ctor<TResult>, ...scopes)
+        : IQuery<TResult, TExtra> {
         return this.fixCtorArg((s) => QueryPart.groupBy(keySelector, elementSelector, s), ctor, scopes);
     }
 
     public groupJoin<TOther, TKey = any, TResult = any>(
-            other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-            selector: Func2<T, TOther[], TResult>, ...scopes): IQuery<TResult, TExtra>;
+        other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther[], TResult>, ...scopes): IQuery<TResult, TExtra>;
     public groupJoin<TOther, TKey = any, TResult = any>(
-            other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-            selector: Func2<T, TOther[], TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
+        other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther[], TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg((s) => QueryPart.groupJoin(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
@@ -139,11 +139,11 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public join<TOther, TResult = any, TKey = any>(
-            other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-            selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
+        other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
     public join<TOther, TResult = any, TKey = any>(
-            other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
-            selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
+        other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
+        selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg((s) => QueryPart.join(other, thisKey, otherKey, selector, s), ctor, scopes);
     }
 
@@ -276,9 +276,9 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
-                                      ...scopes): IQuery<TResult, TExtra>;
+        ...scopes): IQuery<TResult, TExtra>;
     public zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>,
-                                      ...scopes): IQuery<TResult, TExtra> {
+        ...scopes): IQuery<TResult, TExtra> {
         return this.fixCtorArg((s) => QueryPart.zip(other, selector, s), ctor, scopes);
     }
 
@@ -293,7 +293,8 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public [Symbol.iterator]() {
-        return this.provider.execute<IterableIterator<T>>(this.parts);
+        const result = this.provider.execute<any>(this.parts);
+        return result.value ? result.value : result;
     }
 
     protected create<TResult = T, TNewExtra = TExtra>(part: IQueryPart): IQuery<TResult, TNewExtra> {

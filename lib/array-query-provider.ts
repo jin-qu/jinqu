@@ -77,16 +77,12 @@ export class ArrayQueryProvider implements IQueryProvider {
                 // accumulate consecutive sortings
                 orderParts.push(p);
                 continue;
-            } else if (p.type === QueryFunc.skip || p.type === QueryFunc.take) {
+            } else if (p.type === QueryFunc.skip || p.type === QueryFunc.take || executors.indexOf(p.type) !== -1) {
                 if (inlineCountEnabled && inlineCount == null) {
                     [inlineCount, value] = getCount(value);
                 }
             } else if (p.type === QueryFunc.cast) {
                 ctor = p.args[0].literal;
-            } else if (executors.indexOf(p.type) !== -1) {
-                if (inlineCountEnabled && inlineCount == null) {
-                    [inlineCount, value] = getCount(value);
-                }
             } else if (countModifiers.indexOf(p.type) !== -1) {
                 inlineCount = null;
             }
@@ -329,7 +325,7 @@ const funcs = {
     },
 
     *groupBy(items: IterableIterator<any>, keySelector: IPartArgument, elementSelector: IPartArgument) {
-        const groups: Array<{ key, group: any[] }> = [];
+        const groups: { key, group: any[] }[] = [];
         for (const i of items) {
             const key = keySelector.func(i);
             const a = groups.find((g) => deepEqual(g.key, key));
@@ -352,7 +348,7 @@ const funcs = {
     },
 
     *groupJoin(items: IterableIterator<any>, other: IPartArgument, thisKey: IPartArgument,
-               otherKey: IPartArgument, selector: IPartArgument) {
+                otherKey: IPartArgument, selector: IPartArgument) {
         const os = getArray(other);
 
         for (const i of items) {
@@ -375,7 +371,7 @@ const funcs = {
     },
 
     *join(items: IterableIterator<any>, other: IPartArgument, thisKey: IPartArgument,
-          otherKey: IPartArgument, selector: IPartArgument) {
+            otherKey: IPartArgument, selector: IPartArgument) {
         const os = getArray(other);
 
         for (const i of items) {

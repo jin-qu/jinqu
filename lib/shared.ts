@@ -57,7 +57,7 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
                                     seed?: TAccumulate, ...scopes): TAccumulate;
     aggregateAsync<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
-                                         seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
+                                        seed?: TAccumulate, ...scopes): PromiseLike<TAccumulate>;
     all(predicate: Predicate<T>, ...scopes): Result<boolean, TExtra>;
     allAsync(predicate: Predicate<T>, ...scopes): PromiseLike<Result<boolean, TExtra>>;
     any(predicate?: Predicate<T>, ...scopes): Result<boolean, TExtra>;
@@ -135,9 +135,9 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     union(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
     where(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
     zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
-                               ...scopes): IQuery<TResult, TExtra>;
+                                ...scopes): IQuery<TResult, TExtra>;
     zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
-                               ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
+                                ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
 
     toArray(ctor?: Ctor<T>): Result<T[], TExtra>;
     toArrayAsync(ctor?: Ctor<T>): PromiseLike<Result<T[], TExtra>>;
