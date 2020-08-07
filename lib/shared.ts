@@ -1,6 +1,6 @@
 import { Expression } from "jokenizer";
 
-export type Ctor<T> = new (...args) => T;
+export type Ctor<T> = new (...args: any[]) => T;
 
 export type Func1<T1, T2 = any> = ((p1: T1) => T2) | string;
 export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
