@@ -1,12 +1,28 @@
-# Jinqu: The ultimate Javascript LINQ API for Automated DataQuerying Solution for the Web
+---
+title: 'Jinqu: The ultimate Javascript LINQ API for Automated DataQuerying Solution for the Web'
+tags:
+  - JavaScript
+  - C#
+  - CSharp
+  - Query
+  - OData
+  - LINQ
+authors:
+  - name: Umut Özel
+    orcid: 0000-0002-7143-5955
+    affiliation: 1
+  - name: Umut Özel
+    orcid: 0000-0002-2434-9966
+    affiliation: 2
+affiliations:
+ - name: Dogus Technology
+   index: 1
+ - name: Simula Research Laboratory
+   index: 2
+date: 13 August 2017
+---
 
-|Umut Özel                      |Ferhat Ozgur Catak         |
-|-                              |-                          |
-|umut.ozel@d-teknoloji.com.tr   |ozgur@simula.no            |
-|Dogus Technology               |Simula Research Laboratory |
-|Istanbul, Turkey               |Fornebu, Norway            |
-
-## Abstract
+# Summary
 
 Nowadays, the production of data based on mobile devices, IoT and
 computers have reached an enormous scale and complexity, at the same
@@ -22,7 +38,7 @@ interpret the code written in JavaScript and C\# only, the Lazy Loading
 approach with the Generators that comes with EcmaScript 6, and the
 method of dynamically creating `IQueryable` in C\#.
 
-## Introduction
+# Statement of need
 
 Many functional programming languages and C\# has an integrated data
 query system that adopts declarative approach for the data access. While
@@ -231,7 +247,7 @@ This code is a simple example to understand:
 var expression = Tokenizer.Parse<ObjectToken>("new {a = 4, b.c}") 
 ```
 
-### Token Tree
+#### Token Tree
 
 Since Expression is a language-integrated type in C\# language and is
 designed to work without the need to take the scope information
@@ -244,7 +260,7 @@ Instead of the expression tree that we get when interpreting codes for
 JavaScript, we create a token tree. We can create a C\# expression tree
 by passing the scope information as a parameter to the token tree.
 
-### TokenVisitor Class
+#### TokenVisitor Class
 
 Our `TokenVisitor` class allows us to interpret the codes with the scope
 argument by navigating the symbols we create in a recursive manner.
@@ -266,7 +282,7 @@ var lambda = Evaluator.ToLambda<int, bool>("@2 > 42", 40)
 var result = lambda(); // false
 ```
 
-### Dynamic Classes
+#### Dynamic Classes
 
 Since C\# is a type safe language, we need to dynamically create the
 classes we need at run-time and declare them to the type system.
@@ -291,7 +307,7 @@ public class DynamicClass1 {
 }
 ```
 
-### DynamicQueryable
+#### DynamicQueryable
 
 After completing our module development that can interpret the
 expressions with C\# language, we now need to be able to create dynamic
