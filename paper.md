@@ -11,7 +11,7 @@ authors:
   - name: Umut Özel
     orcid: 0000-0002-7143-5955
     affiliation: 1
-  - name: Umut Özel
+  - name: Ferhat Ozgur Catak
     orcid: 0000-0002-2434-9966
     affiliation: 2
 affiliations:
