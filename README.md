@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/jin-qu/jinqu.svg?branch=master)](https://travis-ci.org/jin-qu/jinqu)
 [![Coverage Status](https://coveralls.io/repos/github/jin-qu/jinqu/badge.svg?branch=master)](https://coveralls.io/github/jin-qu/jinqu?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a66f3a091f0f41839817bc6194b73f4f)](https://app.codacy.com/app/jin-qu/jinqu?utm_source=github.com&utm_medium=referral&utm_content=jin-qu/jinqu&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5cc1af8cf2304b4aa5362c33225b380f)](https://www.codacy.com/gh/jin-qu/jinqu/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jin-qu/jinqu&amp;utm_campaign=Badge_Grade)
 [![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)
 <a href="https://snyk.io/test/npm/jinqu"><img src="https://snyk.io/test/npm/jinqu/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/npm/jinqu" style="max-width:100%;"></a>
 [![GitHub issues](https://img.shields.io/github/issues/jin-qu/jinqu.svg)](https://github.com/jin-qu/jinqu/issues)
@@ -183,10 +183,10 @@ In addition, the `concat`, `join`, and `reverse` methdos (which are built into t
 `ofType` and `ofGuardedType` filter elements of a specified type. The type arguments you must supply are a little different to what you might expect if you come from a C# background, but will make sense to you when you get a feel for the Typescript type system.
 
 * `ofType` takes either a:
-        * constructor to filter class instances
-        * default value to filter primitive types
+  * constructor to filter class instances
+  * default value to filter primitive types
 * `ofGuardedType` takes a:
-        * Typescript type guard (See [Typescript Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html)) to filter values by a condition indicative of type
+  * Typescript type guard (See [Typescript Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html)) to filter values by a condition indicative of type
 
 Their usage is as follows:
 
