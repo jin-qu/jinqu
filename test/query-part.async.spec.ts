@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import "mocha";
 
-import "./shim";
 import "../index";
 import { orders, products } from "./fixture";
 

@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import "mocha";
 
-import "./shim";
 // tslint:disable-next-line:ordered-imports
 import "../index";
 import { ExtendedOrder, IOrder, IProduct, Order, OrderNo, orders, products } from "./fixture";

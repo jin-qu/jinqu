@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import "mocha";
 
-import "./shim";
 // tslint:disable-next-line:ordered-imports
 import { ArrayQueryProvider, PartArgument, QueryPart } from "../index";
 import { Order, orders, Product, products } from "./fixture";
