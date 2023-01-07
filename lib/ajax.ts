@@ -1,4 +1,4 @@
-import { Value } from "./shared";
+﻿import { Value } from "./shared";
 
 // jinqu can also be used as an Http request provider
 
@@ -11,7 +11,7 @@ export const AjaxFuncs = {
 
 export interface AjaxOptions {
     url?: string;
-    method?: "GET" | "POST" | "PUT" | "DELETE";
+    method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
     params?: QueryParameter[];
     data?: any;
     timeout?: number;
