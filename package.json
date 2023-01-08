@@ -24,7 +24,7 @@
     "lint": "tslint index.ts ./lib/*.ts ./tests/*.ts",
     "test": "jest",
     "cover": "jest --coverage",
-    "coveralls": "jest --coverage | coveralls",
+    "coveralls": "jest --coverage && coveralls < coverage/lcov.info",
     "build": "tsc",
     "prepare": "npm run build"
   },
