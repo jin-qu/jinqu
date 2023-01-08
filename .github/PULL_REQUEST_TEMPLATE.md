@@ -5,7 +5,7 @@
 ## Types of changes
 
 What types of changes are you proposing/introducing?
-_Put an `x` in the boxes that apply_
+Put an `x` in the boxes that apply
 
 - [ ] Bugfix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
@@ -14,5 +14,5 @@ _Put an `x` in the boxes that apply_
 ## Details
 
 Please provide more details about changes if it is necessary. If there are new features you can provide code samples which show the way they
-work and possible use cases. Also you can create [gists](https://gist.github.com) with pasted C# code samples or put them here using markdown. 
-About markdown please read [Mastering markdown](https://guides.github.com/features/mastering-markdown/) and [Writing on GitHub](https://help.github.com/categories/writing-on-github/) 
+work and possible use cases. Also you can create [gists](https://gist.github.com) with pasted C# code samples or put them here using markdown.
+About markdown please read [Mastering markdown](https://guides.github.com/features/mastering-markdown/) and [Writing on GitHub](https://help.github.com/categories/writing-on-github/)
