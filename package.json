@@ -21,13 +21,14 @@
     "url": "https://github.com/jin-qu/jinqu"
   },
   "scripts": {
+    "lint": "tslint index.ts ./lib/*.ts ./test/*.ts",
     "test": "jest",
     "cover": "jest --coverage",
     "coveralls": "jest --coverage | coveralls",
     "build": "tsc",
     "prepare": "npm run build"
   },
-  "author": "Umut ï¿½zel",
+  "author": "Umut Özel",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.2.5",
