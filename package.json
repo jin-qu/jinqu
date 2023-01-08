@@ -27,7 +27,7 @@
     "build": "tsc",
     "prepare": "npm run build"
   },
-  "author": "Umut Özel",
+  "author": "Umut �zel",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.2.5",
