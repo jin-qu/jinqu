@@ -1,24 +1,20 @@
-import { expect } from "chai";
-import "mocha";
-
-// tslint:disable-next-line:ordered-imports
 import { AjaxOptions, mergeAjaxOptions } from "../index";
 
 // tslint:disable:no-unused-expression
 describe("Ajax helper", () => {
 
     it("should return null for two null options", () => {
-        expect(mergeAjaxOptions(null, null)).to.be.null;
+        expect(mergeAjaxOptions(null, null)).toBeNull;
     });
 
     it("should return first option when second is null", () => {
         const o1: AjaxOptions = {};
-        expect(mergeAjaxOptions(o1, null)).to.equal(o1);
+        expect(mergeAjaxOptions(o1, null)).toBe(o1);
     });
 
     it("should return second option when first is null", () => {
         const o2: AjaxOptions = {};
-        expect(mergeAjaxOptions(null, o2)).to.equal(o2);
+        expect(mergeAjaxOptions(null, o2)).toBe(o2);
     });
 
     it("should merge two options 1", () => {
@@ -48,21 +44,21 @@ describe("Ajax helper", () => {
         };
         const o = mergeAjaxOptions(o1, o2);
 
-        expect(o).property("data").property("id").to.equal(5);
-        expect(o).property("data").property("name").to.equal("Zaphod");
+        expect(o).toHaveProperty("data.id", 5);
+        expect(o).toHaveProperty("data.name", "Zaphod");
 
-        expect(o).property("headers").property("Content-Type").to.equal("application/json");
-        expect(o).property("headers").property("Accept").to.equal("json");
-        expect(o).property("headers").property("Auth").to.equal("12345");
+        expect(o).toHaveProperty("headers.Content-Type", "application/json");
+        expect(o).toHaveProperty("headers.Accept", "json");
+        expect(o).toHaveProperty("headers.Auth", "12345");
 
-        expect(o).property("method").to.equal("GET");
+        expect(o).toHaveProperty("method", "GET");
 
         const prms = [{ key: "$where", value: "a => a < 5" }, { key: "$orderBy", value: "a => a" }];
-        expect(o).property("params").to.deep.equal(prms);
+        expect(o).toHaveProperty("params", prms);
 
-        expect(o).property("timeout").to.equal(1000);
+        expect(o).toHaveProperty("timeout", 1000);
 
-        expect(o).property("url").to.equal("List");
+        expect(o).toHaveProperty("url", "List");
     });
 
     it("should merge two options 2", () => {
@@ -75,15 +71,16 @@ describe("Ajax helper", () => {
             data: { id: 1 },
             headers: { AUTH: "42" },
         };
-
-        expect(mergeAjaxOptions(o1, o2)).to.deep.equal({
+        const merged = {
             data: { id: 1 },
             headers: { AUTH: "42" },
             method: "GET",
             params: [],
             timeout: 1000,
             url: "Companies",
-        });
+        };
+
+        expect(mergeAjaxOptions(o1, o2)).toEqual(merged);
     });
 
     it("should merge two options 3", () => {
@@ -93,6 +90,6 @@ describe("Ajax helper", () => {
         const o2: AjaxOptions = {
         };
 
-        expect(mergeAjaxOptions(o1, o2)).property("data").to.equal(o1.data);
+        expect(mergeAjaxOptions(o1, o2)).toHaveProperty("data", o1.data);
     });
 });

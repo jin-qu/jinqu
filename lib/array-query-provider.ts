@@ -46,10 +46,9 @@ const countModifiers = [
 
 export class ArrayQueryProvider implements IQueryProvider {
 
-    constructor(private readonly items: any[] | IterableIterator<any>) {
-        if (!items) {
+    constructor(private readonly items?: any[] | IterableIterator<any> | null) {
+        if (!items)
             throw new TypeError("Cannot query null array.");
-        }
     }
 
     public createQuery<T>(parts?: IQueryPart[], ctor?: Ctor<T>): Query<T> {
@@ -57,17 +56,16 @@ export class ArrayQueryProvider implements IQueryProvider {
         return ctor ? (query.cast(ctor) as any) : query;
     }
 
-    public execute<TResult = any>(parts: IQueryPart[]): TResult {
-        if (!parts || !parts.length) {
+    public execute<TResult = any>(parts?: IQueryPart[] | null): TResult {
+        if (!parts || !parts.length)
             return this.items as any;
-        }
 
         let ctor: Ctor<any> = null;
         let value = this.items instanceof Array ? this.items[Symbol.iterator]() : this.items;
 
         let inlineCountEnabled: boolean;
         let orderParts = [];
-        let inlineCount;
+        let inlineCount: number;
 
         for (const p of parts) {
             if (p.type === QueryFunc.inlineCount) {
@@ -123,9 +121,8 @@ export class ArrayQueryProvider implements IQueryProvider {
 
     public handlePart(items: IterableIterator<any>, part: IQueryPart) {
         const f = funcs[part.type];
-        if (!f) {
+        if (!f)
             throw new Error(`Unknown query part type ${part.type}.`);
-        }
 
         return f.call(null, items, ...part.args);
     }
@@ -138,13 +135,11 @@ export class ArrayQueryProvider implements IQueryProvider {
                 const v1 = sel.func(i1);
                 const v2 = sel.func(i2);
 
-                if (v1 < v2) {
+                if (v1 < v2)
                     return desc;
-                }
 
-                if (v1 > v2) {
+                if (v1 > v2)
                     return -1 * desc;
-                }
             }
         });
 
@@ -166,9 +161,8 @@ const funcs = {
 
     all(items: IterableIterator<any>, predicate: IPartArgument) {
         for (const i of items) {
-            if (!predicate.func(i)) {
+            if (!predicate.func(i))
                 return false;
-            }
         }
 
         return true;
@@ -176,9 +170,8 @@ const funcs = {
 
     any(items: IterableIterator<any>, predicate: IPartArgument) {
         for (const i of items) {
-            if (!predicate.func || predicate.func(i)) {
+            if (!predicate.func || predicate.func(i))
                 return true;
-            }
         }
 
         return false;
@@ -205,15 +198,13 @@ const funcs = {
 
             if (i !== Object(i)) {
                 const v = ctor.literal(i);
-                if (v == null || (ctor.literal === Number && isNaN(v))) {
+                if (v == null || (ctor.literal === Number && isNaN(v)))
                     throw new Error(`Unable to cast ${i}`);
-                }
 
                 yield v;
             } else {
-                if (i.constructor !== Object && !(i instanceof ctor.literal)) {
+                if (i.constructor !== Object && !(i instanceof ctor.literal))
                     throw new Error(`Unable to cast ${i}`);
-                }
 
                 yield i;
             }
@@ -223,20 +214,17 @@ const funcs = {
     *concat(items: IterableIterator<any>, other: IPartArgument) {
         const os = getArray(other);
 
-        for (const i of items) {
+        for (const i of items)
             yield i;
-        }
 
-        for (const o of os) {
+        for (const o of os)
             yield o;
-        }
     },
 
     contains(items: IterableIterator<any>, item: IPartArgument, comparer: IPartArgument) {
         for (const i of items) {
-            if (comparer.func ? comparer.func(i, item.literal) : i === item.literal) {
+            if (comparer.func ? comparer.func(i, item.literal) : i === item.literal)
                 return true;
-            }
         }
 
         return false;
@@ -255,9 +243,8 @@ const funcs = {
 
     defaultIfEmpty(items: IterableIterator<any>, defaultValue: IPartArgument) {
         const arr = Array.from(items);
-        if (arr.length) {
+        if (arr.length)
             return arr[Symbol.iterator]();
-        }
 
         return defaultValue.literal != null ? [defaultValue.literal] : [];
     },
@@ -266,9 +253,8 @@ const funcs = {
         const dist = [];
         const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
         for (const i of items) {
-            if (dist.find((d) => c(i, d))) {
+            if (dist.find((d) => c(i, d)))
                 continue;
-            }
 
             dist.push(i);
             yield i;
@@ -278,9 +264,8 @@ const funcs = {
     elementAt(items: IterableIterator<any>, index: IPartArgument) {
         let idx = 0;
         for (const i of items) {
-            if (idx++ === index.literal) {
+            if (idx++ === index.literal)
                 return i;
-            }
         }
 
         throw new Error("Index was outside the bounds of the array.");
@@ -289,9 +274,8 @@ const funcs = {
     elementAtOrDefault(items: IterableIterator<any>, index: IPartArgument) {
         let idx = 0;
         for (const i of items) {
-            if (idx++ === index.literal) {
+            if (idx++ === index.literal)
                 return i;
-            }
         }
 
         return null;
@@ -301,9 +285,8 @@ const funcs = {
         const dist = [];
         const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
         for (const i of items) {
-            if (dist.find((d) => c(i, d)) || other.literal.find((d) => c(i, d))) {
+            if (dist.find((d) => c(i, d)) || other.literal.find((d) => c(i, d)))
                 continue;
-            }
 
             dist.push(i);
             yield i;
@@ -313,9 +296,8 @@ const funcs = {
     first(items: IterableIterator<any>, predicate: IPartArgument) {
         const [found, item] = getFirst(items, predicate);
 
-        if (!found) {
+        if (!found)
             throw new Error("Sequence contains no matching element");
-        }
 
         return item;
     },
@@ -361,9 +343,8 @@ const funcs = {
         const dist = [];
         const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
         for (const i of items) {
-            if (dist.find((d) => c(i, d)) || !other.literal.find((d) => c(i, d))) {
+            if (dist.find((d) => c(i, d)) || !other.literal.find((d) => c(i, d)))
                 continue;
-            }
 
             dist.push(i);
             yield i;
@@ -377,9 +358,8 @@ const funcs = {
         for (const i of items) {
             const k = thisKey.func(i);
             for (const o of os) {
-                if (deepEqual(otherKey.func(o), k)) {
+                if (deepEqual(otherKey.func(o), k))
                     yield selector.func(i, o);
-                }
             }
         }
     },
@@ -387,9 +367,8 @@ const funcs = {
     last(items: IterableIterator<any>, predicate: IPartArgument) {
         const [found, item] = getLast(items, predicate);
 
-        if (!found) {
+        if (!found)
             throw new Error("Sequence contains no matching element");
-        }
 
         return item;
     },
@@ -425,9 +404,8 @@ const funcs = {
     *ofGuardedType(items: IterableIterator<any>, typeGuard: IPartArgument) {
         const predicate = typeGuard.literal as (i) => boolean;
         for (const i of items) {
-            if (predicate(i)) {
+            if (predicate(i))
                 yield i;
-            }
         }
     },
 
@@ -437,12 +415,10 @@ const funcs = {
         for (const i of items) {
             // if type is primitive
             if (isPrimitive && i !== Object(i)) {
-                if (type(i) === i) {
+                if (type(i) === i)
                     yield i;
-                }
-            } else if (i instanceof type) {
+            } else if (i instanceof type)
                 yield i;
-            }
         }
     },
 
@@ -464,9 +440,8 @@ const funcs = {
 
     *selectMany(items: IterableIterator<any>, selector: IPartArgument) {
         for (const i of items) {
-            for (const ii of selector.func(i)) {
+            for (const ii of selector.func(i))
                 yield ii;
-            }
         }
     },
 
@@ -476,9 +451,8 @@ const funcs = {
 
         const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
         for (const i of items) {
-            if (idx >= os.length || !c(i, os[idx++])) {
+            if (idx >= os.length || !c(i, os[idx++]))
                 return false;
-            }
         }
 
         return idx === os.length;
@@ -487,9 +461,8 @@ const funcs = {
     single(items: IterableIterator<any>, predicate: IPartArgument) {
         const [found, item] = getSingle(items, predicate);
 
-        if (!found) {
+        if (!found)
             throw new Error("Sequence contains no matching element");
-        }
 
         return item;
     },
@@ -501,9 +474,8 @@ const funcs = {
     *skip(items: IterableIterator<any>, count: IPartArgument) {
         let i = 0;
         for (const item of items) {
-            if (++i > count.literal) {
+            if (++i > count.literal)
                 yield item;
-            }
         }
     },
 
@@ -514,9 +486,8 @@ const funcs = {
                 yielding = true;
             }
 
-            if (yielding) {
+            if (yielding)
                 yield i;
-            }
         }
     },
 
@@ -533,21 +504,19 @@ const funcs = {
     *take(items: IterableIterator<any>, count: IPartArgument) {
         let i = 0;
         for (const item of items) {
-            if (++i <= count.literal) {
+            if (++i <= count.literal)
                 yield item;
-            } else {
+            else
                 break;
-            }
         }
     },
 
     *takeWhile(items: IterableIterator<any>, predicate: IPartArgument) {
         for (const i of items) {
-            if (predicate.func(i)) {
+            if (predicate.func(i))
                 yield i;
-            } else {
+            else
                 break;
-            }
         }
     },
 

@@ -4,9 +4,9 @@ export interface IOrder {
     id: number;
     no: string;
     price: number;
-    customer: ICustomer;
+    customer?: ICustomer | null;
     date: Date;
-    details: IOrderDetail[];
+    details?: IOrderDetail[] | null;
 }
 
 export interface IOrderDetail {
@@ -28,7 +28,7 @@ export interface IProduct {
 export class Order implements IOrder {
 
     constructor(public id: number, public no: string, public price: number,
-                public date: Date, public customer: ICustomer, public details: IOrderDetail[]) {
+                public date: Date, public customer?: ICustomer | null, public details?: IOrderDetail[] | null) {
     }
 }
 

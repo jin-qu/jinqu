@@ -69,7 +69,7 @@ export class PartArgument implements IPartArgument {
     // tslint:enable:variable-name
 
     // tslint:disable-next-line:ban-types
-    constructor($identifier: Function | string, $literal, scopes: any[]) {
+    constructor($identifier?: Function | string | null, $literal?, scopes?: any[] | null) {
         if (typeof $identifier === "string") {
             this._expStr = $identifier;
         } else {

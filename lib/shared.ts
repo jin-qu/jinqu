@@ -6,7 +6,7 @@ export type Func1<T1, T2 = any> = ((p1: T1) => T2) | string;
 export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
 export type Predicate<T> = Func1<T, boolean>;
 export type TypePredicate<T> = (t: any) => t is T;
-export interface Value<T> { value: T; }
+export interface Value<T> { value: T; }
 export type Result<T, TExtra> = {} extends TExtra ? T : Value<T> & TExtra;
 
 export interface IGrouping<T, TKey> extends Array<T> {
@@ -69,7 +69,7 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     containsAsync(item: T, comparer?: Func2<T, T, boolean>, ...scopes): PromiseLike<Result<boolean, TExtra>>;
     count(predicate?: Predicate<T>, ...scopes): Result<number, TExtra>;
     countAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<number, TExtra>>;
-    defaultIfEmpty(defaultValue?: T): IQuery<T, TExtra>;
+    defaultIfEmpty(defaultValue?: T | null): IQuery<T, TExtra>;
     distinct(comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
     elementAt(index: number): Result<T, TExtra>;
     elementAtAsync(index: number): PromiseLike<Result<T, TExtra>>;
