@@ -1,6 +1,6 @@
 # Jinqu - LINQ for Javascript
 
-[![Build Status](https://travis-ci.org/jin-qu/jinqu.svg?branch=master)](https://travis-ci.org/jin-qu/jinqu)
+[![Build Status](https://travis-ci.com/jin-qu/jinqu.svg?branch=master)](https://travis-ci.com/jin-qu/jinqu)
 [![Coverage Status](https://coveralls.io/repos/github/jin-qu/jinqu/badge.svg?branch=master)](https://coveralls.io/github/jin-qu/jinqu?branch=master)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5cc1af8cf2304b4aa5362c33225b380f)](https://www.codacy.com/gh/jin-qu/jinqu/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jin-qu/jinqu&amp;utm_campaign=Badge_Grade)
 [![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)
