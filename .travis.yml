@@ -1,13 +1,13 @@
 language: node_js
 node_js:
-- 16
+  - 16
 git:
   depth: 1
 branches:
   only:
-  - main
+    - main
 after_success:
-- yarn coveralls
+  - yarn coveralls
 deploy:
   on:
     branch: main
