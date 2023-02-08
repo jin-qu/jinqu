@@ -14,7 +14,7 @@ describe("Jinqu should be able to use string expressions with", () => {
         expect([1, 2, 3, 4].asQueryable().any("i => i > 4")).toBeFalsy;
 
         expect(products.asQueryable().all("p => p.category !== null")).toBe(true);
-        expect(products.asQueryable().all('p => p.name === "None"')).toBeFalsy;
+        expect(products.asQueryable().all("p => p.name === 'None'")).toBeFalsy;
     });
 
     it("any", () => {
@@ -23,7 +23,7 @@ describe("Jinqu should be able to use string expressions with", () => {
 
         const p5 = products[5];
         expect(products.asQueryable().any("p => p.name === p5.name", { p5 })).toBe(true);
-        expect(products.asQueryable().any('p => p.name === "None"')).toBeFalsy;
+        expect(products.asQueryable().any("p => p.name === 'None'")).toBeFalsy;
     });
 
     it("average", () => {
@@ -61,13 +61,13 @@ describe("Jinqu should be able to use string expressions with", () => {
     it("first", () => {
         const p4 = products[3];
         expect(products.asQueryable().first("p => p.no === p4.no", { p4 })).toBe(products[3]);
-        expect(() => products.asQueryable().first('p => p.category === "None"')).toThrow;
+        expect(() => products.asQueryable().first("p => p.category === 'None'")).toThrow;
     });
 
     it("firstOrDefault", () => {
         const p3 = products[2];
         expect(products.asQueryable().firstOrDefault("p => p.no == p3.no", { p3 })).toBe(products[2]);
-        expect(products.asQueryable().firstOrDefault('p => p.category === "None"')).toBe(null);
+        expect(products.asQueryable().firstOrDefault("p => p.category === 'None'")).toBe(null);
     });
 
     it("groupBy", () => {
@@ -126,11 +126,11 @@ describe("Jinqu should be able to use string expressions with", () => {
     it("last", () => {
         const last = products[products.length - 1];
         expect(products.asQueryable().last("p => p.no === lastNo", { lastNo: last.no })).toBe(last);
-        expect(() => products.asQueryable().last('p => p.category === "None"')).toThrow();
+        expect(() => products.asQueryable().last("p => p.category === 'None'")).toThrow();
     });
 
     it("lastOrDefault", () => {
-        expect(products.asQueryable().lastOrDefault('p => p.category === "None"')).toBe(null);
+        expect(products.asQueryable().lastOrDefault("p => p.category === 'None'")).toBe(null);
     });
 
     it("max", () => {
@@ -194,13 +194,13 @@ describe("Jinqu should be able to use string expressions with", () => {
     it("single", () => {
         const p4 = products[3];
         expect(products.asQueryable().single("p => p.no === p4No", { p4No: p4.no })).toBe(p4);
-        expect(() => products.asQueryable().single('p => p.category === "None"')).toThrow();
-        expect(() => products.asQueryable().single('p => p.category !== "None"')).toThrow();
+        expect(() => products.asQueryable().single("p => p.category === 'None'")).toThrow();
+        expect(() => products.asQueryable().single("p => p.category !== 'None'")).toThrow();
     });
 
     it("singleOrDefault", () => {
-        expect(products.asQueryable().singleOrDefault('p => p.category === "None"')).toBe(null);
-        expect(() => products.asQueryable().singleOrDefault('p => p.category !== "None"')).toThrow();
+        expect(products.asQueryable().singleOrDefault("p => p.category === 'None'")).toBe(null);
+        expect(() => products.asQueryable().singleOrDefault("p => p.category !== 'None'")).toThrow();
     });
 
     it("skipWhile", () => {
@@ -240,7 +240,7 @@ describe("Jinqu should be able to use string expressions with", () => {
 
         const details = orders.asQueryable().selectMany(o => o.details!).toArray();
         const result2 = details.asQueryable()
-            .where('d => (d.count > 20 && d.supplier != "QWE") || (d.count < 10 && d.supplier == "TYU")')
+            .where("d => (d.count > 20 && d.supplier != 'QWE') || (d.count < 10 && d.supplier == 'TYU')")
             .toArray();
         expect(result2).toHaveLength(8);
         expect(result2[0]).toHaveProperty("count", 63);
