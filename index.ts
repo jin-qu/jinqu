@@ -1,14 +1,13 @@
 import { ArrayQueryProvider } from "./lib/array-query-provider";
 import { Ctor, IQuery } from "./lib/shared";
 
-// tslint:disable-next-line:no-namespace
 declare global {
     interface Array<T> {
         asQueryable(ctor?: Ctor<T>): IQuery<T>;
     }
 }
 
-Array.prototype.asQueryable = function(ctor: Ctor<any>) {
+Array.prototype.asQueryable = function(ctor: Ctor<unknown>) {
     const query = new ArrayQueryProvider(this).createQuery();
     return ctor ? query.cast(ctor) : query;
 };

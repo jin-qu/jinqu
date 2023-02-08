@@ -13,7 +13,7 @@ export interface AjaxOptions {
     url?: string;
     method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
     params?: QueryParameter[];
-    data?: any;
+    data?: unknown;
     timeout?: number;
     headers?: { [key: string]: string };
 }

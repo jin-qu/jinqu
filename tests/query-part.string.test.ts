@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "../index";
 import { OrderNo, orders, products } from "./fixture";
 
-// tslint:disable:no-unused-expression
 describe("Jinqu should be able to use string expressions with", () => {
 
     it("aggregate", () => {
@@ -92,7 +92,7 @@ describe("Jinqu should be able to use string expressions with", () => {
     });
 
     it("groupJoin", () => {
-        const details = orders.asQueryable().selectMany((o) => o.details!).toArray();
+        const details = orders.asQueryable().selectMany(o => o.details!).toArray();
         const prdCount = [products[0], products[1]].asQueryable().groupJoin(
             details,
             "p => p.no",
@@ -176,7 +176,7 @@ describe("Jinqu should be able to use string expressions with", () => {
         ]);
 
         const no = orders.asQueryable().select<OrderNo>("o => ({ no: o.no })", OrderNo).toArray();
-        no.forEach((n) => expect(n).toBeInstanceOf(OrderNo));
+        no.forEach(n => expect(n).toBeInstanceOf(OrderNo));
     });
 
     it("selectMany", () => {
@@ -238,7 +238,7 @@ describe("Jinqu should be able to use string expressions with", () => {
         expect(result1[0].id).toBe(4);
         expect(result1[1].no).toBe("Ord5");
 
-        const details = orders.asQueryable().selectMany((o) => o.details!).toArray();
+        const details = orders.asQueryable().selectMany(o => o.details!).toArray();
         const result2 = details.asQueryable()
             .where('d => (d.count > 20 && d.supplier != "QWE") || (d.count < 10 && d.supplier == "TYU")')
             .toArray();

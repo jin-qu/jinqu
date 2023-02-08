@@ -1,8 +1,10 @@
-// tslint:disable-next-line:ordered-imports
-import "../index";
-import { ExtendedOrder, IOrder, IProduct, Order, OrderNo, orders, products } from "./fixture";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/ban-types */
 
-// tslint:disable:no-unused-expression
+import "../index";
+import { ExtendedOrder, IProduct, Order, OrderNo, orders, products } from "./fixture";
+
 describe("Jinqu should be able to use", () => {
 
     it("aggregate", () => {
@@ -11,32 +13,31 @@ describe("Jinqu should be able to use", () => {
     });
 
     it("all", () => {
-        expect([1, 2, 3, 4].asQueryable().all((i) => i > 0)).toBe(true);
-        expect([1, 2, 3, 4].asQueryable().all((i) => i > 4)).toBe(false);
+        expect([1, 2, 3, 4].asQueryable().all(i => i > 0)).toBe(true);
+        expect([1, 2, 3, 4].asQueryable().all(i => i > 4)).toBe(false);
 
-        expect(products.asQueryable().all((p) => p.category !== null)).toBe(true);
-        expect(products.asQueryable().all((p) => p.name === "None")).toBe(false);
+        expect(products.asQueryable().all(p => p.category !== null)).toBe(true);
+        expect(products.asQueryable().all(p => p.name === "None")).toBe(false);
     });
 
     it("any", () => {
         expect([1, 2, 3, 4].asQueryable().any()).toBe(true);
-        expect([1, 2, 3, 4].asQueryable().any((i) => i > 3)).toBe(true);
-        expect([1, 2, 3, 4].asQueryable().any((i) => i > 4)).toBe(false);
+        expect([1, 2, 3, 4].asQueryable().any(i => i > 3)).toBe(true);
+        expect([1, 2, 3, 4].asQueryable().any(i => i > 4)).toBe(false);
 
-        expect(products.asQueryable().any((p) => p.name === products[4].name)).toBe(true);
-        expect(products.asQueryable().any((p) => p.name === "None")).toBe(false);
+        expect(products.asQueryable().any(p => p.name === products[4].name)).toBe(true);
+        expect(products.asQueryable().any(p => p.name === "None")).toBe(false);
     });
 
     it("average", () => {
         expect([1, 2, 3, 4].asQueryable().average()).toEqual(2.5);
-        expect(orders.asQueryable().average((o) => o.id)).toBe(3);
+        expect(orders.asQueryable().average(o => o.id)).toBe(3);
         expect([].asQueryable().average()).toBe(0);
     });
 
-    // tslint:disable:ban-types
     it("cast", () => {
         // primitive test
-        const items: any[] = ["1", 2, "3", 4, "5"];
+        const items = ["1", 2, "3", 4, "5"];
         const numbers = items.asQueryable().cast<Number>(Number).toArray();
         expect(numbers).toEqual([1, 2, 3, 4, 5]);
 
@@ -53,7 +54,6 @@ describe("Jinqu should be able to use", () => {
 
         expect(() => ["Morty"].asQueryable().cast<Number>(Number).toArray()).toThrow();
     });
-    // tslint:enable:ban-types
 
     it("concat", () => {
         const arr1 = [{ id: 1 }, { id: 2 }];
@@ -79,12 +79,12 @@ describe("Jinqu should be able to use", () => {
             { id: 1, name: "i7" },
             { id: 3, name: "i8" },
         ];
-        expect(items.asQueryable().contains({ id: 3 } as any, (i1, i2) => i1.id === i2.id)).toBe(true);
+        expect(items.asQueryable().contains({ id: 3 } as never, (i1, i2) => i1.id === i2.id)).toBe(true);
     });
 
     it("count", () => {
         expect([1, 2, 3, 4].asQueryable().count()).toBe(4);
-        expect([1, 2, 3, 4].asQueryable().count((i) => i > 2)).toBe(2);
+        expect([1, 2, 3, 4].asQueryable().count(i => i > 2)).toBe(2);
     });
 
     it("defaultIfEmpty", () => {
@@ -94,7 +94,7 @@ describe("Jinqu should be able to use", () => {
         expect(defEmp1).not.toBe(arr);
         expect(defEmp1).toEqual(arr);
 
-        const defEmp2 = [].asQueryable().defaultIfEmpty({ id: 0 } as any).toArray();
+        const defEmp2 = [].asQueryable().defaultIfEmpty({ id: 0 } as never).toArray();
         expect(defEmp2).toEqual([{ id: 0 }]);
 
         const defEmp3 = [].asQueryable().defaultIfEmpty(null).toArray();
@@ -143,23 +143,23 @@ describe("Jinqu should be able to use", () => {
 
     it("first", () => {
         expect(products.asQueryable().first()).toBe(products[0]);
-        expect(products.asQueryable().first((p) => p.no === products[3].no)).toBe(products[3]);
+        expect(products.asQueryable().first(p => p.no === products[3].no)).toBe(products[3]);
 
         expect(() => [].asQueryable().first()).toThrow();
-        expect(() => products.asQueryable().first((p) => p.category === "None")).toThrow();
+        expect(() => products.asQueryable().first(p => p.category === "None")).toThrow();
     });
 
     it("firstOrDefault", () => {
         expect(products.asQueryable().firstOrDefault()).toBe(products[0]);
         expect([].asQueryable().firstOrDefault()).toBe(null);
-        expect(products.asQueryable().firstOrDefault((p) => p.no === products[2].no)).toBe(products[2]);
-        expect(products.asQueryable().firstOrDefault((p) => p.category === "None")).toBe(null);
+        expect(products.asQueryable().firstOrDefault(p => p.no === products[2].no)).toBe(products[2]);
+        expect(products.asQueryable().firstOrDefault(p => p.category === "None")).toBe(null);
     });
 
     it("groupBy", () => {
         const prodCat1 = products
             .asQueryable()
-            .groupBy((p) => p.category, (k, g) => ({ category: k, count: g.length }))
+            .groupBy(p => p.category, (k, g) => ({ category: k, count: g.length }))
             .toArray();
 
         expect(prodCat1).toHaveLength(3);
@@ -169,7 +169,7 @@ describe("Jinqu should be able to use", () => {
 
         const prodCat2 = products
             .asQueryable()
-            .groupBy((p) => p.category)
+            .groupBy(p => p.category)
             .toArray();
 
         expect(prodCat2).toHaveLength(3);
@@ -178,11 +178,11 @@ describe("Jinqu should be able to use", () => {
     });
 
     it("groupJoin", () => {
-        const details = orders.asQueryable().selectMany((o) => o.details!).toArray();
+        const details = orders.asQueryable().selectMany(o => o.details!).toArray();
         const prdCount = [products[0], products[1]].asQueryable().groupJoin(
             details,
-            (p) => p.no,
-            (d) => d.product,
+            p => p.no,
+            d => d.product,
             (p, ds) => ({ product: p.no, count: ds.length }),
         ).toArray();
 
@@ -192,7 +192,7 @@ describe("Jinqu should be able to use", () => {
     it("inlineCount", () => {
         const result1 = orders.asQueryable()
             .inlineCount()
-            .where((c) => c.id > 2)
+            .where(c => c.id > 2)
             .skip(1)
             .take(2)
             .toArray();
@@ -223,8 +223,8 @@ describe("Jinqu should be able to use", () => {
         const details = orders[0].details;
         const supCat = details!.asQueryable().join(
             products,
-            (d) => d.product,
-            (p) => p.no,
+            d => d.product,
+            p => p.no,
             (d, p) => ({ supplier: d.supplier, category: p.category }),
         ).toArray();
 
@@ -234,25 +234,25 @@ describe("Jinqu should be able to use", () => {
     it("last", () => {
         const idx = products.length - 1;
         expect(products.asQueryable().last()).toBe(products[idx]);
-        expect(products.asQueryable().last((p) => p.no === products[idx].no)).toBe(products[idx]);
+        expect(products.asQueryable().last(p => p.no === products[idx].no)).toBe(products[idx]);
 
         expect(() => [].asQueryable().last()).toThrow();
-        expect(() => products.asQueryable().last((p) => p.category === "None")).toThrow();
+        expect(() => products.asQueryable().last(p => p.category === "None")).toThrow();
     });
 
     it("lastOrDefault", () => {
         expect([].asQueryable().lastOrDefault()).toBe(null);
-        expect(products.asQueryable().lastOrDefault((p) => p.category === "None")).toBe(null);
+        expect(products.asQueryable().lastOrDefault(p => p.category === "None")).toBe(null);
     });
 
     it("max", () => {
         expect([2, 1, 3, 4].asQueryable().max()).toBe(4);
-        expect(products.asQueryable().max((p) => p.no)).toBe("Prd9");
+        expect(products.asQueryable().max(p => p.no)).toBe("Prd9");
     });
 
     it("min", () => {
         expect([2, 1, 3, 4].asQueryable().min()).toBe(1);
-        expect(products.asQueryable().min((p) => p.no)).toBe("Prd1");
+        expect(products.asQueryable().min(p => p.no)).toBe("Prd1");
     });
 
     it("ofGuardedType", () => {
@@ -286,7 +286,7 @@ describe("Jinqu should be able to use", () => {
         expect(() => items.asQueryable().ofType(null as any)).toThrow();
 
         // object test
-        const classOrders = orders.asQueryable().ofType<Order>(Order).toArray();
+        const classOrders = orders.asQueryable().ofType(Order).toArray();
         expect(classOrders).toEqual([orders[0], orders[2], orders[4]]);
 
         expect(items.asQueryable().ofType(Order).toArray()).toEqual([o1, o2]);
@@ -295,8 +295,8 @@ describe("Jinqu should be able to use", () => {
 
     it("orderBy, orderByDescending, thenBy, thenByDescending", () => {
         const sortedDetails1 = orders[4].details!.asQueryable()
-            .orderBy((d) => d.supplier)
-            .thenByDescending((d) => d.count)
+            .orderBy(d => d.supplier)
+            .thenByDescending(d => d.count)
             .toArray();
 
         expect(sortedDetails1[0]).toHaveProperty("count", 67);
@@ -304,8 +304,8 @@ describe("Jinqu should be able to use", () => {
         expect(sortedDetails1[2]).toHaveProperty("count", 86);
 
         const sortedDetails2 = orders[4].details!.asQueryable()
-            .orderByDescending((d) => d.supplier)
-            .thenBy((d) => d.count)
+            .orderByDescending(d => d.supplier)
+            .thenBy(d => d.count)
             .toArray();
 
         expect(sortedDetails2[0]).toHaveProperty("count", 8);
@@ -322,11 +322,11 @@ describe("Jinqu should be able to use", () => {
     });
 
     it("select", () => {
-        const ids = orders.asQueryable().select((o) => o.id).toArray();
+        const ids = orders.asQueryable().select(o => o.id).toArray();
         expect(ids).toEqual([1, 2, 3, 4, 5]);
 
         const token = "abc";
-        const idNo = orders.asQueryable().select((o) => ({ id: o.id, no: o.no, token }), { token }).toArray();
+        const idNo = orders.asQueryable().select(o => ({ id: o.id, no: o.no, token }), { token }).toArray();
         expect(idNo).toEqual([
             { id: 1, no: "Ord1", token: "abc" },
             { id: 2, no: "Ord2", token: "abc" },
@@ -335,12 +335,12 @@ describe("Jinqu should be able to use", () => {
             { id: 5, no: "Ord5", token: "abc" },
         ]);
 
-        const no = orders.asQueryable().select((o) => ({ no: o.no }), OrderNo).toArray();
-        no.forEach((n) => expect(n).toBeInstanceOf(OrderNo));
+        const no = orders.asQueryable().select(o => ({ no: o.no }), OrderNo).toArray();
+        no.forEach(n => expect(n).toBeInstanceOf(OrderNo));
     });
 
     it("selectMany", () => {
-        const details = orders.asQueryable().selectMany((o) => o.details!).toArray();
+        const details = orders.asQueryable().selectMany(o => o.details!).toArray();
         expect(details.length).toBe(16);
     });
 
@@ -357,20 +357,20 @@ describe("Jinqu should be able to use", () => {
 
     it("single", () => {
         expect([42].asQueryable().single()).toBe(42);
-        expect(products.asQueryable().single((p) => p.no === products[3].no)).toBe(products[3]);
+        expect(products.asQueryable().single(p => p.no === products[3].no)).toBe(products[3]);
 
         expect(() => products.asQueryable().single()).toThrow();
         expect(() => products.asQueryable().take(0).single()).toThrow();
-        expect(() => products.asQueryable().single((p) => p.category !== "None")).toThrow();
-        expect(() => products.asQueryable().single((p) => p.category === "None")).toThrow();
+        expect(() => products.asQueryable().single(p => p.category !== "None")).toThrow();
+        expect(() => products.asQueryable().single(p => p.category === "None")).toThrow();
     });
 
     it("singleOrDefault", () => {
         expect([].asQueryable().singleOrDefault()).toBe(null);
-        expect(products.asQueryable().singleOrDefault((p) => p.category === "None")).toBe(null);
+        expect(products.asQueryable().singleOrDefault(p => p.category === "None")).toBe(null);
 
         expect(() => products.asQueryable().singleOrDefault()).toThrow();
-        expect(() => products.asQueryable().singleOrDefault((p) => p.category !== "None")).toThrow();
+        expect(() => products.asQueryable().singleOrDefault(p => p.category !== "None")).toThrow();
     });
 
     it("skip", () => {
@@ -382,7 +382,7 @@ describe("Jinqu should be able to use", () => {
     });
 
     it("skipWhile", () => {
-        const biggerTwo = orders.asQueryable().skipWhile((o) => o.id < 3).toArray();
+        const biggerTwo = orders.asQueryable().skipWhile(o => o.id < 3).toArray();
 
         expect(biggerTwo).toHaveLength(3);
         expect(biggerTwo[0]).toHaveProperty("id", 3);
@@ -392,7 +392,7 @@ describe("Jinqu should be able to use", () => {
 
     it("sum", () => {
         expect([1, 2, 3, 4].asQueryable().sum()).toBe(10);
-        expect(orders.asQueryable().sum((o) => o.id)).toBe(15);
+        expect(orders.asQueryable().sum(o => o.id)).toBe(15);
     });
 
     it("take", () => {
@@ -405,7 +405,7 @@ describe("Jinqu should be able to use", () => {
     });
 
     it("takeWhile", () => {
-        const firstTwo = orders.asQueryable().takeWhile((o) => o.id < 3).toArray();
+        const firstTwo = orders.asQueryable().takeWhile(o => o.id < 3).toArray();
 
         expect(firstTwo).toHaveLength(2);
         expect(firstTwo[0]).toHaveProperty("id", 1);
@@ -424,14 +424,14 @@ describe("Jinqu should be able to use", () => {
     });
 
     it("where", () => {
-        const result1 = orders.asQueryable().where((c) => c.id > 3).toArray();
+        const result1 = orders.asQueryable().where(c => c.id > 3).toArray();
         expect(result1).toHaveLength(2);
         expect(result1[0].id).toBe(4);
         expect(result1[1].no).toBe("Ord5");
 
-        const details = orders.asQueryable().selectMany((o) => o.details!).toArray();
+        const details = orders.asQueryable().selectMany(o => o.details!).toArray();
         const result2 = details.asQueryable()
-            .where((d) => (d.count > 20 && d.supplier !== "QWE") || (d.count < 10 && d.supplier === "TYU"))
+            .where(d => (d.count > 20 && d.supplier !== "QWE") || (d.count < 10 && d.supplier === "TYU"))
             .toArray();
         expect(result2).toHaveLength(8);
         expect(result2[0].count).toBe(63);

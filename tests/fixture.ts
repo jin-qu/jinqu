@@ -1,5 +1,3 @@
-// tslint:disable:max-classes-per-file
-
 export interface IOrder {
     id: number;
     no: string;

@@ -1,12 +1,13 @@
 import { Expression } from "jokenizer";
 
-export type Ctor<T> = new (...args: any[]) => T;
+export type Ctor<T> = new (...args: never[]) => T;
 
-export type Func1<T1, T2 = any> = ((p1: T1) => T2) | string;
-export type Func2<T1, T2, T3 = any> = ((p1: T1, p2: T2) => T3) | string;
+export type Func1<T1, T2 = unknown> = ((p1: T1) => T2) | string;
+export type Func2<T1, T2, T3 = unknown> = ((p1: T1, p2: T2) => T3) | string;
 export type Predicate<T> = Func1<T, boolean>;
-export type TypePredicate<T> = (t: any) => t is T;
+export type TypePredicate<T> = (t: unknown) => t is T;
 export interface Value<T> { value: T; }
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type Result<T, TExtra> = {} extends TExtra ? T : Value<T> & TExtra;
 
 export interface IGrouping<T, TKey> extends Array<T> {
@@ -15,22 +16,22 @@ export interface IGrouping<T, TKey> extends Array<T> {
 
 export interface IQueryProvider {
     createQuery(parts?: IQueryPart[]): IQueryBase;
-    execute<TResult = any[]>(parts: IQueryPart[]): TResult;
-    executeAsync<TResult = any[]>(parts: IQueryPart[]): PromiseLike<TResult>;
+    execute<TResult = unknown[]>(parts: IQueryPart[]): TResult;
+    executeAsync<TResult = unknown[]>(parts: IQueryPart[]): PromiseLike<TResult>;
 }
 
 export interface IPartArgument {
-    // tslint:disable-next-line:ban-types
+    // eslint-disable-next-line @typescript-eslint/ban-types
     readonly func: Function;
     readonly exp: Expression;
-    readonly literal: any;
-    readonly scopes: any[];
+    readonly literal: unknown;
+    readonly scopes: unknown[];
 }
 
 export interface IQueryPart {
     readonly type: string;
     readonly args: IPartArgument[];
-    readonly scopes: any[];
+    readonly scopes: unknown[];
 }
 
 export interface IQueryBase {
@@ -42,17 +43,19 @@ export interface InlineCountInfo {
     readonly inlineCount: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 interface IQueryDuplicates<T, TExtra = {}> {
     concat(other: T[]): IQuery<T, TExtra>;
-    join<TOther, TResult = any, TKey = any>(
+    join<TOther, TResult = unknown, TKey = unknown>(
         other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    join<TOther, TResult = any, TKey = any>(
+    join<TOther, TResult = unknown, TKey = unknown>(
         other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra>;
     reverse(): IQuery<T, TExtra>;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     aggregate<TAccumulate = number>(func: Func2<TAccumulate, T, TAccumulate>,
                                     seed?: TAccumulate, ...scopes): TAccumulate;
@@ -80,22 +83,22 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     firstAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
     firstOrDefault(predicate?: Predicate<T>, ...scopes): Result<T, TExtra>;
     firstOrDefaultAsync(predicate?: Predicate<T>, ...scopes): PromiseLike<Result<T, TExtra>>;
-    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(
+    groupBy<TKey = unknown, TResult = IGrouping<TKey, T>>(
         keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, T[], TResult>,
         ...scopes): IQuery<TResult, TExtra>;
-    groupBy<TKey = any, TResult = IGrouping<TKey, T>>(
+    groupBy<TKey = unknown, TResult = IGrouping<TKey, T>>(
         keySelector: Func1<T, TKey>,
         elementSelector?: Func2<TKey, T[], TResult>,
         ctor?: Ctor<TResult>,
         ...scopes): IQuery<TResult, TExtra>;
-    groupJoin<TOther, TKey = any, TResult = any>(
+    groupJoin<TOther, TKey = unknown, TResult = unknown>(
         other: TOther[],
         thisKey: Func1<T, TKey>,
         otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther[], TResult>,
         ...scopes): IQuery<TResult, TExtra>;
-    groupJoin<TOther, TKey = any, TResult = any>(
+    groupJoin<TOther, TKey = unknown, TResult = unknown>(
         other: TOther[],
         thisKey: Func1<T, TKey>,
         otherKey: Func1<TOther, TKey>,
@@ -116,8 +119,8 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult, TExtra>;
     orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
     orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
-    select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
+    select<TResult = unknown>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TExtra>;
+    select<TResult = unknown>(selector: Func1<T, TResult>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
     selectMany<TResult>(selector: Func1<T, TResult[]>, ...scopes): IQuery<TResult, TExtra>;
     selectMany<TResult>(selector: Func1<T, TResult[]>, ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
     sequenceEqual(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): Result<boolean, TExtra>;
@@ -134,17 +137,19 @@ export interface IQuerySafe<T, TExtra = {}> extends IQueryBase, Iterable<T> {
     takeWhile(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
     union(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra>;
     where(predicate: Predicate<T>, ...scopes): IQuery<T, TExtra>;
-    zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
+    zip<TOther, TResult = unknown>(other: TOther[], selector: Func2<T, TOther, TResult>,
                                 ...scopes): IQuery<TResult, TExtra>;
-    zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
+    zip<TOther, TResult = unknown>(other: TOther[], selector: Func2<T, TOther, TResult>,
                                 ctor: Ctor<T>, ...scopes): IQuery<TResult, TExtra>;
 
     toArray(ctor?: Ctor<T>): Result<T[], TExtra>;
     toArrayAsync(ctor?: Ctor<T>): PromiseLike<Result<T[], TExtra>>;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type IQuery<T, TExtra = {}> = IQuerySafe<T, TExtra> & IQueryDuplicates<T, TExtra>;
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export interface IOrderedQuery<T, TExtra = {}> extends IQuery<T, TExtra> {
     thenBy(selector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;
     thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra>;

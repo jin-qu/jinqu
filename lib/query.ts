@@ -2,10 +2,11 @@ import { QueryPart } from "./query-part";
 import {
     Ctor, Func1, Func2, IGrouping, InlineCountInfo,
     IOrderedQuery, IQuery, IQueryPart, IQueryProvider,
-    Predicate, Result, TypePredicate,
+    Predicate, Result, TypePredicate
 } from "./shared";
 
-export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, Iterable<T> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export class Query<T = unknown, TExtra = {}> implements IOrderedQuery<T, TExtra>, Iterable<T> {
 
     constructor(public readonly provider: IQueryProvider, public readonly parts: IQueryPart[] = []) {
     }
@@ -112,22 +113,22 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
         return this.provider.executeAsync([...this.parts, QueryPart.firstOrDefault(predicate, scopes)]);
     }
 
-    public groupBy<TKey = any, TResult = IGrouping<T, TKey>>(
+    public groupBy<TKey = unknown, TResult = IGrouping<T, TKey>>(
         keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, T[], TResult>, ...scopes)
         : IQuery<TResult, TExtra>;
-    public groupBy<TKey = any, TResult = IGrouping<T, TKey>>(
+    public groupBy<TKey = unknown, TResult = IGrouping<T, TKey>>(
         keySelector: Func1<T, TKey>, elementSelector?: Func2<TKey, T[], TResult>, ctor?: Ctor<TResult>, ...scopes)
         : IQuery<TResult, TExtra> {
-        return this.fixCtorArg((s) => QueryPart.groupBy(keySelector, elementSelector, s), ctor, scopes);
+        return this.fixCtorArg(s => QueryPart.groupBy(keySelector, elementSelector, s), ctor, scopes) as never;
     }
 
-    public groupJoin<TOther, TKey = any, TResult = any>(
+    public groupJoin<TOther, TKey = unknown, TResult = unknown>(
         other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther[], TResult>, ...scopes): IQuery<TResult, TExtra>;
-    public groupJoin<TOther, TKey = any, TResult = any>(
+    public groupJoin<TOther, TKey = unknown, TResult = unknown>(
         other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther[], TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
-        return this.fixCtorArg((s) => QueryPart.groupJoin(other, thisKey, otherKey, selector, s), ctor, scopes);
+        return this.fixCtorArg(s => QueryPart.groupJoin(other, thisKey, otherKey, selector, s), ctor, scopes) as never;
     }
 
     public inlineCount(): IQuery<T, TExtra & InlineCountInfo> {
@@ -138,13 +139,13 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
         return this.create(QueryPart.intersect(other, comparer, scopes));
     }
 
-    public join<TOther, TResult = any, TKey = any>(
+    public join<TOther, TResult = unknown, TKey = unknown>(
         other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    public join<TOther, TResult = any, TKey = any>(
+    public join<TOther, TResult = unknown, TKey = unknown>(
         other: TOther[], thisKey: Func1<T, TKey>, otherKey: Func1<TOther, TKey>,
         selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
-        return this.fixCtorArg((s) => QueryPart.join(other, thisKey, otherKey, selector, s), ctor, scopes);
+        return this.fixCtorArg(s => QueryPart.join(other, thisKey, otherKey, selector, s), ctor, scopes) as never;
     }
 
     public last(predicate?: Predicate<T>, ...scopes): Result<T, TExtra> {
@@ -180,34 +181,34 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public ofGuardedType<TResult>(checker: TypePredicate<TResult>): IQuery<TResult, TExtra> {
-        return this.create(QueryPart.ofGuardedType(checker as any));
+        return this.create(QueryPart.ofGuardedType(checker as never));
     }
 
     public ofType<TResult extends T>(type: Ctor<TResult> | TResult): IQuery<TResult, TExtra> {
-        const ctor: any = typeof type === "function" ? type : type.constructor;
-        return this.create(QueryPart.ofType(ctor)).cast(ctor);
+        const ctor = typeof type === "function" ? type : type.constructor;
+        return this.create(QueryPart.ofType(ctor as never)).cast(ctor as never);
     }
 
     public orderBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
-        return this.create(QueryPart.orderBy(keySelector, scopes)) as any;
+        return this.create(QueryPart.orderBy(keySelector, scopes)) as never;
     }
 
     public orderByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
-        return this.create(QueryPart.orderByDescending(keySelector, scopes)) as any;
+        return this.create(QueryPart.orderByDescending(keySelector, scopes)) as never;
     }
 
     public reverse(): IQuery<T, TExtra> {
         return this.create(QueryPart.reverse());
     }
 
-    public select<TResult = any>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TExtra>;
-    public select<TResult = any>(selector: Func1<T, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
-        return this.fixCtorArg((s) => QueryPart.select(selector, s), ctor, scopes);
+    public select<TResult = unknown>(selector: Func1<T, TResult>, ...scopes): IQuery<TResult, TExtra>;
+    public select<TResult = unknown>(selector: Func1<T, TResult>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
+        return this.fixCtorArg(s => QueryPart.select(selector, s), ctor, scopes) as never;
     }
 
     public selectMany<TResult>(selector: Func1<T, TResult[]>, ...scopes): IQuery<TResult, TExtra>;
     public selectMany<TResult>(selector: Func1<T, TResult[]>, ctor: Ctor<TResult>, ...scopes): IQuery<TResult, TExtra> {
-        return this.fixCtorArg((s) => QueryPart.selectMany(selector, s), ctor, scopes);
+        return this.fixCtorArg(s => QueryPart.selectMany(selector, s), ctor, scopes) as never;
     }
 
     public sequenceEqual(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): Result<boolean, TExtra> {
@@ -260,11 +261,11 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public thenBy(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
-        return this.create(QueryPart.thenBy(keySelector, scopes)) as any;
+        return this.create(QueryPart.thenBy(keySelector, scopes)) as never;
     }
 
     public thenByDescending(keySelector: Func1<T>, ...scopes): IOrderedQuery<T, TExtra> {
-        return this.create(QueryPart.thenByDescending(keySelector, scopes)) as any;
+        return this.create(QueryPart.thenByDescending(keySelector, scopes)) as never;
     }
 
     public union(other: T[], comparer?: Func2<T, T, boolean>, ...scopes): IQuery<T, TExtra> {
@@ -275,11 +276,11 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
         return this.create(QueryPart.where(predicate, scopes));
     }
 
-    public zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>,
+    public zip<TOther, TResult = unknown>(other: TOther[], selector: Func2<T, TOther, TResult>,
         ...scopes): IQuery<TResult, TExtra>;
-    public zip<TOther, TResult = any>(other: TOther[], selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>,
+    public zip<TOther, TResult = unknown>(other: TOther[], selector: Func2<T, TOther, TResult>, ctor: Ctor<TResult>,
         ...scopes): IQuery<TResult, TExtra> {
-        return this.fixCtorArg((s) => QueryPart.zip(other, selector, s), ctor, scopes);
+        return this.fixCtorArg(s => QueryPart.zip(other, selector, s), ctor, scopes) as never;
     }
 
     public toArray(ctor?: Ctor<T>): Result<T[], TExtra> {
@@ -293,15 +294,15 @@ export class Query<T = any, TExtra = {}> implements IOrderedQuery<T, TExtra>, It
     }
 
     public [Symbol.iterator]() {
-        const result = this.provider.execute<any>(this.parts);
-        return result.value ? result.value : result;
+        const result = this.provider.execute(this.parts);
+        return result["value"] ?? result;
     }
 
     protected create<TResult = T, TNewExtra = TExtra>(part: IQueryPart): IQuery<TResult, TNewExtra> {
-        return this.provider.createQuery([...this.parts, part]) as any;
+        return this.provider.createQuery([...this.parts, part]) as never;
     }
 
-    protected fixCtorArg(partCurry: (scopes: any[]) => IQueryPart, ctor: Ctor<any>, scopes: any[]) {
+    protected fixCtorArg(partCurry: (scopes: unknown[]) => IQueryPart, ctor: Ctor<unknown>, ...scopes) {
         if (ctor && typeof ctor !== "function") {
             scopes = [ctor, ...scopes];
             ctor = null;

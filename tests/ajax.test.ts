@@ -1,6 +1,5 @@
 import { AjaxOptions, mergeAjaxOptions } from "../index";
 
-// tslint:disable:no-unused-expression
 describe("Ajax helper", () => {
 
     it("should return null for two null options", () => {
