@@ -1,4 +1,4 @@
-import { ArrayQueryProvider, PartArgument, QueryPart } from "../index";
+import { ArrayQueryProvider, PartArgument, QueryPart } from "..";
 import { Order, orders, Product, products } from "./fixture";
 
 describe("Jinqu should", () => {

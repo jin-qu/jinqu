@@ -1,4 +1,4 @@
-import { AjaxOptions, mergeAjaxOptions } from "../index";
+import { AjaxOptions, mergeAjaxOptions } from "..";
 
 describe("Ajax helper", () => {
 
