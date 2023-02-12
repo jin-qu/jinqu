@@ -22,12 +22,8 @@ export interface AjaxResponse<TResponse> {
     response: TResponse;
 }
 
-export interface IAjaxProvider<TResponse> {
-    ajax<T>(options: AjaxOptions): PromiseLike<Value<T> & AjaxResponse<TResponse>>;
-}
-
-export interface IRequestProvider<TOptions extends AjaxOptions> {
-    request<TResult>(prms: QueryParameter[], options: TOptions[]): PromiseLike<TResult>;
+export interface IAjaxProvider<TResponse, TOptions extends AjaxOptions = AjaxOptions> {
+    ajax<T>(options: TOptions): PromiseLike<Value<T> & AjaxResponse<TResponse>>;
 }
 
 export function mergeAjaxOptions(o1?: AjaxOptions | null, o2?: AjaxOptions | null): AjaxOptions {
@@ -35,8 +31,8 @@ export function mergeAjaxOptions(o1?: AjaxOptions | null, o2?: AjaxOptions | nul
     if (o2 == null) return o1;
 
     return {
-        data: o1.data ? (o2.data ? Object.assign({}, o1.data, o2.data) : o1.data) : o2.data,
-        headers: o1.headers ? Object.assign({}, o1.headers, o2.headers) : o2.headers,
+        data: Object.assign({}, o1.data, o2.data),
+        headers: Object.assign({}, o1.headers, o2.headers),
         method: o2.method || o1.method,
         params: (o1.params || []).concat(o2.params || []),
         timeout: o2.timeout || o1.timeout,
