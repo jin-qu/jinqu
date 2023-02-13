@@ -15,12 +15,10 @@ export class PartArgument implements IPartArgument {
     // eslint-disable-next-line @typescript-eslint/ban-types
     private _func: Function;
     get func() {
-        if (this._func) {
+        if (this._func)
             return this._func;
-        }
-        if (!this._expStr) {
+        if (!this._expStr)
             return null;
-        }
 
         if (this.exp.type === ExpressionType.Func) {
             const f = evaluate(this.exp, ...this._scopes);
@@ -32,26 +30,22 @@ export class PartArgument implements IPartArgument {
 
     private _expStr;
     get expStr() {
-        if (this._expStr) {
+        if (this._expStr)
             return this._expStr;
-        }
-        if (!this._func) {
+        if (!this._func)
             return null;
-        }
 
         return this._expStr = this._func.toString();
     }
 
     private _exp: Expression;
     get exp() {
-        if (this._exp) {
+        if (this._exp)
             return this._exp;
-        }
 
         const s = this.expStr;
-        if (!s) {
+        if (!s)
             return null;
-        }
 
         return this._exp = tokenize(s);
     }
@@ -313,9 +307,8 @@ export class QueryPart implements IQueryPart {
     }
 
     constructor(type: string, args: IPartArgument[] = [], scopes = []) {
-        if (!type) {
+        if (!type)
             throw new Error("Type of QueryPart cannot be null or empty.");
-        }
 
         this._type = type;
         this._args = args;

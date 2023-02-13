@@ -322,9 +322,9 @@ const funcs = {
         }
 
         for (const g of groups) {
-            if (elementSelector.func) {
+            if (elementSelector.func)
                 yield elementSelector.func(g.key, g.group);
-            } else {
+            else {
                 g.group["key"] = g.key;
                 yield g.group;
             }
@@ -438,9 +438,8 @@ const funcs = {
     },
 
     *select(items: IterableIterator<unknown>, selector: IPartArgument) {
-        for (const i of items) {
+        for (const i of items)
             yield selector.func(i);
-        }
     },
 
     *selectMany(items: IterableIterator<unknown>, selector: IPartArgument) {
@@ -547,9 +546,8 @@ const funcs = {
 
     *where(items: IterableIterator<unknown>, predicate: IPartArgument) {
         for (const i of items) {
-            if (predicate.func(i)) {
+            if (predicate.func(i))
                 yield i;
-            }
         }
     },
 
@@ -558,9 +556,8 @@ const funcs = {
 
         let idx = 0;
         for (const i of items) {
-            if (idx >= os.length) {
+            if (idx >= os.length)
                 return;
-            }
 
             yield selector.func(i, os[idx++]);
         }
@@ -577,9 +574,8 @@ function getArray(arg: IPartArgument) {
 
 function getFirst(items: IterableIterator<unknown>, predicate: IPartArgument) {
     for (const i of items) {
-        if (!predicate.func || predicate.func(i)) {
+        if (!predicate.func || predicate.func(i))
             return [true, i];
-        }
     }
 
     return [false, null];
@@ -600,13 +596,11 @@ function getLast(items: IterableIterator<unknown>, predicate: IPartArgument) {
 function getSingle(items: IterableIterator<unknown>, predicate: IPartArgument) {
     const matches = [];
     for (const item of items) {
-        if (predicate.func && !predicate.func(item)) {
+        if (predicate.func && !predicate.func(item))
             continue;
-        }
 
-        if (matches.length > 0) {
+        if (matches.length > 0)
             throw new Error("Sequence contains more than one matching element");
-        }
 
         matches.push(item);
     }
