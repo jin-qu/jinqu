@@ -9,7 +9,7 @@
     "sourceMap": true,
     "strictFunctionTypes": false,
     "lib": [
-      "es2015"
+      "ES2015"
     ]
   },
   "include": [
