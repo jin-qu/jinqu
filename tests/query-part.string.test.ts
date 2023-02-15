@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import "..";
+import "../index";
 import { OrderNo, orders, products } from "./fixture";
 
 describe("Jinqu should be able to use string expressions with", () => {

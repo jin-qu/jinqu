@@ -1,4 +1,4 @@
-import { AjaxOptions, mergeAjaxOptions } from "..";
+import { AjaxOptions, mergeAjaxOptions } from "../index";
 
 describe("Ajax helper", () => {
 
@@ -18,65 +18,65 @@ describe("Ajax helper", () => {
 
     it("should merge two options 1", () => {
         const o1: AjaxOptions = {
-            data: { id: 5 },
-            headers: {
+            $data: { id: 5 },
+            $headers: {
                 "Accept": "json",
                 "Content-Type": "application/javascript",
             },
-            method: "GET",
-            params: [
+            $method: "GET",
+            $params: [
                 { key: "$where", value: "a => a < 5" },
             ],
-            timeout: 300,
+            $timeout: 300,
         };
         const o2: AjaxOptions = {
-            data: { name: "Zaphod" },
-            headers: {
+            $data: { name: "Zaphod" },
+            $headers: {
                 "Auth": "12345",
                 "Content-Type": "application/json",
             },
-            params: [
+            $params: [
                 { key: "$orderBy", value: "a => a" },
             ],
-            timeout: 1000,
-            url: "List",
+            $timeout: 1000,
+            $url: "List",
         };
         const o = mergeAjaxOptions(o1, o2);
 
-        expect(o).toHaveProperty("data.id", 5);
-        expect(o).toHaveProperty("data.name", "Zaphod");
+        expect(o).toHaveProperty("$data.id", 5);
+        expect(o).toHaveProperty("$data.name", "Zaphod");
 
-        expect(o).toHaveProperty("headers.Content-Type", "application/json");
-        expect(o).toHaveProperty("headers.Accept", "json");
-        expect(o).toHaveProperty("headers.Auth", "12345");
+        expect(o).toHaveProperty("$headers.Content-Type", "application/json");
+        expect(o).toHaveProperty("$headers.Accept", "json");
+        expect(o).toHaveProperty("$headers.Auth", "12345");
 
-        expect(o).toHaveProperty("method", "GET");
+        expect(o).toHaveProperty("$method", "GET");
 
         const prms = [{ key: "$where", value: "a => a < 5" }, { key: "$orderBy", value: "a => a" }];
-        expect(o).toHaveProperty("params", prms);
+        expect(o).toHaveProperty("$params", prms);
 
-        expect(o).toHaveProperty("timeout", 1000);
+        expect(o).toHaveProperty("$timeout", 1000);
 
-        expect(o).toHaveProperty("url", "List");
+        expect(o).toHaveProperty("$url", "List");
     });
 
     it("should merge two options 2", () => {
         const o1: AjaxOptions = {
-            method: "GET",
-            timeout: 1000,
-            url: "Companies",
+            $method: "GET",
+            $timeout: 1000,
+            $url: "Companies",
         };
         const o2: AjaxOptions = {
-            data: { id: 1 },
-            headers: { AUTH: "42" },
+            $data: { id: 1 },
+            $headers: { AUTH: "42" },
         };
         const merged = {
-            data: { id: 1 },
-            headers: { AUTH: "42" },
-            method: "GET",
-            params: [],
-            timeout: 1000,
-            url: "Companies",
+            $data: { id: 1 },
+            $headers: { AUTH: "42" },
+            $method: "GET",
+            $params: [],
+            $timeout: 1000,
+            $url: "Companies",
         };
 
         expect(mergeAjaxOptions(o1, o2)).toEqual(merged);
@@ -84,11 +84,11 @@ describe("Ajax helper", () => {
 
     it("should merge two options 3", () => {
         const o1: AjaxOptions = {
-            data: { id: 1 },
+            $data: { id: 1 },
         };
         const o2: AjaxOptions = {
         };
 
-        expect(mergeAjaxOptions(o1, o2)).toHaveProperty("data", o1.data);
+        expect(mergeAjaxOptions(o1, o2)).toHaveProperty("$data", o1.$data);
     });
 });

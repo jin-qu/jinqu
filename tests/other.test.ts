@@ -1,4 +1,4 @@
-import { ArrayQueryProvider, PartArgument, QueryPart } from "..";
+import { ArrayQueryProvider, PartArgument, QueryPart } from "../index";
 import { Order, orders, Product, products } from "./fixture";
 
 describe("Jinqu should", () => {
@@ -14,6 +14,15 @@ describe("Jinqu should", () => {
     });
 
     it("iterate filtered array", () => {
+        const query = orders.asQueryable().where(c => c.id > 3);
+
+        let i = 3;
+        for (const o of query) {
+            expect(o).toBe(orders[i++]);
+        }
+    });
+
+    it("iterate filtered array with inline count", () => {
         const query = orders.asQueryable().inlineCount().where(c => c.id > 3);
 
         let i = 3;
@@ -27,6 +36,7 @@ describe("Jinqu should", () => {
         const query = orders[4].details!.asQueryable()
             .orderBy(d => d.supplier)
             .thenByDescending(d => d.count);
+
         const sortedDetails = Array.from(query.provider.execute<Order[]>(query.parts));
 
         expect(sortedDetails[0]).toHaveProperty("count", 67);

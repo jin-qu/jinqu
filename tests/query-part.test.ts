@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/ban-types */
 
-import "..";
+import "../index";
 import { ExtendedOrder, IProduct, Order, OrderNo, orders, products } from "./fixture";
 
 describe("Jinqu should be able to use", () => {

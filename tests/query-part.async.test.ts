@@ -1,4 +1,4 @@
-import "..";
+import "../index";
 import { orders, products } from "./fixture";
 
 describe("Jinqu should be able to asynchronously execute", () => {
