@@ -295,7 +295,7 @@ export class Query<T = unknown, TExtra = {}> implements IOrderedQuery<T, TExtra>
 
     public [Symbol.iterator]() {
         const result = this.provider.execute(this.parts);
-        return result["value"] ?? result;
+        return ("value" in result ? result.value : result) as never;
     }
 
     protected create<TResult = T, TNewExtra = TExtra>(part: IQueryPart): IQuery<TResult, TNewExtra> {
