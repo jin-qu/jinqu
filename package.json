@@ -20,7 +20,7 @@
     "url": "https://github.com/jin-qu/jinqu"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-pattern \"coverage\" --ignore-pattern \"dist\"",
     "test": "jest",
     "cover": "jest --coverage",
     "codecov": "jest --coverage && codecov",
