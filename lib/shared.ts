@@ -20,8 +20,7 @@ export interface IQueryProvider {
 }
 
 export interface IPartArgument {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    readonly func: Function;
+    readonly func: (...args: any[]) => any;
     readonly exp: Expression;
     readonly literal: unknown;
     readonly scopes: unknown[];

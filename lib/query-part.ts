@@ -3,8 +3,7 @@ import { Ctor, Func1, Func2, IPartArgument, IQueryPart, Predicate } from "./shar
 
 export class PartArgument implements IPartArgument {
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    public static identifier(value: Function | string, scopes?: unknown[]) {
+    public static identifier(value: ((...args: any[]) => any) | string, scopes?: unknown[]) {
         return new PartArgument(value, null, scopes);
     }
 
@@ -12,8 +11,7 @@ export class PartArgument implements IPartArgument {
         return new PartArgument(null, value, null);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    private _func: Function;
+    private _func: (...args: any[]) => any;
     get func() {
         if (this._func)
             return this._func;
@@ -22,10 +20,10 @@ export class PartArgument implements IPartArgument {
 
         if (this.exp.type === ExpressionType.Func) {
             const f = evaluate(this.exp, ...this._scopes);
-            return this._func = (...args: unknown[]) => f(...args);
+            return this._func = (...args: any[]) => f(...args);
         }
 
-        return this._func = (...args: unknown[]) => evaluate(this.exp, ...args.concat(this._scopes));
+        return this._func = (...args: any[]) => evaluate(this.exp, ...args.concat(this._scopes));
     }
 
     private _expStr: any;
@@ -60,8 +58,7 @@ export class PartArgument implements IPartArgument {
         return this._scopes;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    constructor($identifier?: Function | string | null, $literal?: unknown, scopes?: unknown[]) {
+    constructor($identifier?: ((...args: any[]) => any) | string | null, $literal?: unknown, scopes?: unknown[]) {
         if (typeof $identifier === "string") {
             this._expStr = $identifier;
         } else {
@@ -72,8 +69,7 @@ export class PartArgument implements IPartArgument {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-function identifier(value: Function | string, scopes?: unknown[]) {
+function identifier(value: ((...args: any[]) => any) | string, scopes?: unknown[]) {
     return PartArgument.identifier(value, scopes);
 }
 
