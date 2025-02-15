@@ -1,8 +1,9 @@
 import { plainToClass } from "class-transformer";
-import deepEqual = require("deep-equal");
 import { Query } from "./query";
 import { QueryFunc } from "./query-part";
 import { Ctor, IPartArgument, IQueryPart, IQueryProvider } from "./shared";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import deepEqual = require("deep-equal");
 
 const primitives = [Number, Boolean, String];
 const orderFuncs = [QueryFunc.orderBy, QueryFunc.orderByDescending, QueryFunc.thenBy, QueryFunc.thenByDescending];
@@ -65,14 +66,14 @@ export class ArrayQueryProvider implements IQueryProvider {
 
         let inlineCountEnabled: boolean;
         let orderParts = [];
-        let inlineCount: number;
+        let inlineCount: number = null;
 
         for (const p of parts) {
             if (p.type === QueryFunc.inlineCount) {
                 inlineCountEnabled = true;
                 continue;
             } else if (orderFuncs.indexOf(p.type) !== -1) {
-                // accumulate consecutive sortings
+                // accumulate consecutive sorting
                 orderParts.push(p);
                 continue;
             } else if (p.type === QueryFunc.skip || p.type === QueryFunc.take || executors.indexOf(p.type) !== -1) {
@@ -85,17 +86,17 @@ export class ArrayQueryProvider implements IQueryProvider {
                 inlineCount = null;
             }
 
-            // if it is not an order, apply previous sortings
+            // if it is not an order, apply previous sorting
             if (orderParts.length) {
                 value = this.multiOrderBy(value, orderParts);
             }
 
-            // clear sortings
+            // clear sorting
             orderParts = [];
             value = this.handlePart(value, p);
         }
 
-        // handle remaining sortings. necessary when last query part is an order
+        // handle remaining sorting. necessary when last query part is an order
         if (orderParts.length) {
             value = this.multiOrderBy(value, orderParts);
         }
@@ -197,14 +198,14 @@ const funcs = {
             }
 
             if (i !== Object(i)) {
-                // eslint-disable-next-line @typescript-eslint/ban-types
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
                 const v = (ctor.literal as Function)(i);
                 if (v == null || (ctor.literal === Number && isNaN(v)))
                     throw new Error(`Unable to cast ${i}`);
 
                 yield v;
             } else {
-                // eslint-disable-next-line @typescript-eslint/ban-types
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
                 if (i.constructor !== Object && !(i instanceof (ctor.literal as Function)))
                     throw new Error(`Unable to cast ${i}`);
 
@@ -253,7 +254,7 @@ const funcs = {
 
     *distinct(items: IterableIterator<unknown>, comparer: IPartArgument) {
         const dist = [];
-        const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
+        const c = (comparer.func || ((a, b) => a === b)) as (a: unknown, b: unknown) => boolean;
         for (const i of items) {
             if (dist.find(d => c(i, d)))
                 continue;
@@ -285,9 +286,9 @@ const funcs = {
 
     *except(items: IterableIterator<unknown>, other: IPartArgument, comparer: IPartArgument) {
         const dist = [];
-        const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
+        const c = (comparer.func || ((a, b) => a === b)) as (a: unknown, b: unknown) => boolean;
         for (const i of items) {
-            if (dist.find(d => c(i, d)) || other.literal["find"](d => c(i, d)))
+            if (dist.find(d => c(i, d)) || other.literal["find"]((d: unknown) => c(i, d)))
                 continue;
 
             dist.push(i);
@@ -343,9 +344,9 @@ const funcs = {
 
     *intersect(items: IterableIterator<unknown>, other: IPartArgument, comparer: IPartArgument) {
         const dist = [];
-        const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
+        const c = (comparer.func || ((a, b) => a === b)) as (a: unknown, b: unknown) => boolean;
         for (const i of items) {
-            if (dist.find(d => c(i, d)) || !other.literal["find"](d => c(i, d)))
+            if (dist.find((d: unknown) => c(i, d)) || !other.literal["find"]((d: unknown) => c(i, d)))
                 continue;
 
             dist.push(i);
@@ -380,7 +381,7 @@ const funcs = {
     },
 
     max(items: IterableIterator<unknown>, selector: IPartArgument) {
-        let max;
+        let max: unknown;
         for (const i of items) {
             const curr = selector.func ? selector.func(i) : i;
             if (max == null || curr > max) {
@@ -392,7 +393,7 @@ const funcs = {
     },
 
     min(items: IterableIterator<unknown>, selector: IPartArgument) {
-        let min;
+        let min: unknown;
         for (const i of items) {
             const curr = selector.func ? selector.func(i) : i;
             if (min == null || curr < min) {
@@ -404,7 +405,7 @@ const funcs = {
     },
 
     *ofGuardedType(items: IterableIterator<unknown>, typeGuard: IPartArgument) {
-        const predicate = typeGuard.literal as (i) => boolean;
+        const predicate = typeGuard.literal as (i: unknown) => boolean;
         for (const i of items) {
             if (predicate(i))
                 yield i;
@@ -417,10 +418,10 @@ const funcs = {
         for (const i of items) {
             // if type is primitive
             if (isPrimitive && i !== Object(i)) {
-                // eslint-disable-next-line @typescript-eslint/ban-types
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
                 if ((type as Function)(i) === i)
                     yield i;
-            // eslint-disable-next-line @typescript-eslint/ban-types
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
             } else if (i instanceof (type as Function))
                 yield i;
         }
@@ -453,7 +454,7 @@ const funcs = {
         const os = getArray(other);
         let idx = 0;
 
-        const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
+        const c = (comparer.func || ((a, b) => a === b)) as (a: unknown, b: unknown) => boolean;
         for (const i of items) {
             if (idx >= os.length || !c(i, os[idx++]))
                 return false;
@@ -478,7 +479,7 @@ const funcs = {
     *skip(items: IterableIterator<unknown>, count: IPartArgument) {
         let i = 0;
         for (const item of items) {
-            if (++i > count.literal)
+            if (++i > (count.literal as number))
                 yield item;
         }
     },
@@ -508,7 +509,7 @@ const funcs = {
     *take(items: IterableIterator<unknown>, count: IPartArgument) {
         let i = 0;
         for (const item of items) {
-            if (++i <= count.literal)
+            if (++i <= (count.literal as number))
                 yield item;
             else
                 break;
@@ -527,7 +528,7 @@ const funcs = {
     *union(items: IterableIterator<unknown>, other: IPartArgument, comparer: IPartArgument) {
         const dist = [];
 
-        const c = (comparer.func || ((a, b) => a === b)) as (a, b) => boolean;
+        const c = (comparer.func || ((a, b) => a === b)) as (a: unknown, b: unknown) => boolean;
         for (const i of items) {
             if (!dist.find(d => c(i, d))) {
                 dist.push(i);
@@ -582,7 +583,7 @@ function getFirst(items: IterableIterator<unknown>, predicate: IPartArgument) {
 }
 
 function getLast(items: IterableIterator<unknown>, predicate: IPartArgument) {
-    let last;
+    let last: any;
 
     for (const i of items) {
         if (!predicate.func || predicate.func(i)) {

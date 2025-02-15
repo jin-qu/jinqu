@@ -11,19 +11,19 @@ describe("Jinqu should be able to use string expressions with", () => {
 
     it("all", () => {
         expect([1, 2, 3, 4].asQueryable().all("i => i > 0")).toBe(true);
-        expect([1, 2, 3, 4].asQueryable().any("i => i > 4")).toBeFalsy;
+        expect([1, 2, 3, 4].asQueryable().any("i => i > 4")).toBeFalsy();
 
         expect(products.asQueryable().all("p => p.category !== null")).toBe(true);
-        expect(products.asQueryable().all("p => p.name === 'None'")).toBeFalsy;
+        expect(products.asQueryable().all("p => p.name === 'None'")).toBeFalsy();
     });
 
     it("any", () => {
         expect([1, 2, 3, 4].asQueryable().any("i => i > 3")).toBe(true);
-        expect([1, 2, 3, 4].asQueryable().any("i => i > 4")).toBeFalsy;
+        expect([1, 2, 3, 4].asQueryable().any("i => i > 4")).toBeFalsy();
 
         const p5 = products[5];
         expect(products.asQueryable().any("p => p.name === p5.name", { p5 })).toBe(true);
-        expect(products.asQueryable().any("p => p.name === 'None'")).toBeFalsy;
+        expect(products.asQueryable().any("p => p.name === 'None'")).toBeFalsy();
     });
 
     it("average", () => {
@@ -61,7 +61,7 @@ describe("Jinqu should be able to use string expressions with", () => {
     it("first", () => {
         const p4 = products[3];
         expect(products.asQueryable().first("p => p.no === p4.no", { p4 })).toBe(products[3]);
-        expect(() => products.asQueryable().first("p => p.category === 'None'")).toThrow;
+        expect(() => products.asQueryable().first("p => p.category === 'None'")).toThrow();
     });
 
     it("firstOrDefault", () => {

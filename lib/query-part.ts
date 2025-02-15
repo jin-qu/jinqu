@@ -3,16 +3,16 @@ import { Ctor, Func1, Func2, IPartArgument, IQueryPart, Predicate } from "./shar
 
 export class PartArgument implements IPartArgument {
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     public static identifier(value: Function | string, scopes?: unknown[]) {
         return new PartArgument(value, null, scopes);
     }
 
-    public static literal(value) {
+    public static literal(value: unknown) {
         return new PartArgument(null, value, null);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     private _func: Function;
     get func() {
         if (this._func)
@@ -22,13 +22,13 @@ export class PartArgument implements IPartArgument {
 
         if (this.exp.type === ExpressionType.Func) {
             const f = evaluate(this.exp, ...this._scopes);
-            return this._func = (...args) => f(...args);
+            return this._func = (...args: unknown[]) => f(...args);
         }
 
-        return this._func = (...args) => evaluate(this.exp, ...args.concat(this._scopes));
+        return this._func = (...args: unknown[]) => evaluate(this.exp, ...args.concat(this._scopes));
     }
 
-    private _expStr;
+    private _expStr: any;
     get expStr() {
         if (this._expStr)
             return this._expStr;
@@ -50,18 +50,18 @@ export class PartArgument implements IPartArgument {
         return this._exp = tokenize(s);
     }
 
-    private _literal;
+    private readonly _literal: any;
     get literal() {
         return this._literal;
     }
 
-    private _scopes: unknown[];
+    private readonly _scopes: unknown[];
     get scopes() {
         return this._scopes;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    constructor($identifier?: Function | string | null, $literal?, scopes?: unknown[]) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    constructor($identifier?: Function | string | null, $literal?: unknown, scopes?: unknown[]) {
         if (typeof $identifier === "string") {
             this._expStr = $identifier;
         } else {
@@ -72,12 +72,12 @@ export class PartArgument implements IPartArgument {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function identifier(value: Function | string, scopes?: unknown[]) {
     return PartArgument.identifier(value, scopes);
 }
 
-function literal(value) {
+function literal(value: unknown) {
     return PartArgument.literal(value);
 }
 
@@ -193,7 +193,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.min, [identifier(selector, scopes)], scopes);
     }
 
-    public static ofGuardedType(typeGuard: (i) => boolean) {
+    public static ofGuardedType(typeGuard: (i: unknown) => boolean) {
         return this.create(QueryFunc.ofGuardedType, [literal(typeGuard)]);
     }
 
@@ -278,7 +278,7 @@ export class QueryPart implements IQueryPart {
         return this.create(QueryFunc.toArray);
     }
 
-    private static createJoin(type, other, thisKey, otherKey, selector, scopes?: unknown[]) {
+    private static createJoin(type: any, other: any, thisKey: any, otherKey: any, selector: any, scopes?: any[]) {
         return this.create(
             type,
             [

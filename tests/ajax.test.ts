@@ -3,7 +3,7 @@ import { AjaxOptions, mergeAjaxOptions } from "../index";
 describe("Ajax helper", () => {
 
     it("should return null for two null options", () => {
-        expect(mergeAjaxOptions(null, null)).toBeNull;
+        expect(mergeAjaxOptions(null, null)).toBeNull();
     });
 
     it("should return first option when second is null", () => {

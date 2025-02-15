@@ -32,7 +32,6 @@ describe("Jinqu should", () => {
     });
 
     it("sort order details when executed explicitly", () => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const query = orders[4].details!.asQueryable()
             .orderBy(d => d.supplier)
             .thenByDescending(d => d.count);
@@ -65,13 +64,13 @@ describe("Jinqu should", () => {
         expect(new QueryPart("where")).toHaveProperty("scopes", []);
 
         const part1 = new PartArgument(null, null, undefined);
-        expect(part1.func).toBeNull;
-        expect(part1.expStr).toBeNull;
-        expect(part1.exp).toBeNull;
-        expect(part1.scopes).toBeNull;
+        expect(part1.func).toBeNull();
+        expect(part1.expStr).toBeNull();
+        expect(part1.exp).toBeNull();
+        expect(part1.scopes).toBeUndefined();
 
-        const part2 = new PartArgument(c => c % 2 === 0, null, undefined);
-        expect(part2.expStr).not.toBeNull;
+        const part2 = new PartArgument((c: any) => c % 2 === 0, null, undefined);
+        expect(part2.expStr).not.toBeNull();
     });
 
     it("fix prototype 1", () => {

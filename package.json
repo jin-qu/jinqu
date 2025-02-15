@@ -1,6 +1,6 @@
 {
   "name": "@jin-qu/jinqu",
-  "version": "2.0.0-alpha1",
+  "version": "2.0.0",
   "description": "Querying infrastructure for JavaScript, with Linq style",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,8 +13,6 @@
   ],
   "files": [
     "dist",
-    "index.ts",
-    "lib",
     "README.md"
   ],
   "repository": {
@@ -22,29 +20,30 @@
     "url": "https://github.com/jin-qu/jinqu"
   },
   "scripts": {
-    "lint": "eslint lib tests",
+    "lint": "eslint .",
     "test": "jest",
     "cover": "jest --coverage",
-    "coveralls": "jest --coverage && coveralls < coverage/lcov.info",
-    "build": "npm run test && npm run lint && tsc",
-    "prepare": "npm run build"
+    "codecov": "jest --coverage && codecov",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "author": "Umut Özel",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
-    "@typescript-eslint/parser": "^5.51.0",
-    "coveralls": "^3.1.1",
-    "eslint": "^8.33.0",
-    "jest": "^29.4.2",
-    "ts-jest": "^29.0.5",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "@eslint/js": "^9.20.0",
+    "@types/jest": "^29.5.14",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "codecov": "^3.8.3",
+    "eslint": "9.20.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
-    "deep-equal": "^2.2.0",
-    "jokenizer": "^0.4.5"
+    "deep-equal": "^2.2.3",
+    "jokenizer": "^1.0.0"
   }
 }

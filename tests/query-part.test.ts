@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/ban-types */
-
 import "../index";
 import { ExtendedOrder, IProduct, Order, OrderNo, orders, products } from "./fixture";
 
@@ -257,7 +253,7 @@ describe("Jinqu should be able to use", () => {
 
     it("ofGuardedType", () => {
         // type guard
-        function isProduct(item): item is IProduct {
+        function isProduct(item: any): item is IProduct {
             return item && item.category != null;
         }
 

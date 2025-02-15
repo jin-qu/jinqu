@@ -1,6 +1,6 @@
 import { Value } from "./shared";
 
-// jinqu can also be used as an Http request provider
+// jinqu can also be used as a Http request provider
 
 export interface QueryParameter { key: string; value: string; }
 
