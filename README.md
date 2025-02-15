@@ -5,7 +5,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5cc1af8cf2304b4aa5362c33225b380f)](https://www.codacy.com/gh/jin-qu/jinqu/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jin-qu/jinqu&amp;utm_campaign=Badge_Grade)
 <a href="https://snyk.io/test/npm/jinqu"><img src="https://snyk.io/test/npm/jinqu/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/npm/jinqu" style="max-width:100%;"></a>
 
-[![npm version](https://badge.fury.io/js/jinqu.svg)](https://badge.fury.io/js/jinqu)
+[![npm version](https://img.shields.io/npm/v/jinqu)](https://www.npmjs.com/package/jinqu)
 [![npm downloads](https://img.shields.io/npm/dm/jinqu.svg)](https://www.npmjs.com/package/jinqu)
 
 [![GitHub issues](https://img.shields.io/github/issues/jin-qu/jinqu.svg)](https://github.com/jin-qu/jinqu/issues)
