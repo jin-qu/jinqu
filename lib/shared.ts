@@ -20,7 +20,7 @@ export interface IQueryProvider {
 }
 
 export interface IPartArgument {
-    readonly func: (...args: any[]) => any;
+    readonly func: (...args: unknown[]) => any;
     readonly exp: Expression;
     readonly literal: unknown;
     readonly scopes: unknown[];

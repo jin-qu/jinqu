@@ -198,7 +198,7 @@ const funcs = {
             }
 
             if (i !== Object(i)) {
-                const v = (ctor.literal as (arg: any) => any)(i);
+                const v = (ctor.literal as (arg: unknown) => any)(i);
                 if (v == null || (ctor.literal === Number && isNaN(v)))
                     throw new Error(`Unable to cast ${i}`);
 
@@ -417,7 +417,7 @@ const funcs = {
         for (const i of items) {
             // if type is primitive
             if (isPrimitive && i !== Object(i)) {
-                if ((type as (...args: any[]) => any)(i) === i)
+                if ((type as (...args: unknown[]) => unknown)(i) === i)
                     yield i;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
             } else if (i instanceof (type as Function))

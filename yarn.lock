@@ -723,6 +723,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/deep-equal@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@types/deep-equal/-/deep-equal-1.0.4.tgz"
+  integrity sha512-tqdiS4otQP4KmY0PR3u6KbZ5EWvhNdUoS/jc93UuK23C220lOZ/9TvjfxdPcKvqwwDVtmtSCrnr0p/2dirAxkA==
+
 "@types/estree@^1.0.6":
   version "1.0.6"
   resolved "https://registry.npmjs.org/@types/estree/-/estree-1.0.6.tgz"
