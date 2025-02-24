@@ -26,14 +26,14 @@ Jinqu works perfectly in both Javascript and Typescript, but is optimized for Ty
 
 ## Installation
 
-> npm install jinqu
+> npm install @jin-qu/jinqu
 
 ## Code Examples
 
 First, make sure you've imported jinqu. This will add **asQueryable** method to Array Prototype.
 
 ```typescript
-import 'jinqu'
+import '@jin-qu/jinqu'
 ```
 
 We need to call **asQueryable** to create a query for an Array.
@@ -45,12 +45,12 @@ for (var n of query)
     console.log (n) // outputs 2,4
 ```
 
-If you want to use query methods directly, you need to install and import **jinqu-array-extensions** package.
+If you want to use query methods directly, you need to install and import **@jin-qu/array-extensions** package.
 
-> npm i jinqu-array-extensions
+> npm i @jin-qu/array-extensions
 
 ```typescript
-import 'jinqu-array-extensions'
+import '@jin-qu/array-extensions'
 ```
 
 You actually only need to do this once, such as in the entry point for your application, to ensure the Array prototype extensions are set up.
